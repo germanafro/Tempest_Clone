@@ -25,8 +25,10 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
 	private JMenuItem rectangle;
     private JMenuItem sphere;
     private JMenuItem torus;
+    private JMenuItem cuboid;
     public JSlider SlideX;
     public JSlider SlideY;
+    public JSlider SlideZ;
     public JSlider SlideScale;
     public JSlider SlideR;
     public JSlider SlideP;
@@ -34,6 +36,7 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
     private JLabel selected;
     private JLabel LabelX; 
     private JLabel LabelY; 
+    private JLabel LabelZ; 
     private JLabel LabelScale;
     private JLabel LabelR; 
     private JLabel LabelP; 
@@ -51,7 +54,7 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
     	this.setTitle("HUD");        
         this.setSize(300,600);
         
-        panel.setLayout(new GridLayout(14,0));
+        panel.setLayout(new GridLayout(16,0));
         
         Border black = new LineBorder(Color.black);
         JMenuBar menubar = new JMenuBar();
@@ -61,19 +64,24 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
         this.rectangle = new JMenuItem("rectangle");
         this.sphere = new JMenuItem("sphere");
         this.torus = new JMenuItem("torus");
+        this.cuboid = new JMenuItem("cuboid");
         this.rectangle.addActionListener(this);
         this.sphere.addActionListener(this);
         this.torus.addActionListener(this);
-        
+        this.cuboid.addActionListener(this);
+      
         menu.add(this.rectangle);
         menu.add(this.sphere);
         menu.add(this.torus);
+        menu.add(this.cuboid);
+        
         menubar.add(menu);
         this.setJMenuBar(menubar);
         //Labels
         this.selected = new JLabel(" current Object: rectangle");
         this.LabelX = new JLabel("X");
         this.LabelY = new JLabel("Y");
+        this.LabelZ = new JLabel("Z");
         this.LabelScale = new JLabel("Scale (%)");
         //Sliders
         this.SlideX = new JSlider();
@@ -95,6 +103,16 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
         this.SlideY.createStandardLabels(1);
         this.SlideY.setPaintTicks(true);
         this.SlideY.setPaintLabels(true);
+        
+        this.SlideZ = new JSlider();
+        this.SlideZ.setValue(2);
+        this.SlideZ.setMinimum(2);
+        this.SlideZ.setMaximum(100);
+        this.SlideZ.setMajorTickSpacing(10);
+        this.SlideZ.setMinorTickSpacing(1);
+        this.SlideZ.createStandardLabels(1);
+        this.SlideZ.setPaintTicks(true);
+        this.SlideZ.setPaintLabels(true);
         
         this.SlideScale = new JSlider();
         this.SlideScale.setValue(100);
@@ -145,6 +163,7 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
         
         this.SlideX.addChangeListener(this);
         this.SlideY.addChangeListener(this);
+        this.SlideZ.addChangeListener(this);
         this.SlideScale.addChangeListener(this);
         this.SlideR.addChangeListener(this);
         this.SlideP.addChangeListener(this);
@@ -157,6 +176,8 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
         panel.add(this.SlideX);
         panel.add(this.LabelY);
         panel.add(this.SlideY);
+        panel.add(this.LabelZ);
+        panel.add(this.SlideZ);
         panel.add(this.LabelScale);
         panel.add(this.SlideScale);
         panel.add(this.LabelR);
@@ -220,6 +241,17 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
 
 			this.currObject = new Torus(this.SlideX.getValue(),this.SlideY.getValue(),this.SlideScale.getValue(), this.SlideR.getValue(), this.SlideP.getValue(), this.SlideQ.getValue());
 		}
+		else if(e.getSource() == this.cuboid){
+			this.selected.setText(" current Object: cuboid");
+			this.SlideX.setValue(1);
+			this.SlideY.setValue(1);
+			this.SlideZ.setValue(1);
+			this.SlideScale.setValue(100);
+			this.currObject = new Cuboid(SlideX.getValue(),SlideY.getValue(), SlideZ.getValue(), SlideScale.getValue());
+			//System.out.println(currObject.getNormals().length);
+			//System.out.println(currObject.getVertices().length);
+			//System.out.println(currObject.getIndices().length);
+		}
 		currObject.create();
 		this.setDirty(true);
 	}
@@ -254,6 +286,9 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
 			((Torus) this.currObject).setP(SlideP.getValue());
 			((Torus) this.currObject).setQ(SlideQ.getValue());
 			SlideR.setMaximum(SlideScale.getValue());
+		}
+		if (this.currObject.getType().equals("cuboid")){
+			((Cuboid) this.currObject).setZ(SlideZ.getValue());
 		}
 		this.currObject.create();
 		this.setDirty(true);

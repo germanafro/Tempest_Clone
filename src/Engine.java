@@ -27,6 +27,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_L;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_J;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_U;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_O;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_FORWARD_COMPAT;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
@@ -168,6 +169,7 @@ public class Engine {
     private boolean showMesh = true;
     private boolean showNormals = false;
     private boolean useBackfaceCulling = false;
+    private boolean useDepthTest = false;
     private int useNormalColoring = 0;
     private int useNormalColoringLocation = 0;
     private int useTexture = 0;
@@ -272,6 +274,12 @@ public class Engine {
             		useBackfaceCulling = !useBackfaceCulling;
             		if (useBackfaceCulling) glEnable(GL_CULL_FACE);
             		else glDisable(GL_CULL_FACE);
+            	}
+            	if (key == GLFW_KEY_F && action == GLFW_PRESS){
+            		useDepthTest = !useDepthTest;
+            		System.out.println("depth test:" + useDepthTest);
+            		if(useDepthTest)glEnable(GL11.GL_DEPTH_TEST);
+            		else glDisable(GL11.GL_DEPTH_TEST);
             	}
             	if ( key == GLFW_KEY_V && action == GLFW_PRESS ){
             		if (useNormalColoring==1)
@@ -787,7 +795,9 @@ public class Engine {
             	hud.setDirty(false);
             }
             
+            
             // =============================== Update matrices ====================================
+            
             
             // first translate, then rotate. Remember the flipped order
             modelMatrix = new TranslationMatrix(new Vec3(0,0,1));  // translate...
