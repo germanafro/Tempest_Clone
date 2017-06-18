@@ -27,7 +27,38 @@ public class Rectangle extends Primitive {
 		
 		// now the indices
 		this.createIndices();
+		
+		// do texturemapping
+		this.createTextureMap(this.isStreched());
 	}
+	
+	private void createTextureMap(boolean streched) {
+		float[] texturecoords = new float[this.getVertices().length]; 
+		int x = this.getX();
+		int y = this.getY();
+		int k = 0;
+		if(!streched){
+			for(int i = 0; i < y; i++){
+				for(int j = 0; j < x; j++){
+					System.out.println("i,j: " + i + ", " + j);
+					texturecoords[k] = (float)j/(float)(x-1);
+					texturecoords[k+1] = (float)(y-i-1)/(float)(y-1);
+					k += 2;
+				}
+			}
+		}else{
+			for(int i = 0; i < y; i++){
+				for(int j = 0; j < x; j++){
+					System.out.println("i,j: " + i + ", " + j);
+					texturecoords[k] = (float)j;
+					texturecoords[k+1] = (float)(y-i-1);
+					k += 2;
+				}
+			}
+		}
+		this.setTexturecoords(texturecoords);
+	}
+
 	/**
 	 * produce array of indices for our vertices
 	 */

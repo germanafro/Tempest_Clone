@@ -8,8 +8,10 @@ public abstract class Primitive {
 	private int y;
 	private int scale;
 	private float[] vertices;
+	private float[] texturecoords;
 	private float[] normals;
 	private int[] indices;
+	private boolean streched;
 	protected String type; 
 	
 	
@@ -74,6 +76,18 @@ public abstract class Primitive {
 	}
 	public void setIndices(int[] indices) {
 		this.indices = indices;
+	}
+	public float[] getTexturecoords() {
+		return texturecoords;
+	}
+	public void setTexturecoords(float[] texturecoords) {
+		this.texturecoords = texturecoords;
+	}
+	public boolean isStreched() {
+		return streched;
+	}
+	public void setStreched(boolean streched) {
+		this.streched = streched;
 	}
 
 }

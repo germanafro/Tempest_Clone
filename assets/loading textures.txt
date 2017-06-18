@@ -1,0 +1,7 @@
+GLuint handles[2];
+glGenTextures(2, handles);
+glBindTexture(GL_TEXTURE_2D, handles[0]);
+// Initialize texture parameters and load a texture with glT
+exImage2D
+glBindTexture(GL_TEXTURE_2D, handles[1]);
+// Initialize texture parameters and load another texture

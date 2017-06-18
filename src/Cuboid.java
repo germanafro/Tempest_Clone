@@ -43,11 +43,12 @@ public class Cuboid extends Primitive {
 	 */
 	private void createNormals() {
 		int size = this.getVertices().length;
+		float[] vertices = this.getVertices();
 		float[] normals = new float[size];
 		for (int i = 0 ; i < size-2; i+= 3){
-			normals[i] = 0;
-			normals[i+1] = 0;
-			normals[i+2] = 1;
+			normals[i] = vertices[i];
+			normals[i+1] = vertices[i+1];
+			normals[i+2] = vertices[i+2];
 		}
 		this.setNormals(normals);
 		

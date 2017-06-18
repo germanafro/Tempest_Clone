@@ -643,14 +643,44 @@ public class Engine {
 		normalsBuffer.flip();
 		
 		// Texture Coordinates for each vertex, ST
-		float[] textureCoords = {
+		
+		
+		float[] textureCoords = hud.getCurrObject().getTexturecoords();
+		System.out.println(Arrays.toString(textureCoords));
+		/*{
+			
+				0f,3f,//2
+				1f,3f,//5
+				2f,3f,//1
+				0f,2f,//4
+				1f,2f,//0
+				2f,2f,//3
+				0f,1f,//3
+				1f,1f,//5
+				2f,1f,//5
+				0f,0f,//8
+				1f,0f,//4
+				2f,0f,//7
+				//1f,0f,//3
+				//2f,0f//6
+				
+				//1f,0f,
+				//0f, 1f,
+				//1f,1f
+		};*/
+		/*new float[vertices.length]; 
+		for(int i = 0 ; i < vertices.length ; i += 3 ){
+			textureCoords[i] = vertices[i];
+			textureCoords[i+1] = vertices[i+1];
+		}*/
+		/*{
 				0.0f, 1.0f,
 				0.5f, 1.0f,
 				1.0f, 1.0f,
 				0.0f, 0.0f,
 				0.5f, 0.0f,
 				1.0f, 0.0f,
-				};
+			}; */
 		FloatBuffer textureCoordsBuffer = BufferUtils.createFloatBuffer(textureCoords.length);
 		textureCoordsBuffer.put(textureCoords);
 		textureCoordsBuffer.flip();
