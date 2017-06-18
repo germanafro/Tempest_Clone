@@ -20,6 +20,7 @@ public class Torus extends Primitive {
 		this.P = P;
 		this.Q = Q;
 		this.type = "torus";
+		this.setTexturecoords(new float[1]);
 	}
 
 	public int getR() {

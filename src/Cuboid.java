@@ -15,6 +15,7 @@ public class Cuboid extends Primitive {
 		// TODO Auto-generated constructor stub
 		this.type = "cuboid";
 		this.z = z;
+		this.setTexturecoords(new float[1]);
 	}
 
 	@Override

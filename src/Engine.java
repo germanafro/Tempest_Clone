@@ -605,7 +605,8 @@ public class Engine {
     }
     
     private void setupTextures() {
-        textureID = this.loadPNGTexture("assets/gdv.png", GL13.GL_TEXTURE0);
+    	//TODO move this?
+        textureID = this.loadPNGTexture(hud.getCurrObject().getTexture(), GL13.GL_TEXTURE0);
     }
     /**
      * receive geometrical data from the Object currently saved in the hud.
@@ -614,6 +615,8 @@ public class Engine {
     private void initObject(){
     	//failsave just in case somethign goes wrong
     	hud.getCurrObject().create();
+    	//reload object texture
+    	setupTextures();
     	
     	// receive vertices from currObject
     	float[] vertices = hud.getCurrObject().getVertices();
@@ -838,7 +841,7 @@ public class Engine {
             
             // Upload matrices to the uniform variables to shader program 0
             GL20.glUseProgram(pId);
-             
+            
             GL20.glUniformMatrix4fv(projectionMatrixLocation, false , toFFB(projectionMatrix));
             GL20.glUniformMatrix4fv(viewMatrixLocation, false, toFFB(viewMatrix));
             GL20.glUniformMatrix4fv(modelMatrixLocation, false, toFFB(modelMatrix));

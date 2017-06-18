@@ -12,14 +12,15 @@ public abstract class Primitive {
 	private float[] normals;
 	private int[] indices;
 	private boolean streched;
-	protected String type; 
+	protected String type;
+	private String texture;
 	
 	
 	public String getType() {
 		return type;
 	}
 	/**
-	 * stores basic geometrical data
+	 * stores basic geometric data
 	 * @param x
 	 * @param y
 	 * @param scale
@@ -29,6 +30,7 @@ public abstract class Primitive {
 		this.y = y;
 		this.scale = scale;
 		this.type = "primitive";
+		this.setTexture("assets/gdv.png");
 	}
 	/**
 	 * non trivial every child needs to specify it's own create method
@@ -88,6 +90,12 @@ public abstract class Primitive {
 	}
 	public void setStreched(boolean streched) {
 		this.streched = streched;
+	}
+	public String getTexture() {
+		return texture;
+	}
+	public void setTexture(String texture) {
+		this.texture = texture;
 	}
 
 }

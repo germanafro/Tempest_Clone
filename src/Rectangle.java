@@ -37,7 +37,7 @@ public class Rectangle extends Primitive {
 		int x = this.getX();
 		int y = this.getY();
 		int k = 0;
-		if(!streched){
+		if(streched){
 			for(int i = 0; i < y; i++){
 				for(int j = 0; j < x; j++){
 					System.out.println("i,j: " + i + ", " + j);

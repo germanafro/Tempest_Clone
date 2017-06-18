@@ -16,6 +16,8 @@ public class Cylinder extends Primitive {
 		// TODO Auto-generated constructor stub
 		this.r = r;
 		this.type = "cylinder";
+		this.setTexture("assets/neon.png");
+		
 	}
 
 	@Override
@@ -24,14 +26,15 @@ public class Cylinder extends Primitive {
 		this.createVertices();	
 		// now the indices
 		this.createIndices();
-		
+		// do texturemapping
+		this.createTextureMap(this.isStreched());
 	}
 	
 	/**
 	 * produce array of indices for our vertices
 	 */
 	private void createIndices() {
-		int x = this.getY();
+		int x = this.getY() + 1 ;
 		int y = this.getX();
 		int current = x-1;
 		List<Integer> pattern = new ArrayList<Integer>();
@@ -43,9 +46,14 @@ public class Cylinder extends Primitive {
 				}
 			pattern.add(x);
 			//connect from left to the right
-			pattern.add(-1);
-			pattern.add(x);
 			pattern.add(0);
+			pattern.add(x-1);
+			pattern.add(0);
+			
+			//connect from left to the right
+			//pattern.add(-1);
+			//pattern.add(x);
+			//pattern.add(0);
 		}
 		//for (int i = 0; i < (x-1); i++){
 		//	pattern.add((y-1)*-x); // back to origin
@@ -80,7 +88,7 @@ public class Cylinder extends Primitive {
 		float x = new Float(this.getX());
 		float y = new Float(this.getY());
 		float scale = new Float (this.getScale())/100f;
-		float r = 0.5f* scale * new Float(this.getR())/100f;
+		float r = 1f* scale * new Float(this.getR())/100f;
 		float front = 0.5f * scale;
 		float back = -0.5f * scale;
 		float stepz = (front - back)/x;
@@ -91,7 +99,7 @@ public class Cylinder extends Primitive {
     	List<Float> n = new ArrayList<Float>();
 		
 		for (int i = 0; i < this.getX(); i ++){
-			for (int j = 0; j < this.getY(); j ++){
+			for (int j = 0; j < this.getY() + 1; j ++){
 				double rad =  Math.toRadians(360f - j*stepr);
 				// splice normal information
 				n.add((float) (-r*Math.cos(rad)));
@@ -100,7 +108,7 @@ public class Cylinder extends Primitive {
 				// add z
 				v.add((float) (r*Math.cos(rad)));
 				v.add((float) (r*Math.sin(rad)));
-				v.add(i * stepz);
+				v.add(front - i * stepz);
 			}
 		}
 		vertices = new float[v.size()];
@@ -117,7 +125,34 @@ public class Cylinder extends Primitive {
 		this.setVertices(vertices);
 		this.setNormals(normals);
 	}
-
+	
+	private void createTextureMap(boolean streched) {
+		float[] texturecoords = new float[this.getVertices().length]; 
+		int x = this.getY() + 1 ;
+		int y = this.getX();
+		int k = 0;
+		if(streched){
+			for(int i = 0; i < y; i++){
+				for(int j = 0; j < x; j++){
+					System.out.println("i,j: " + i + ", " + j);
+					texturecoords[k] = (float)j/(float)(x-1);
+					texturecoords[k+1] = (float)(y-i-1)/(float)(y-1);
+					k += 2;
+				}
+			}
+		}else{
+			for(int i = 0; i < y; i++){
+				for(int j = 0; j < x; j++){
+					System.out.println("i,j: " + i + ", " + j);
+					texturecoords[k] = (float)j;
+					texturecoords[k+1] = (float)(y-i-1);
+					k += 2;
+				}
+			}
+		}
+		this.setTexturecoords(texturecoords);
+	}
+	
 	public int getR() {
 		return r;
 	}

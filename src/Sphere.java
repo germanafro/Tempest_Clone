@@ -12,6 +12,7 @@ public class Sphere extends Primitive {
 		super(x, y, scale);
 		// TODO Auto-generated constructor stub
 		this.type = "sphere";
+		this.setTexturecoords(new float[1]);
 	}
 
 	@Override
