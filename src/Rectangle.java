@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import mat.Vec3;
 /**
  * A rectangle. creates geometrical data for triangle slice representation in opqnGL.
  * @author Andreas Berger
@@ -136,12 +138,13 @@ public class Rectangle extends Primitive {
 		float top = 0.5f * new Float(scale/100);
 		float stepX = (right-left)/(x-1f);
 		float stepY = (top - bottom)/(y-1f);
+		Vec3 origin = this.getOrigin();
 		
-		for (float i = 0; i < y; i ++){
-			for (float j = 0; j < x; j ++){
-				v.add(left + j *stepX);
-				v.add(bottom + i *stepY);
-				v.add(0f);
+		for (int i = 0; i < y; i ++){
+			for (int j = 0; j < x; j ++){
+				v.add((float)origin.x + left + (float)j *stepX);
+				v.add((float)origin.y + bottom + (float)i *stepY);
+				v.add((float)origin.z + 0f);
 			}
 		}
 		vertices = new float[v.size()];

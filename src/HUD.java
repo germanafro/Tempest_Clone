@@ -28,6 +28,8 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
     private JMenuItem sphere;
     private JMenuItem torus;
     private JMenuItem cuboid;
+    private JMenu objectMenu;
+    private List<JMenuItem> newobjects;
     private List<JMenuItem> objects;
     public JSlider SlideX;
     public JSlider SlideY;
@@ -44,7 +46,8 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
     private JLabel LabelR; 
     private JLabel LabelP; 
     private JLabel LabelQ; 
-    private Primitive currObject;
+    private List<Primitive> currObject = new ArrayList<Primitive>();
+    private int currObjId;
     private JPanel panel = new JPanel();
     private boolean dirty = false;
     
@@ -62,24 +65,27 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
         Border black = new LineBorder(Color.black);
         JMenuBar menubar = new JMenuBar();
         menubar.setBorder(black);
-        JMenu menu = new JMenu("Choose Object");
+        JMenu menu = new JMenu("New Object");
+        this.objectMenu = new JMenu("Select Object");
+        this.newobjects = new ArrayList<JMenuItem>();
         this.objects = new ArrayList<JMenuItem>();
-        this.currObject = new Rectangle(2,2,100);
+        this.currObject.add(new Rectangle(2,2,100));
+        registerNewObject("rectangle");
         // add new objects here
-        this.objects.add(new JMenuItem("rectangle"));
-        this.objects.add(new JMenuItem("sphere"));
-        this.objects.add(new JMenuItem("torus"));
-        this.objects.add(new JMenuItem("cuboid"));
-        this.objects.add(new JMenuItem("cylinder"));
-        for(JMenuItem obj : this.objects){
+        this.newobjects.add(new JMenuItem("rectangle"));
+        this.newobjects.add(new JMenuItem("sphere"));
+        this.newobjects.add(new JMenuItem("torus"));
+        this.newobjects.add(new JMenuItem("cuboid"));
+        this.newobjects.add(new JMenuItem("cylinder"));
+        for(JMenuItem obj : this.newobjects){
         	obj.addActionListener(this);
         	menu.add(obj);
         }
-        
         menubar.add(menu);
+        menubar.add(this.objectMenu);
         this.setJMenuBar(menubar);
         //Labels
-        this.selected = new JLabel(" current Object: rectangle");
+        this.selected = new JLabel("current Object: rectangle[0]");
         this.LabelX = new JLabel("X");
         this.LabelY = new JLabel("Y");
         this.LabelZ = new JLabel("Z");
@@ -198,26 +204,28 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
 	 */
 	public void actionPerformed(ActionEvent e) {
 		// rectangle - make sure these indexes are right
-		if(e.getSource() == this.objects.get(0)){
+		if(e.getSource() == this.newobjects.get(0)){
 			this.selected.setText(" current Object: rectangle");
 			this.SlideX.setValue(2);
 			this.SlideY.setValue(2);
 			this.SlideScale.setValue(100);
-			this.currObject = new Rectangle(SlideX.getValue(),SlideY.getValue(),SlideScale.getValue());
+			this.currObject.add(new Rectangle(SlideX.getValue(),SlideY.getValue(),SlideScale.getValue()));
+			registerNewObject("rectangle");
 			//System.out.println(currObject.getNormals().length);
 			//System.out.println(currObject.getVertices().length);
 			//System.out.println(currObject.getIndices().length);
 		}
-		else if(e.getSource() == this.objects.get(1)){
+		else if(e.getSource() == this.newobjects.get(1)){
 			this.selected.setText(" current Object: sphere");
 			this.SlideX.setValue(3);
 			this.SlideX.setMinimum(3);
 			this.SlideY.setValue(3);
 			this.SlideY.setMinimum(3);
 			this.SlideScale.setValue(100);
-			this.currObject = new Sphere(SlideX.getValue(),SlideY.getValue(),SlideScale.getValue());
+			this.currObject.add(new Sphere(SlideX.getValue(),SlideY.getValue(),SlideScale.getValue()));
+			registerNewObject("sphere");
 		}
-		else if(e.getSource() == this.objects.get(2)){
+		else if(e.getSource() == this.newobjects.get(2)){
 			this.selected.setText(" current Object: torus");
 			
 			this.SlideX.setValue(3);
@@ -240,39 +248,69 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
 	        this.SlideQ.setMaximum(10);
 	        this.SlideQ.setValue(1);
 
-			this.currObject = new Torus(this.SlideX.getValue(),this.SlideY.getValue(),this.SlideScale.getValue(), this.SlideR.getValue(), this.SlideP.getValue(), this.SlideQ.getValue());
+			this.currObject.add(new Torus(this.SlideX.getValue(),this.SlideY.getValue(),this.SlideScale.getValue(), this.SlideR.getValue(), this.SlideP.getValue(), this.SlideQ.getValue()));
+			registerNewObject("torus");
 		}
-		else if(e.getSource() == this.objects.get(3)){
+		else if(e.getSource() == this.newobjects.get(3)){
 			this.selected.setText(" current Object: cuboid");
 			this.SlideX.setValue(1);
 			this.SlideY.setValue(1);
 			this.SlideZ.setValue(1);
 			this.SlideScale.setValue(100);
-			this.currObject = new Cuboid(SlideX.getValue(),SlideY.getValue(), SlideZ.getValue(), SlideScale.getValue());
+			this.currObject.add(new Cuboid(SlideX.getValue(),SlideY.getValue(), SlideZ.getValue(), SlideScale.getValue()));
+			registerNewObject("cuboid");
 		}
-		else if(e.getSource() == this.objects.get(4)){
-			this.selected.setText(" current Object: cuboid");
+		else if(e.getSource() == this.newobjects.get(4)){
+			this.selected.setText(" current Object: cylinder");
 			this.SlideX.setValue(10);
 			this.SlideY.setValue(10);
 			this.SlideR.setValue(100);
 			this.SlideScale.setValue(100);
-			this.currObject = new Cylinder(SlideX.getValue(),SlideY.getValue(), SlideR.getValue(), SlideScale.getValue());	
+			this.currObject.add(new Cylinder(SlideX.getValue(),SlideY.getValue(), SlideR.getValue(), SlideScale.getValue()));	
+			registerNewObject("cylinder");
+		} else{
+			int len = this.objects.size();
+			for (int i = 0 ; i< len ; i++){
+				if(e.getSource() == this.objects.get(i)){
+					this.currObjId = i;
+					this.selected.setText(" current Object: " + this.currObject.get(i).getType());
+					break;
+				}
+				
+			}
 		}
-		currObject.create();
+		currObject.get(0).create();
 		this.setDirty(true);
 	}
 
 	public Primitive getCurrObject() {
+		return currObject.get(0);
+	}
+	
+	public Primitive getCurrObject(int i) {
+		if (i < currObject.size()){
+			return currObject.get(i);
+		} else return currObject.get(0);
+	}
+	
+	public List<Primitive> getCurrObjects() {
 		return currObject;
 	}
 
 
 	public void setCurrObject(Primitive currObject) {
-		this.currObject = currObject;
+		this.currObject.remove(0);
 		currObject.create();
+		this.currObject.add(currObject);
 		this.setDirty(true);
 	}
-
+	
+	public void registerNewObject(String type){
+		JMenuItem obj = new JMenuItem(type);
+		this.objects.add(obj);
+    	obj.addActionListener(this);
+    	this.objectMenu.add(obj);
+	}
 
 	@Override
 	/**
@@ -283,23 +321,24 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
 	public void stateChanged(ChangeEvent arg0) {
 		// TODO Auto-generated method stub
 		// can be optimized a little more by checking for source and changing only respective value ~see above :P
+		int id = this.currObjId;
 		System.out.println("[DEBUG] change event triggered");
-		this.currObject.setX(SlideX.getValue());
-		this.currObject.setY(SlideY.getValue());
-		this.currObject.setScale(SlideScale.getValue());
-		if (this.currObject.getType().equals("torus")){
-			((Torus) this.currObject).setR(SlideR.getValue());
-			((Torus) this.currObject).setP(SlideP.getValue());
-			((Torus) this.currObject).setQ(SlideQ.getValue());
+		this.currObject.get(id).setX(SlideX.getValue());
+		this.currObject.get(id).setY(SlideY.getValue());
+		this.currObject.get(id).setScale(SlideScale.getValue());
+		if (this.currObject.get(id).getType().equals("torus")){
+			((Torus) this.currObject.get(id)).setR(SlideR.getValue());
+			((Torus) this.currObject.get(id)).setP(SlideP.getValue());
+			((Torus) this.currObject.get(id)).setQ(SlideQ.getValue());
 			SlideR.setMaximum(SlideScale.getValue());
 		}
-		if (this.currObject.getType().equals("cuboid")){
-			((Cuboid) this.currObject).setZ(SlideZ.getValue());
+		if (this.currObject.get(id).getType().equals("cuboid")){
+			((Cuboid) this.currObject.get(id)).setZ(SlideZ.getValue());
 		}
-		if (this.currObject.getType().equals("cylinder")){
-			((Cylinder) this.currObject).setR(SlideR.getValue());
+		if (this.currObject.get(id).getType().equals("cylinder")){
+			((Cylinder) this.currObject.get(id)).setR(SlideR.getValue());
 		}
-		this.currObject.create();
+		this.currObject.get(id).create();
 		this.setDirty(true);
 	}
 

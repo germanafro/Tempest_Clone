@@ -127,17 +127,17 @@ public class Engine {
     private int HEIGHT = 640;
     
     // Buffer IDs
-  	private int vaoId = 0;
-  	private int vaoNormalLinesId = 0;
-  	private int vboId = 0;	//vertex
-  	private int vbocId = 0;	//color
-  	private int vbonId = 0;	//normal
-  	private int vbotId = 0;	//texture coords
-  	private int vbonlId = 0;	//normal lines
-  	private int vbonlcId = 0;	//normal lines color
-  	private int vboiId = 0;	//index
-  	private int indicesCount = 0;
-  	private int verticesCount = 0;
+  	private List<Integer> vaoId = new ArrayList<Integer>();
+  	private List<Integer> vaoNormalLinesId = new ArrayList<Integer>();
+  	private List<Integer> vboId = new ArrayList<Integer>();	//vertex
+  	private List<Integer> vbocId = new ArrayList<Integer>();	//color
+  	private List<Integer> vbonId = new ArrayList<Integer>();	//normal
+  	private List<Integer> vbotId = new ArrayList<Integer>();	//texture coords
+  	private List<Integer> vbonlId = new ArrayList<Integer>();	//normal lines
+  	private List<Integer> vbonlcId = new ArrayList<Integer>();	//normal lines color
+  	private List<Integer> vboiId = new ArrayList<Integer>();	//index
+  	private List<Integer> indicesCount = new ArrayList<Integer>();
+  	private List<Integer> verticesCount = new ArrayList<Integer>();
   	
   	// Shader variables
   	private int vsId = 0;
@@ -191,9 +191,8 @@ public class Engine {
         try {
             init();
             setupShaders();
-            setupTextures();
             setupMatrices();
-            initObject();
+            initObjects();
             loop();
  
             // Release window and window callbacks
@@ -289,7 +288,7 @@ public class Engine {
             	}
             	// Andy's custom keys
             	if ( key == GLFW_KEY_R && action == GLFW_PRESS ){
-            		initObject();
+            		initObjects();
             	}
             	if ( key == GLFW_KEY_H && action == GLFW_PRESS ){
             		if(hud.isVisible()){
@@ -604,27 +603,29 @@ public class Engine {
         return texId;
     }
     
-    private void setupTextures() {
+    private void setupTextures(String filename) {
     	//TODO move this?
-        textureID = this.loadPNGTexture(hud.getCurrObject().getTexture(), GL13.GL_TEXTURE0);
+        textureID = this.loadPNGTexture(filename, GL13.GL_TEXTURE0);
     }
     /**
-     * receive geometrical data from the Object currently saved in the hud.
-     * loads the data into a buffer
+     * calculate geometric data for the Object with given id.
+     * loads the data into respective buffer
      */
-    private void initObject(){
-    	//failsave just in case somethign goes wrong
-    	hud.getCurrObject().create();
+    private void initObject(int id){
+    	
+    	Primitive currObject = hud.getCurrObject(id);
+    	//failsave just in case something goes wrong
+    	currObject.create();
     	//reload object texture
-    	setupTextures();
+    	setupTextures(currObject.getTexture());
     	
     	// receive vertices from currObject
-    	float[] vertices = hud.getCurrObject().getVertices();
+    	float[] vertices = currObject.getVertices();
 		// Sending data to OpenGL requires the usage of (flipped) byte buffers
 		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length);
 		verticesBuffer.put(vertices);
 		verticesBuffer.flip();
-		verticesCount = vertices.length/3;
+		verticesCount.set(id, vertices.length/3);
 		
 		// Colors for each vertex, RGBA
 		float[] colors = {
@@ -640,7 +641,7 @@ public class Engine {
 		colorsBuffer.flip();
 		
 		// receive Normals for each vertex, XYZ from currObject
-		float[] normals = hud.getCurrObject().getNormals();
+		float[] normals = currObject.getNormals();
 		FloatBuffer normalsBuffer = BufferUtils.createFloatBuffer(normals.length);
 		normalsBuffer.put(normals);
 		normalsBuffer.flip();
@@ -648,42 +649,8 @@ public class Engine {
 		// Texture Coordinates for each vertex, ST
 		
 		
-		float[] textureCoords = hud.getCurrObject().getTexturecoords();
+		float[] textureCoords = currObject.getTexturecoords();
 		System.out.println(Arrays.toString(textureCoords));
-		/*{
-			
-				0f,3f,//2
-				1f,3f,//5
-				2f,3f,//1
-				0f,2f,//4
-				1f,2f,//0
-				2f,2f,//3
-				0f,1f,//3
-				1f,1f,//5
-				2f,1f,//5
-				0f,0f,//8
-				1f,0f,//4
-				2f,0f,//7
-				//1f,0f,//3
-				//2f,0f//6
-				
-				//1f,0f,
-				//0f, 1f,
-				//1f,1f
-		};*/
-		/*new float[vertices.length]; 
-		for(int i = 0 ; i < vertices.length ; i += 3 ){
-			textureCoords[i] = vertices[i];
-			textureCoords[i+1] = vertices[i+1];
-		}*/
-		/*{
-				0.0f, 1.0f,
-				0.5f, 1.0f,
-				1.0f, 1.0f,
-				0.0f, 0.0f,
-				0.5f, 0.0f,
-				1.0f, 0.0f,
-			}; */
 		FloatBuffer textureCoordsBuffer = BufferUtils.createFloatBuffer(textureCoords.length);
 		textureCoordsBuffer.put(textureCoords);
 		textureCoordsBuffer.flip();
@@ -692,10 +659,10 @@ public class Engine {
 		
 		// OpenGL expects to draw the first vertices in counter clockwise order by default
 		// receive indices from currObject
-		int[] indices = hud.getCurrObject().getIndices();
+		int[] indices = currObject.getIndices();
 		System.out.println("[DEBUG] Indices: " + Arrays.toString( indices));
-		indicesCount = indices.length;
-		IntBuffer indicesBuffer = BufferUtils.createIntBuffer(indicesCount);
+		indicesCount.set(id, indices.length);
+		IntBuffer indicesBuffer = BufferUtils.createIntBuffer(indicesCount.get(id));
 		indicesBuffer.put(indices);
 		indicesBuffer.flip();
 		
@@ -720,10 +687,10 @@ public class Engine {
 		normalLinesBuffer.flip();
 		
 		// color for normal lines. Each vertex has the same RGBA value (1,1,0,1) -> yellow
-		float[] normalLinesColors = new float[(verticesCount)*8];
+		float[] normalLinesColors = new float[(verticesCount.get(id))*8];
 		
 		pos=0;
-		for (int i=0;i<(verticesCount*4);i+=4){
+		for (int i=0;i<(verticesCount.get(id)*4);i+=4){
 			normalLinesColors[pos++]=1f;
 			normalLinesColors[pos++]=1f;
 			normalLinesColors[pos++]=0f;
@@ -741,13 +708,13 @@ public class Engine {
 		
 		// Create a new Vertex Array Object in memory and select it (bind)
 		// A VAO can have up to 16 attributes (VBO's) assigned to it by default
-		vaoId = GL30.glGenVertexArrays();
-		GL30.glBindVertexArray(vaoId);
+		vaoId.set(id, GL30.glGenVertexArrays());
+		GL30.glBindVertexArray(vaoId.get(id));
 		
 		// Create a new Vertex Buffer Object (VBO) in memory and select it (bind)
 		// A VBO is a collection of Vectors which in this case resemble the location of each vertex.
-		vboId = GL15.glGenBuffers();
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
+		vboId.set(id, GL15.glGenBuffers());
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId.get(id));
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, verticesBuffer, GL15.GL_STATIC_DRAW);
 		// Put the VBO in the attributes list at index 0
 		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
@@ -755,60 +722,94 @@ public class Engine {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 		
 		// Create a new VBO for the indices and select it (bind) - COLORS
-        vbocId = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbocId);
+        vbocId.set(id, GL15.glGenBuffers());
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbocId.get(id));
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, colorsBuffer, GL15.GL_STATIC_DRAW);
         //index 1, in 0 are the vertices stored; 4 values (RGAB) instead of 3 (XYZ)
         GL20.glVertexAttribPointer(1, 4, GL11.GL_FLOAT, false, 0, 0); 
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
         
         // Create a new VBO for the indices and select it (bind) - NORMALS
-        vbonId = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbonId);
+        vbonId.set(id, GL15.glGenBuffers());
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbonId.get(id));
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, normalsBuffer, GL15.GL_STATIC_DRAW);
         //index 2, 3 values (XYZ)
         GL20.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, true, 0, 0); 
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
         
         // Create a new VBO and select it (bind) - TEXTURE COORDS
-        vbotId = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbotId);
+        vbotId.set(id, GL15.glGenBuffers());
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbotId.get(id));
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, textureCoordsBuffer, GL15.GL_STATIC_DRAW);
         //index 3, 2 values (ST)
         GL20.glVertexAttribPointer(3, 2, GL11.GL_FLOAT, true, 0, 0); 
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 		
 		// Create a new VBO for the indices and select it (bind) - INDICES
-		vboiId = GL15.glGenBuffers();
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboiId);
+		vboiId.set(id, GL15.glGenBuffers());
+		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboiId.get(id));
 		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL15.GL_STATIC_DRAW);
 		// Deselect (bind to 0) the VBO
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 		
 		// _Second_ VAO for normal visualization (optional)
-		vaoNormalLinesId = GL30.glGenVertexArrays();
-		GL30.glBindVertexArray(vaoNormalLinesId);
+		vaoNormalLinesId.set(id, GL30.glGenVertexArrays());
+		GL30.glBindVertexArray(vaoNormalLinesId.get(id));
 		
 		// Create a new VBO for normal lines and select it (bind)
-        vbonlId = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbonlId);
+        vbonlId.set(id, GL15.glGenBuffers());
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbonlId.get(id));
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, normalLinesBuffer, GL15.GL_STATIC_DRAW);
         //index 0, new VAO; 3 values (XYZ)
         GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0); 
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
         
         // Create a new VBO for normal lines and select it (bind) - COLOR
-        vbonlcId = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbonlcId);
+        vbonlcId.set(id, GL15.glGenBuffers());
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbonlcId.get(id));
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, normalLinesColorsBuffer, GL15.GL_STATIC_DRAW);
         //index 0, new VAO; 4 values (RGBA)
         GL20.glVertexAttribPointer(1, 4, GL11.GL_FLOAT, false, 0, 0); 
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
         
         // Deselect (bind to 0) the VAO
-     	GL30.glBindVertexArray(0);
+     	GL30.glBindVertexArray(0);		
+    }
+    /**
+     * load all Objects into buffer
+     */
+    private void initObjects(){
+    	int numObj = hud.getCurrObjects().size();
+    	vaoId = new ArrayList<Integer>();
+      	vaoNormalLinesId = new ArrayList<Integer>();
+      	vboId = new ArrayList<Integer>();	//vertex
+      	vbocId = new ArrayList<Integer>();	//color
+      	vbonId = new ArrayList<Integer>();	//normal
+      	vbotId = new ArrayList<Integer>();	//texture coords
+      	vbonlId = new ArrayList<Integer>();	//normal lines
+      	vbonlcId = new ArrayList<Integer>();	//normal lines color
+      	vboiId = new ArrayList<Integer>();	//index
+      	indicesCount = new ArrayList<Integer>();
+      	verticesCount = new ArrayList<Integer>();
+    	for (int i = 0 ; i < numObj ; i++){
+    		vaoId.add(0);
+          	vaoNormalLinesId.add(0);
+          	vboId.add(0);	//vertex
+          	vbocId.add(0);	//color
+          	vbonId.add(0);	//normal
+          	vbotId.add(0);	//texture coords
+          	vbonlId.add(0);	//normal lines
+          	vbonlcId.add(0);	//normal lines color
+          	vboiId.add(0);	//index
+          	indicesCount.add(0);
+          	verticesCount.add(0);
+    		initObject(i);
+    	
+    	}
      		
     }
+    
+    
     /**
      * changes of notice: checks for hud dirty bit. if true reloads the geometrical Object into the buffer
      * @throws Exception when exiting the window.. lol
@@ -824,7 +825,7 @@ public class Engine {
             
             // =============================== Update HUD dirty bit  ====================================
             if(hud.isDirty()){
-            	initObject();
+            	initObjects();
             	hud.setDirty(false);
             }
             
@@ -840,7 +841,7 @@ public class Engine {
             		.mul(modelMatrix)); // ... and rotate, multiply matrices 
             
             // Upload matrices to the uniform variables to shader program 0
-            GL20.glUseProgram(pId);
+			GL20.glUseProgram(pId);
             
             GL20.glUniformMatrix4fv(projectionMatrixLocation, false , toFFB(projectionMatrix));
             GL20.glUniformMatrix4fv(viewMatrixLocation, false, toFFB(viewMatrix));
@@ -852,22 +853,28 @@ public class Engine {
              
             GL20.glUseProgram(0);
 
-            // ================================== Draw object =====================================
+            // ================================== Draw objects =====================================
             
+        	int numObj = hud.getCurrObjects().size();
+        	for (int i = 0 ; i < numObj ; i++){
             GL20.glUseProgram(pId);
-
+            
             // Bind to the VAO that has all the information about the vertices
-            GL30.glBindVertexArray(vaoId);
+            if(hud.isDirty()){
+             	initObjects();
+             	hud.setDirty(false);
+             }
+            GL30.glBindVertexArray(vaoId.get(i));
             GL20.glEnableVertexAttribArray(0);
             GL20.glEnableVertexAttribArray(1);
             GL20.glEnableVertexAttribArray(2);
             GL20.glEnableVertexAttribArray(3); // texture coordinates
              
             // Bind to the index VBO that has all the information about the order of the vertices
-            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboiId);
+            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboiId.get(i));
              
             // Draw the vertices
-            GL11.glDrawElements(GL11.GL_TRIANGLE_STRIP, indicesCount, GL11.GL_UNSIGNED_INT, 0);
+            GL11.glDrawElements(GL11.GL_TRIANGLE_STRIP, indicesCount.get(i), GL11.GL_UNSIGNED_INT, 0);
             
             // Put everything back to default (deselect)
             GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -890,15 +897,15 @@ public class Engine {
 	            GL20.glUniformMatrix4fv(modelMatrixLocationNormals, false, toFFB(modelMatrix));
 	             
 	            // Bind to the VAO that has all the information about the normal lines
-	            GL30.glBindVertexArray(vaoNormalLinesId);
+	            GL30.glBindVertexArray(vaoNormalLinesId.get(i));
 	            GL20.glEnableVertexAttribArray(0);
 	            GL20.glEnableVertexAttribArray(1);
 	             
 	            // Bind to the VBO that has all the information about the order of the vertices
-	            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbonlId);
+	            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbonlId.get(i));
 	             
 	            // Draw the vertices
-	            GL11.glDrawArrays(GL11.GL_LINES, 0, verticesCount*2);
+	            GL11.glDrawArrays(GL11.GL_LINES, 0, verticesCount.get(i)*2);
 	            
 	            // Put everything back to default (deselect)
 	            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -907,7 +914,7 @@ public class Engine {
 	            GL30.glBindVertexArray(0);
 	            GL20.glUseProgram(0);
             }
-            
+        	}//end for loop
             // Swap the color buffer. We never draw directly to the screen, only in this buffer. So we need to display it
     		glfwSwapBuffers(window);
             

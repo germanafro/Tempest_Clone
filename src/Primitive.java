@@ -1,3 +1,5 @@
+import mat.Vec3;
+
 /**
  * base class for geometrical objects
  * @author Andreas Berger
@@ -14,6 +16,7 @@ public abstract class Primitive {
 	private boolean streched;
 	protected String type;
 	private String texture;
+	private Vec3 origin;
 	
 	
 	public String getType() {
@@ -31,6 +34,7 @@ public abstract class Primitive {
 		this.scale = scale;
 		this.type = "primitive";
 		this.setTexture("assets/gdv.png");
+		this.setOrigin(new Vec3(0.0, 0.0, 0.0));
 	}
 	/**
 	 * non trivial every child needs to specify it's own create method
@@ -96,6 +100,12 @@ public abstract class Primitive {
 	}
 	public void setTexture(String texture) {
 		this.texture = texture;
+	}
+	public Vec3 getOrigin() {
+		return origin;
+	}
+	public void setOrigin(Vec3 origin) {
+		this.origin = origin;
 	}
 
 }
