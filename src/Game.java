@@ -7,8 +7,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
@@ -33,7 +35,7 @@ public class Game {
 	private HUD hud;
 	
 	public Game(){
-		this.setHud(new HUD());
+		this.setHud(new HUD(this));
 		this.setGameObjects(new HashMap<String, GameObject>());
 		this.setTextureIds(new HashMap<String, Integer>());
 		this.startNewGame();
@@ -94,9 +96,7 @@ public class Game {
 			switch(state){
 			case "starting":
 				this.addGameObject(new Player("player1", this));
-				this.hud.registerNewObject("player1");
 				this.addGameObject(new Tube("tube1", this));
-				this.hud.registerNewObject("tube1");
 				this.setState("playing");
 			case "playing":
 				if(!this.isPause()){
@@ -123,17 +123,10 @@ public class Game {
 		}
 	}
 
-	private void addGameObject(GameObject obj) {
-		// TODO Auto-generated method stub
-		this.hud.getCurrObjects().add(obj.getGeom());
-		this.gameObjects.put(obj.getName(), obj);
-	}
-
-	public void loadObjects() {
-		// TODO Auto-generated method stub
-		int i = 0;
-		for (Primitive obj : this.hud.getCurrObjects()){
-			this.gameObjects.put(Integer.toString(i++), new GameObject(obj.getType(), obj, this));
+	public void addGameObject(GameObject gameObject) {
+		this.hud.registerNewObject(gameObject.getName());
+		for(Primitive obj : gameObject.getGeom()){
+			this.gameObjects.put(gameObject.getName(), gameObject);
 		}
 	}
 	 /**
@@ -210,20 +203,22 @@ public class Game {
 	
 	public void destroyObject(String name){
 		//temp save obj
-		GameObject obj = this.getGameObjects().get(name);
+		GameObject gameObject = this.getGameObjects().get(name);
 		// remove from registry
 		this.getGameObjects().remove(name);
-		// free memory
-		GL15.glDeleteBuffers(obj.getVboId());
-    	GL15.glDeleteBuffers(obj.getVaoId());
-		GL15.glDeleteBuffers(obj.getVboId());
-        GL15.glDeleteBuffers(obj.getVbocId());
-        GL15.glDeleteBuffers(obj.getVbonId());
-        GL15.glDeleteBuffers(obj.getVbotId());
-		GL15.glDeleteBuffers(obj.getVboiId());
-		GL15.glDeleteBuffers(obj.getVaoNormalLinesId());
-        GL15.glDeleteBuffers(obj.getVbonlId());
-        GL15.glDeleteBuffers(obj.getVbonlcId());
+		for(Primitive obj : gameObject.getGeom()){
+			// free memory
+			GL15.glDeleteBuffers(obj.getVboId());
+    		GL15.glDeleteBuffers(obj.getVaoId());
+			GL15.glDeleteBuffers(obj.getVboId());
+        	GL15.glDeleteBuffers(obj.getVbocId());
+        	GL15.glDeleteBuffers(obj.getVbonId());
+        	GL15.glDeleteBuffers(obj.getVbotId());
+			GL15.glDeleteBuffers(obj.getVboiId());
+			GL15.glDeleteBuffers(obj.getVaoNormalLinesId());
+        	GL15.glDeleteBuffers(obj.getVbonlId());
+        	GL15.glDeleteBuffers(obj.getVbonlcId());
+		}
 	}
 
 	public RenderEngine getRenderEngine() {

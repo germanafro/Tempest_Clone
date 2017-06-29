@@ -8,8 +8,8 @@ import java.util.List;
  */
 public class Sphere extends Primitive {
 
-	public Sphere(int x, int y, int scale) {
-		super(x, y, scale);
+	public Sphere(int x, int y, int scale, Game game) {
+		super(x, y, scale, game);
 		// TODO Auto-generated constructor stub
 		this.type = "sphere";
 		this.setTexturecoords(new float[1]);
@@ -45,8 +45,8 @@ public class Sphere extends Primitive {
 				//0.5f, -0.5f, 0f,	// right top
     	List<Float> v = new ArrayList<Float>();
 		float[] vertices;
-		int xval = this.getX();
-		int yval = this.getY();
+		int xval = this.getxTiles();
+		int yval = this.getyTiles();
 		int scaleval = this.getScale();
 		float x = new Float(xval);
 		float y = new Float(yval);
@@ -87,8 +87,8 @@ public class Sphere extends Primitive {
 		// start: x-1
 		//travserse from right to left with x-1 steps: +x, -(x+1) 
 		//to advance from left to right once: +x, +0 ,+(x-1),+0 
-		int x = this.getY();
-		int y = this.getX();
+		int x = this.getyTiles();
+		int y = this.getxTiles();
 		int current = 0;
 		//int end = (x*(y-2) + 1 - x);
 		List<Integer> pattern = new ArrayList<Integer>();

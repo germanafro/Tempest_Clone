@@ -13,8 +13,8 @@ public class Torus extends Primitive {
 	private int P;
 	private int Q;
 
-	public Torus(int x, int y, int scale, int r, int P, int Q) {
-		super(x, y, scale);
+	public Torus(int x, int y, int scale, int r, int P, int Q, Game game) {
+		super(x, y, scale, game);
 		// TODO Auto-generated constructor stub
 		this.r = r;
 		this.P = P;
@@ -144,8 +144,8 @@ public class Torus extends Primitive {
 		// start: x-1
 		//travserse from right to left with x-1 steps: +x, -(x+1) 
 		//to advance from left to right once: +x, +0 ,+(x-1),+0 
-		int x = this.getY();
-		int y = this.getX();
+		int x = this.getyTiles();
+		int y = this.getxTiles();
 		int current = x-1;
 		//int end = (x*(y-2) + 1 - x);
 		List<Integer> pattern = new ArrayList<Integer>();

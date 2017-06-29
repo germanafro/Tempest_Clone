@@ -145,7 +145,6 @@ public class RenderEngine {
     private int modelMatrixLocationNormals = 0;// separate one for normals
     private Matrix4 projectionMatrix = null;
     private Matrix4 viewMatrix = null;
-    private Matrix4 modelMatrix = null;
     private Vec3 modelAngle = new Vec3(0,0,0);
     private Vec3 cameraPos = new Vec3(0,0,-4);
     private float deltaRotX = 5f;
@@ -533,15 +532,30 @@ public class RenderEngine {
      * buffer all Objects
      */
     public void initObjects(){
-    	this.game.loadObjects();
     	Iterator<GameObject> gameObjects = this.game.getGameObjects().values().iterator();
     	while(gameObjects.hasNext()){
     		GameObject gameObject = gameObjects.next(); 
-    		gameObject.buffer();
+    		for(Primitive obj : gameObject.getGeom()){
+    			obj.buffer();
+    		}
     	}
      		
     }
     
+    public void doAlloc(Primitive obj){
+		// allocate memory
+    	obj.setVaoId(GL30.glGenVertexArrays());
+		obj.setVboId(GL15.glGenBuffers());
+        obj.setVbocId(GL15.glGenBuffers());
+        obj.setVbonId(GL15.glGenBuffers());
+        obj.setVbotId(GL15.glGenBuffers());
+		obj.setVboiId(GL15.glGenBuffers());
+		obj.setVaoNormalLinesId(GL30.glGenVertexArrays());
+        obj.setVbonlId(GL15.glGenBuffers());
+        obj.setVbonlcId(GL15.glGenBuffers());
+        obj.setModelMatrixLocation(GL20.glGetUniformLocation(pId, "modelMatrix"));
+        obj.setAlloc(false);
+	}
     
     /**
      * changes of notice: checks for hud dirty bit. if true reloads the geometric Object into the buffer
@@ -554,28 +568,10 @@ public class RenderEngine {
         if (!glfwWindowShouldClose(getWindow())) {
         	
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-
-            
-            // =============================== Update HUD dirty bit  ====================================
-            if(hud.isDirty()){
-            	initObjects();
-            	hud.setDirty(false);
-            }
-            
-            
+          
             // =============================== Update matrices ====================================
-            
-            
-            // first translate, then rotate. Remember the flipped order
-            modelMatrix = new TranslationMatrix(new Vec3(0,0,1));  // translate...
-            modelMatrix = (Matrix4) new RotationMatrix(modelAngle.z, mat.Axis.Z)
-            		.mul((new RotationMatrix(modelAngle.y, mat.Axis.Y))
-            		.mul(new RotationMatrix(modelAngle.x, mat.Axis.X))
-            		.mul(modelMatrix)); // ... and rotate, multiply matrices 
-            
             // Upload matrices to the uniform variables to shader program 0
 			GL20.glUseProgram(pId);
-            
             GL20.glUniformMatrix4fv(projectionMatrixLocation, false , toFFB(projectionMatrix));
             GL20.glUniformMatrix4fv(viewMatrixLocation, false, toFFB(viewMatrix));
             
@@ -589,37 +585,55 @@ public class RenderEngine {
             
             Iterator<GameObject> gameObjects = this.game.getGameObjects().values().iterator();
         	while(gameObjects.hasNext()){
+        		
         		GameObject gameObject = gameObjects.next(); 
-        		//gameObject.buffer();
-        		GL20.glUseProgram(pId);
+        		for(Primitive obj : gameObject.getGeom()){
+        			//gameObject.buffer();
+        			GL20.glUseProgram(pId);
+        			
+        			// Step 1 allocate memory Step2 buffer data 
+        			//schedule mem alloc for new geom
+        			if(obj.isAlloc()){
+        				
+        				doAlloc(obj);
+        			}
+        			//update dirty gameObjects
+        			if(gameObject.isDirty()){
+        				gameObject.buffer();
+        				gameObject.setDirty(false);
+        			}
+        			
+        			// bind the individual texture
+        			GL11.glBindTexture(GL11.GL_TEXTURE_2D, obj.getTextureID());
+        			useTextureLocation = GL20.glGetUniformLocation(pId, "useTexture");
+        			GL20.glUniform1i(useTextureLocation, useTexture);
+        			
+        			// setup individual modelmatrix
+        			// first translate, then rotate. Remember the flipped order
+                    // Einheitliche Rotation (zusätzliche individuelle Berechnungen finden in geom statt)
+        			Matrix4 modelMatrix = obj.getModelMatrix();
+                    modelMatrix = (Matrix4) new RotationMatrix(modelAngle.z, mat.Axis.Z)
+                    		.mul((new RotationMatrix(modelAngle.y, mat.Axis.Y))
+                    		.mul(new RotationMatrix(modelAngle.x, mat.Axis.X))
+                    		.mul(modelMatrix)); // ... and rotate, multiply matrices 
+                    
+        			int modelMatrixLocation = GL20.glGetUniformLocation(pId, "modelMatrix");
+        			GL20.glUniformMatrix4fv(modelMatrixLocation, false, toFFB(modelMatrix));
         		
-        		// bind the individual texture
-                GL11.glBindTexture(GL11.GL_TEXTURE_2D, gameObject.getTextureID());
-                useTextureLocation = GL20.glGetUniformLocation(pId, "useTexture");
-                GL20.glUniform1i(useTextureLocation, useTexture);
-        		
-        		// Bind to the VAO that has all the information about the vertices
-        		if(hud.isDirty()){
-        			initObjects();
-        			hud.setDirty(false);
-        		}
-        		// setup individual modelmatrix
-        		int modelMatrixLocation = GL20.glGetUniformLocation(pId, "modelMatrix");
-        		GL20.glUniformMatrix4fv(modelMatrixLocation, false, toFFB(modelMatrix));
-        		
-        		GL30.glBindVertexArray(gameObject.getVaoId());
-        		GL20.glEnableVertexAttribArray(0);
-        		GL20.glEnableVertexAttribArray(1);
+        			GL30.glBindVertexArray(obj.getVaoId());
+        			GL20.glEnableVertexAttribArray(0);
+        			GL20.glEnableVertexAttribArray(1);
         		GL20.glEnableVertexAttribArray(2);
         		GL20.glEnableVertexAttribArray(3); // texture coordinates
              
             // Bind to the index VBO that has all the information about the order of the vertices
-            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, gameObject.getVboiId());
+            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, obj.getVboiId());
              
             // Draw the vertices
-            GL11.glDrawElements(GL11.GL_TRIANGLE_STRIP, gameObject.getIndicesCount(), GL11.GL_UNSIGNED_INT, 0);
+            GL11.glDrawElements(GL11.GL_TRIANGLE_STRIP, obj.getIndicesCount(), GL11.GL_UNSIGNED_INT, 0);
             
             // Put everything back to default (deselect)
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
             GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
             GL20.glDisableVertexAttribArray(0);
             GL20.glDisableVertexAttribArray(1);
@@ -640,15 +654,15 @@ public class RenderEngine {
 	            GL20.glUniformMatrix4fv(modelMatrixLocationNormals, false, toFFB(modelMatrix));
 	             
 	            // Bind to the VAO that has all the information about the normal lines
-	            GL30.glBindVertexArray(gameObject.getVaoNormalLinesId());
+	            GL30.glBindVertexArray(obj.getVaoNormalLinesId());
 	            GL20.glEnableVertexAttribArray(0);
 	            GL20.glEnableVertexAttribArray(1);
 	             
 	            // Bind to the VBO that has all the information about the order of the vertices
-	            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, gameObject.getVbonId());
+	            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, obj.getVbonId());
 	             
 	            // Draw the vertices
-	            GL11.glDrawArrays(GL11.GL_LINES, 0, gameObject.getVerticesCount()*2);
+	            GL11.glDrawArrays(GL11.GL_LINES, 0, obj.getVerticesCount()*2);
 	            
 	            // Put everything back to default (deselect)
 	            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -658,11 +672,13 @@ public class RenderEngine {
 	            GL20.glUseProgram(0);
             }
         	}//end for loop
+        	}
             // Swap the color buffer. We never draw directly to the screen, only in this buffer. So we need to display it
     		glfwSwapBuffers(getWindow());
             
             // Poll for window events. The key callback above will only be invoked during this call.
             glfwPollEvents();
+        	
         }
     }
     

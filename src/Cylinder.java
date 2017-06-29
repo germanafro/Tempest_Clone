@@ -11,13 +11,23 @@ import java.util.List;
 public class Cylinder extends Primitive {
 	
 	private int r;
-	public Cylinder(int x, int y, int r, int scale) {
-		super(x, y, scale);
+	public Cylinder(int x, int y, int z, int r, int scale, Game game) {
+		super(x, y, scale, game);
 		// TODO Auto-generated constructor stub
 		this.r = r;
+		this.setZ(z);
 		this.type = "cylinder";
-		this.setTexture("tube_neon.png");
-		
+		this.setxTiles(2);
+		this.setyTiles(10);
+	}
+	public Cylinder(int x, int y, int z, int r, int scale, Game game, String texture) {
+		super(x, y, scale, game, texture);
+		// TODO Auto-generated constructor stub
+		this.setZ(z);
+		this.r = r;
+		this.type = "cylinder";
+		this.setxTiles(2);
+		this.setyTiles(10);
 	}
 
 	@Override
@@ -34,8 +44,8 @@ public class Cylinder extends Primitive {
 	 * produce array of indices for our vertices
 	 */
 	private void createIndices() {
-		int x = this.getY() + 1 ;
-		int y = this.getX();
+		int x = this.getyTiles() + 1 ;
+		int y = this.getxTiles();
 		int current = x-1;
 		List<Integer> pattern = new ArrayList<Integer>();
 		// advancement right to left counter clockwise
@@ -85,12 +95,15 @@ public class Cylinder extends Primitive {
 	 */
 	private void createVertices(){
 // ================================== 1. Define vertices ==================================
-		float x = new Float(this.getX());
-		float y = new Float(this.getY());
+		float x = new Float(this.getxTiles());
+		float y = new Float(this.getyTiles());
 		float scale = new Float (this.getScale())/100f;
 		float r = 1f* scale * new Float(this.getR())/100f;
-		float front = 0.5f * scale;
-		float back = -0.5f * scale;
+		float xscale = new Float(this.getX())/100f;
+		float yscale = new Float(this.getY())/100f;
+		float zscale = new Float(this.getZ())/100f;
+		float front = 0.5f * scale * zscale;
+		float back = -0.5f * scale * zscale;
 		float stepz = (front - back)/x;
 		double stepr = 360d/y; // num of sides
 		float[] vertices;
@@ -98,16 +111,16 @@ public class Cylinder extends Primitive {
 		List<Float> v = new ArrayList<Float>();
     	List<Float> n = new ArrayList<Float>();
 		
-		for (int i = 0; i < this.getX(); i ++){
-			for (int j = 0; j < this.getY() + 1; j ++){
+		for (int i = 0; i < this.getxTiles(); i ++){
+			for (int j = 0; j < this.getyTiles() + 1; j ++){
 				double rad =  Math.toRadians(360f - j*stepr);
 				// splice normal information
-				n.add((float) (-r*Math.cos(rad)));
-				n.add((float) (-r*Math.sin(rad)));
+				n.add((float) (-r*Math.cos(rad)*xscale));
+				n.add((float) (-r*Math.sin(rad)*yscale));
 				n.add(0f);
 				// add z
-				v.add((float) (r*Math.cos(rad)));
-				v.add((float) (r*Math.sin(rad)));
+				v.add((float) (r*Math.cos(rad)*xscale));
+				v.add((float) (r*Math.sin(rad)*yscale));
 				v.add(front - i * stepz);
 			}
 		}
@@ -121,20 +134,20 @@ public class Cylinder extends Primitive {
 		for(float coord : n){
 			normals[i++] = coord;
 		}
-		System.out.println("[DEBUG] vertices created: " + Arrays.toString(vertices));
+		//System.out.println("[DEBUG] vertices created: " + Arrays.toString(vertices));
 		this.setVertices(vertices);
 		this.setNormals(normals);
 	}
 	
 	private void createTextureMap(boolean streched) {
 		float[] texturecoords = new float[this.getVertices().length]; 
-		int x = this.getY() + 1 ;
-		int y = this.getX();
+		int x = this.getyTiles() + 1 ;
+		int y = this.getxTiles();
 		int k = 0;
 		if(streched){
 			for(int i = 0; i < y; i++){
 				for(int j = 0; j < x; j++){
-					System.out.println("i,j: " + i + ", " + j);
+					//System.out.println("i,j: " + i + ", " + j);
 					texturecoords[k] = (float)j/(float)(x-1);
 					texturecoords[k+1] = (float)(y-i-1)/(float)(y-1);
 					k += 2;
@@ -143,7 +156,7 @@ public class Cylinder extends Primitive {
 		}else{
 			for(int i = 0; i < y; i++){
 				for(int j = 0; j < x; j++){
-					System.out.println("i,j: " + i + ", " + j);
+					//System.out.println("i,j: " + i + ", " + j);
 					texturecoords[k] = (float)j;
 					texturecoords[k+1] = (float)(y-i-1);
 					k += 2;

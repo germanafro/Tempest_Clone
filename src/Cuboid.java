@@ -10,8 +10,8 @@ public class Cuboid extends Primitive {
 	
 	private int z;
 	
-	public Cuboid(int x, int y, int z,  int scale) {
-		super(x, y, scale);
+	public Cuboid(int x, int y, int z,  int scale, Game game) {
+		super(x, y, scale, game);
 		// TODO Auto-generated constructor stub
 		this.type = "cuboid";
 		this.z = z;
@@ -60,9 +60,9 @@ public class Cuboid extends Primitive {
 	 */
 	private void createVertices(){
 // ================================== 1. Define vertices ==================================
-		float x = new Float(this.getX());
-		float y = new Float(this.getY());
-		float z = new Float(this.getZ());
+		float x = this.getX()/100f;
+		float y = this.getY()/100f;
+		float z = this.getZ()/100f;
 		float scale = new Float (this.getScale())/100f;
 		float left = -0.5f * x *  scale;
 		float right = 0.5f * x * scale;
