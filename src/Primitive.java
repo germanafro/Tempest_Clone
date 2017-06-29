@@ -33,7 +33,7 @@ public abstract class Primitive {
 		this.y = y;
 		this.scale = scale;
 		this.type = "primitive";
-		this.setTexture("assets/gdv.png");
+		this.setTexture("default.png");
 		this.setOrigin(new Vec3(0.0, 0.0, 0.0));
 	}
 	/**

@@ -1,33 +1,33 @@
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_C;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_H;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_I;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_J;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_K;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_L;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_M;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_N;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_O;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_T;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_U;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_V;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_H;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_I;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_K;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_L;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_J;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_U;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_O;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_FORWARD_COMPAT;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
@@ -78,6 +78,10 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 
 import org.lwjgl.BufferUtils;
@@ -101,19 +105,10 @@ import mat.RotationMatrix;
 import mat.TranslationMatrix;
 import mat.Vec3;
 
-/**
- * This document is mostly copied from simplePrimitives
- * a number of functions have been altered to interject the loop() function and allow for on-the-fly object change
- * additional keyboard controls have been added
- * object geometry has been moved to the respective Objects
- * a HUD has been added
- * @author Thorsten Gattinger, Andreas Berger
- *
- */
-public class Engine {
+public class RenderEngine {
+
 	
-	
-	 
+	private Game game;
     // We need to strongly reference callback instances.
     private GLFWErrorCallback errorCallback;
     private GLFWKeyCallback   keyCallback;
@@ -126,32 +121,25 @@ public class Engine {
     private int WIDTH = 800;
     private int HEIGHT = 640;
     
-    // Buffer IDs
-  	private List<Integer> vaoId = new ArrayList<Integer>();
-  	private List<Integer> vaoNormalLinesId = new ArrayList<Integer>();
-  	private List<Integer> vboId = new ArrayList<Integer>();	//vertex
-  	private List<Integer> vbocId = new ArrayList<Integer>();	//color
-  	private List<Integer> vbonId = new ArrayList<Integer>();	//normal
-  	private List<Integer> vbotId = new ArrayList<Integer>();	//texture coords
-  	private List<Integer> vbonlId = new ArrayList<Integer>();	//normal lines
-  	private List<Integer> vbonlcId = new ArrayList<Integer>();	//normal lines color
-  	private List<Integer> vboiId = new ArrayList<Integer>();	//index
-  	private List<Integer> indicesCount = new ArrayList<Integer>();
-  	private List<Integer> verticesCount = new ArrayList<Integer>();
   	
   	// Shader variables
   	private int vsId = 0;
     private int fsId = 0;
     private int pId = 0;
-    private int vsNormalsId = 0;
+    public int getpId() {
+		return pId;
+	}
+	public void setpId(int pId) {
+		this.pId = pId;
+	}
+
+	private int vsNormalsId = 0;
     private int fsNormalsId = 0;
     private int pNormalsId = 0;
-    private int textureID = 0;
     
     // Moving variables
     private int projectionMatrixLocation = 0;
     private int viewMatrixLocation = 0;
-    private int modelMatrixLocation = 0;
     private int projectionMatrixLocationNormals = 0; // separate one for normals
     private int viewMatrixLocationNormals = 0;// separate one for normals
     private int modelMatrixLocationNormals = 0;// separate one for normals
@@ -163,7 +151,6 @@ public class Engine {
     private float deltaRotX = 5f;
     private float deltaRotY = 5f;
     private float deltaRotZ = 5f;
-    private float normalScale=0.1f;
     
     // toggles & interactions
     private boolean showMesh = true;
@@ -175,12 +162,13 @@ public class Engine {
     private int useTexture = 0;
     private int useTextureLocation = 0;
     
-    // HUD
-    private HUD hud = new HUD();
+    // HUD TODO remove me
+    private HUD hud;
     
-    public Engine(){
+    public RenderEngine(Game game){
+		this.game = game;
+		this.hud = this.game.getHud();
 		this.hud.setVisible(true);
-		
 	}
   	/**
   	 * noteworthy changes: hooked hud to destroy when the window is closed
@@ -192,19 +180,11 @@ public class Engine {
             init();
             setupShaders();
             setupMatrices();
-            initObjects();
-            loop();
+            //initObjects();
  
-            // Release window and window callbacks
-            glfwDestroyWindow(window);
-            keyCallback.free();
+
         } catch (Exception e){
         	e.printStackTrace();
-        } finally {
-        	hud.dispose();
-            // Terminate GLFW and release the GLFWerrorfun
-            glfwTerminate();
-            errorCallback.free();
         }
     }
  
@@ -229,12 +209,12 @@ public class Engine {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
  
         // Create the window
-        window = glfwCreateWindow(WIDTH, HEIGHT, "Hello World!", NULL, NULL);
-        if ( window == NULL )
+        setWindow(glfwCreateWindow(WIDTH, HEIGHT, "Hello World!", NULL, NULL));
+        if ( getWindow() == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
  
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(window, keyCallback = new GLFWKeyCallback() {
+        glfwSetKeyCallback(getWindow(), setKeyCallback(new GLFWKeyCallback() {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
             	if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
@@ -373,28 +353,28 @@ public class Engine {
             	}
             	
             }
-        }
+        })
     );
    
         // Get the resolution of the primary monitor
         GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         // Center our window
         glfwSetWindowPos(
-            window,
+            getWindow(),
             (vidmode.width() - WIDTH) / 2,
             (vidmode.height() - HEIGHT) / 2
         );
  
         // Make the OpenGL context current
-        glfwMakeContextCurrent(window);
+        glfwMakeContextCurrent(getWindow());
         // Enable v-sync
         glfwSwapInterval(1);
  
         // Make the window visible
-        glfwShowWindow(window);
+        glfwShowWindow(getWindow());
         
         // Setup a window size callback for viewport adjusting while resizing
-        glfwSetWindowSizeCallback(window, window_size_callback = new GLFWWindowSizeCallback() {
+        glfwSetWindowSizeCallback(getWindow(), window_size_callback = new GLFWWindowSizeCallback() {
 			@Override
 			public void invoke(long window, int width, int height) {
 				// Viewport: Use full display size
@@ -499,11 +479,10 @@ public class Engine {
         // Get matrices uniform locations
         projectionMatrixLocation = GL20.glGetUniformLocation(pId,"projectionMatrix");
         viewMatrixLocation = GL20.glGetUniformLocation(pId, "viewMatrix");
-        modelMatrixLocation = GL20.glGetUniformLocation(pId, "modelMatrix");
+        
         
         // the switch for toggling normals as vertex colors and texture
         useNormalColoringLocation = GL20.glGetUniformLocation(pId, "useNormalColoring");
-        useTextureLocation = GL20.glGetUniformLocation(pId, "useTexture");
         
         
         // ============================= 2. Shader: For normal lines ==============================
@@ -543,268 +522,22 @@ public class Engine {
         modelMatrixLocationNormals = GL20.glGetUniformLocation(pNormalsId, "modelMatrix");        
     }
  
-    /**
-     * Uses an external class to load a PNG image and bind it as texture
-     * @param filename
-     * @param textureUnit
-     * @return textureID
-     */
-    private int loadPNGTexture(String filename, int textureUnit) {
-        ByteBuffer buf = null;
-        int tWidth = 0;
-        int tHeight = 0;
-         
-        try {
-            // Open the PNG file as an InputStream
-            InputStream in = new FileInputStream(filename);
-            // Link the PNG decoder to this stream
-            PNGDecoder decoder = new PNGDecoder(in);
-             
-            // Get the width and height of the texture
-            tWidth = decoder.getWidth();
-            tHeight = decoder.getHeight();
-             
-             
-            // Decode the PNG file in a ByteBuffer
-            buf = ByteBuffer.allocateDirect(
-                    4 * decoder.getWidth() * decoder.getHeight());
-            decoder.decode(buf, decoder.getWidth() * 4, Format.RGBA);
-            buf.flip();
-             
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
-         
-        // Create a new texture object in memory and bind it
-        int texId = GL11.glGenTextures();
-        GL13.glActiveTexture(textureUnit);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
-         
-        // All RGB bytes are aligned to each other and each component is 1 byte
-        GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
-         
-        // Upload the texture data and generate mip maps (for scaling)
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, tWidth, tHeight, 0, 
-                GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
-        GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
-         
-        // Setup the ST coordinate system
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
-         
-        // Setup what to do when the texture has to be scaled
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, 
-                GL11.GL_NEAREST);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, 
-                GL11.GL_LINEAR_MIPMAP_LINEAR);
-
-        return texId;
-    }
+   
     
-    private void setupTextures(String filename) {
-    	//TODO move this?
-        textureID = this.loadPNGTexture(filename, GL13.GL_TEXTURE0);
-    }
     /**
      * calculate geometric data for the Object with given id.
      * loads the data into respective buffer
      */
-    private void initObject(int id){
-    	
-    	Primitive currObject = hud.getCurrObject(id);
-    	//failsave just in case something goes wrong
-    	currObject.create();
-    	//reload object texture
-    	setupTextures(currObject.getTexture());
-    	
-    	// receive vertices from currObject
-    	float[] vertices = currObject.getVertices();
-		// Sending data to OpenGL requires the usage of (flipped) byte buffers
-		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length);
-		verticesBuffer.put(vertices);
-		verticesBuffer.flip();
-		verticesCount.set(id, vertices.length/3);
-		
-		// Colors for each vertex, RGBA
-		float[] colors = {
-		        1f, 0f, 0f, 1f,
-		        0f, 1f, 0f, 1f,
-		        0f, 0f, 1f, 1f,
-		        0.5f, 0.5f, 0.5f, 1f,
-		        1f, 0f, 0f, 1f,
-		        0f, 1f, 0f, 1f
-		};
-		FloatBuffer colorsBuffer = BufferUtils.createFloatBuffer(colors.length);
-		colorsBuffer.put(colors);
-		colorsBuffer.flip();
-		
-		// receive Normals for each vertex, XYZ from currObject
-		float[] normals = currObject.getNormals();
-		FloatBuffer normalsBuffer = BufferUtils.createFloatBuffer(normals.length);
-		normalsBuffer.put(normals);
-		normalsBuffer.flip();
-		
-		// Texture Coordinates for each vertex, ST
-		
-		
-		float[] textureCoords = currObject.getTexturecoords();
-		System.out.println(Arrays.toString(textureCoords));
-		FloatBuffer textureCoordsBuffer = BufferUtils.createFloatBuffer(textureCoords.length);
-		textureCoordsBuffer.put(textureCoords);
-		textureCoordsBuffer.flip();
-		
-		// ================================== 2. Define indices for vertices ======================
-		
-		// OpenGL expects to draw the first vertices in counter clockwise order by default
-		// receive indices from currObject
-		int[] indices = currObject.getIndices();
-		System.out.println("[DEBUG] Indices: " + Arrays.toString( indices));
-		indicesCount.set(id, indices.length);
-		IntBuffer indicesBuffer = BufferUtils.createIntBuffer(indicesCount.get(id));
-		indicesBuffer.put(indices);
-		indicesBuffer.flip();
-		
-		// ============== 2.5 (optional) Define normal lines for visualization ====================
-		
-		// normal lines. Each line is represented by his start "vertex" and and "vertex + normalScale*normal"
-		float[] normalLines = new float[vertices.length*2];
-		
-		int pos=0;
-		
-		// in each loop we set two XYZ points
-		for (int i=0;i<vertices.length;i+=3){
-			normalLines[pos++]=vertices[i];
-			normalLines[pos++]=vertices[i+1];
-			normalLines[pos++]=vertices[i+2];
-			normalLines[pos++]=vertices[i]+normalScale*normals[i];
-			normalLines[pos++]=vertices[i+1]+normalScale*normals[i+1];
-			normalLines[pos++]=vertices[i+2]+normalScale*normals[i+2];
-		}
-		FloatBuffer normalLinesBuffer = BufferUtils.createFloatBuffer(normalLines.length);
-		normalLinesBuffer.put(normalLines);
-		normalLinesBuffer.flip();
-		
-		// color for normal lines. Each vertex has the same RGBA value (1,1,0,1) -> yellow
-		float[] normalLinesColors = new float[(verticesCount.get(id))*8];
-		
-		pos=0;
-		for (int i=0;i<(verticesCount.get(id)*4);i+=4){
-			normalLinesColors[pos++]=1f;
-			normalLinesColors[pos++]=1f;
-			normalLinesColors[pos++]=0f;
-			normalLinesColors[pos++]=1f;
-			normalLinesColors[pos++]=1f;
-			normalLinesColors[pos++]=1f;
-			normalLinesColors[pos++]=0f;
-			normalLinesColors[pos++]=1f;
-		}		
-		FloatBuffer normalLinesColorsBuffer = BufferUtils.createFloatBuffer(normalLinesColors.length);
-		normalLinesColorsBuffer.put(normalLinesColors);
-		normalLinesColorsBuffer.flip();
-				
-		// ================================== 3. Make the data accessible =========================
-		
-		// Create a new Vertex Array Object in memory and select it (bind)
-		// A VAO can have up to 16 attributes (VBO's) assigned to it by default
-		vaoId.set(id, GL30.glGenVertexArrays());
-		GL30.glBindVertexArray(vaoId.get(id));
-		
-		// Create a new Vertex Buffer Object (VBO) in memory and select it (bind)
-		// A VBO is a collection of Vectors which in this case resemble the location of each vertex.
-		vboId.set(id, GL15.glGenBuffers());
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId.get(id));
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, verticesBuffer, GL15.GL_STATIC_DRAW);
-		// Put the VBO in the attributes list at index 0
-		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
-		// Deselect (bind to 0) the VBO
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-		
-		// Create a new VBO for the indices and select it (bind) - COLORS
-        vbocId.set(id, GL15.glGenBuffers());
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbocId.get(id));
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, colorsBuffer, GL15.GL_STATIC_DRAW);
-        //index 1, in 0 are the vertices stored; 4 values (RGAB) instead of 3 (XYZ)
-        GL20.glVertexAttribPointer(1, 4, GL11.GL_FLOAT, false, 0, 0); 
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-        
-        // Create a new VBO for the indices and select it (bind) - NORMALS
-        vbonId.set(id, GL15.glGenBuffers());
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbonId.get(id));
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, normalsBuffer, GL15.GL_STATIC_DRAW);
-        //index 2, 3 values (XYZ)
-        GL20.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, true, 0, 0); 
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-        
-        // Create a new VBO and select it (bind) - TEXTURE COORDS
-        vbotId.set(id, GL15.glGenBuffers());
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbotId.get(id));
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, textureCoordsBuffer, GL15.GL_STATIC_DRAW);
-        //index 3, 2 values (ST)
-        GL20.glVertexAttribPointer(3, 2, GL11.GL_FLOAT, true, 0, 0); 
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-		
-		// Create a new VBO for the indices and select it (bind) - INDICES
-		vboiId.set(id, GL15.glGenBuffers());
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboiId.get(id));
-		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL15.GL_STATIC_DRAW);
-		// Deselect (bind to 0) the VBO
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-		
-		// _Second_ VAO for normal visualization (optional)
-		vaoNormalLinesId.set(id, GL30.glGenVertexArrays());
-		GL30.glBindVertexArray(vaoNormalLinesId.get(id));
-		
-		// Create a new VBO for normal lines and select it (bind)
-        vbonlId.set(id, GL15.glGenBuffers());
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbonlId.get(id));
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, normalLinesBuffer, GL15.GL_STATIC_DRAW);
-        //index 0, new VAO; 3 values (XYZ)
-        GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0); 
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-        
-        // Create a new VBO for normal lines and select it (bind) - COLOR
-        vbonlcId.set(id, GL15.glGenBuffers());
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbonlcId.get(id));
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, normalLinesColorsBuffer, GL15.GL_STATIC_DRAW);
-        //index 0, new VAO; 4 values (RGBA)
-        GL20.glVertexAttribPointer(1, 4, GL11.GL_FLOAT, false, 0, 0); 
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-        
-        // Deselect (bind to 0) the VAO
-     	GL30.glBindVertexArray(0);		
-    }
+    
     /**
-     * load all Objects into buffer
+     * buffer all Objects
      */
-    private void initObjects(){
-    	int numObj = hud.getCurrObjects().size();
-    	vaoId = new ArrayList<Integer>();
-      	vaoNormalLinesId = new ArrayList<Integer>();
-      	vboId = new ArrayList<Integer>();	//vertex
-      	vbocId = new ArrayList<Integer>();	//color
-      	vbonId = new ArrayList<Integer>();	//normal
-      	vbotId = new ArrayList<Integer>();	//texture coords
-      	vbonlId = new ArrayList<Integer>();	//normal lines
-      	vbonlcId = new ArrayList<Integer>();	//normal lines color
-      	vboiId = new ArrayList<Integer>();	//index
-      	indicesCount = new ArrayList<Integer>();
-      	verticesCount = new ArrayList<Integer>();
-    	for (int i = 0 ; i < numObj ; i++){
-    		vaoId.add(0);
-          	vaoNormalLinesId.add(0);
-          	vboId.add(0);	//vertex
-          	vbocId.add(0);	//color
-          	vbonId.add(0);	//normal
-          	vbotId.add(0);	//texture coords
-          	vbonlId.add(0);	//normal lines
-          	vbonlcId.add(0);	//normal lines color
-          	vboiId.add(0);	//index
-          	indicesCount.add(0);
-          	verticesCount.add(0);
-    		initObject(i);
-    	
+    public void initObjects(){
+    	this.game.loadObjects();
+    	Iterator<GameObject> gameObjects = this.game.getGameObjects().values().iterator();
+    	while(gameObjects.hasNext()){
+    		GameObject gameObject = gameObjects.next(); 
+    		gameObject.buffer();
     	}
      		
     }
@@ -814,11 +547,11 @@ public class Engine {
      * changes of notice: checks for hud dirty bit. if true reloads the geometric Object into the buffer
      * @throws Exception when exiting the window.. lol
      */
-    private void loop() throws Exception {
+    public void render() throws Exception {
     	
-        // Run the rendering loop until the user has attempted to close
+        // Run once unless the user has attempted to close
         // the window or has pressed the ESCAPE key.
-        while (!glfwWindowShouldClose(window)) {
+        if (!glfwWindowShouldClose(getWindow())) {
         	
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
@@ -845,36 +578,46 @@ public class Engine {
             
             GL20.glUniformMatrix4fv(projectionMatrixLocation, false , toFFB(projectionMatrix));
             GL20.glUniformMatrix4fv(viewMatrixLocation, false, toFFB(viewMatrix));
-            GL20.glUniformMatrix4fv(modelMatrixLocation, false, toFFB(modelMatrix));
+            
             
             // Upload normal coloring and texture toggle
             GL20.glUniform1i(useNormalColoringLocation, useNormalColoring);
-            GL20.glUniform1i(useTextureLocation, useTexture);
              
             GL20.glUseProgram(0);
 
             // ================================== Draw objects =====================================
             
-        	int numObj = hud.getCurrObjects().size();
-        	for (int i = 0 ; i < numObj ; i++){
-            GL20.glUseProgram(pId);
-            
-            // Bind to the VAO that has all the information about the vertices
-            if(hud.isDirty()){
-             	initObjects();
-             	hud.setDirty(false);
-             }
-            GL30.glBindVertexArray(vaoId.get(i));
-            GL20.glEnableVertexAttribArray(0);
-            GL20.glEnableVertexAttribArray(1);
-            GL20.glEnableVertexAttribArray(2);
-            GL20.glEnableVertexAttribArray(3); // texture coordinates
+            Iterator<GameObject> gameObjects = this.game.getGameObjects().values().iterator();
+        	while(gameObjects.hasNext()){
+        		GameObject gameObject = gameObjects.next(); 
+        		//gameObject.buffer();
+        		GL20.glUseProgram(pId);
+        		
+        		// bind the individual texture
+                GL11.glBindTexture(GL11.GL_TEXTURE_2D, gameObject.getTextureID());
+                useTextureLocation = GL20.glGetUniformLocation(pId, "useTexture");
+                GL20.glUniform1i(useTextureLocation, useTexture);
+        		
+        		// Bind to the VAO that has all the information about the vertices
+        		if(hud.isDirty()){
+        			initObjects();
+        			hud.setDirty(false);
+        		}
+        		// setup individual modelmatrix
+        		int modelMatrixLocation = GL20.glGetUniformLocation(pId, "modelMatrix");
+        		GL20.glUniformMatrix4fv(modelMatrixLocation, false, toFFB(modelMatrix));
+        		
+        		GL30.glBindVertexArray(gameObject.getVaoId());
+        		GL20.glEnableVertexAttribArray(0);
+        		GL20.glEnableVertexAttribArray(1);
+        		GL20.glEnableVertexAttribArray(2);
+        		GL20.glEnableVertexAttribArray(3); // texture coordinates
              
             // Bind to the index VBO that has all the information about the order of the vertices
-            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboiId.get(i));
+            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, gameObject.getVboiId());
              
             // Draw the vertices
-            GL11.glDrawElements(GL11.GL_TRIANGLE_STRIP, indicesCount.get(i), GL11.GL_UNSIGNED_INT, 0);
+            GL11.glDrawElements(GL11.GL_TRIANGLE_STRIP, gameObject.getIndicesCount(), GL11.GL_UNSIGNED_INT, 0);
             
             // Put everything back to default (deselect)
             GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -897,15 +640,15 @@ public class Engine {
 	            GL20.glUniformMatrix4fv(modelMatrixLocationNormals, false, toFFB(modelMatrix));
 	             
 	            // Bind to the VAO that has all the information about the normal lines
-	            GL30.glBindVertexArray(vaoNormalLinesId.get(i));
+	            GL30.glBindVertexArray(gameObject.getVaoNormalLinesId());
 	            GL20.glEnableVertexAttribArray(0);
 	            GL20.glEnableVertexAttribArray(1);
 	             
 	            // Bind to the VBO that has all the information about the order of the vertices
-	            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbonlId.get(i));
+	            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, gameObject.getVbonId());
 	             
 	            // Draw the vertices
-	            GL11.glDrawArrays(GL11.GL_LINES, 0, verticesCount.get(i)*2);
+	            GL11.glDrawArrays(GL11.GL_LINES, 0, gameObject.getVerticesCount()*2);
 	            
 	            // Put everything back to default (deselect)
 	            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -916,7 +659,7 @@ public class Engine {
             }
         	}//end for loop
             // Swap the color buffer. We never draw directly to the screen, only in this buffer. So we need to display it
-    		glfwSwapBuffers(window);
+    		glfwSwapBuffers(getWindow());
             
             // Poll for window events. The key callback above will only be invoked during this call.
             glfwPollEvents();
@@ -937,5 +680,23 @@ public class Engine {
 		}
 		return (FloatBuffer) res.flip();
 	}
- 
+	public long getWindow() {
+		return window;
+	}
+	public void setWindow(long window) {
+		this.window = window;
+	}
+	public GLFWKeyCallback getKeyCallback() {
+		return keyCallback;
+	}
+	public GLFWKeyCallback setKeyCallback(GLFWKeyCallback keyCallback) {
+		this.keyCallback = keyCallback;
+		return keyCallback;
+	}
+	public GLFWErrorCallback getErrorCallback() {
+		return errorCallback;
+	}
+	public void setErrorCallback(GLFWErrorCallback errorCallback) {
+		this.errorCallback = errorCallback;
+	}
 }

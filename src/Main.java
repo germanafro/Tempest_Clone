@@ -9,9 +9,22 @@ public class Main {
 	 * @param args no arguments needed
 	 */
 	public static void main(String[] args){
-		Engine engine = new Engine();
-		engine.run();
-      
+		
+		if(args.length > 0){
+			switch (args[0]){
+			case "test":
+				Engine engine = new Engine();
+				engine.run();
+				break;
+			default:
+				break;
+			}
+		}else{
+			Game game = new Game();
+			game.newGameEngine();
+			game.newRenderEngine();
+			game.run();
+		}
     }
 	
 }

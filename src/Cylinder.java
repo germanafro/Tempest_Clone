@@ -16,7 +16,7 @@ public class Cylinder extends Primitive {
 		// TODO Auto-generated constructor stub
 		this.r = r;
 		this.type = "cylinder";
-		this.setTexture("assets/neon.png");
+		this.setTexture("tube_neon.png");
 		
 	}
 
