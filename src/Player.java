@@ -6,7 +6,7 @@ public class Player extends GameObject {
 		// TODO Auto-generated constructor stub
 	}
 	public Player(String name, Game game) {
-		super(name, new Cuboid(2, 1, 4, 100), game);
+		super(name, new Cuboid(2, 1, 4, 10), game);
 		// TODO Auto-generated constructor stub
 	}
 

@@ -94,6 +94,9 @@ public class Game {
 			switch(state){
 			case "starting":
 				this.addGameObject(new Player("player1", this));
+				this.hud.registerNewObject("player1");
+				this.addGameObject(new Tube("tube1", this));
+				this.hud.registerNewObject("tube1");
 				this.setState("playing");
 			case "playing":
 				if(!this.isPause()){
@@ -122,6 +125,7 @@ public class Game {
 
 	private void addGameObject(GameObject obj) {
 		// TODO Auto-generated method stub
+		this.hud.getCurrObjects().add(obj.getGeom());
 		this.gameObjects.put(obj.getName(), obj);
 	}
 

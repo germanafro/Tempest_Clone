@@ -6,9 +6,13 @@ import mat.Vec3;
  *
  */
 public abstract class Primitive {
-	private int x;
-	private int y;
-	private int scale;
+	private int x = 3;
+	private int y = 3;
+	private int z = 3;
+	private int r = 100;
+	private int p = 1;
+	private int q = 1;
+	private int scale = 100;
 	private float[] vertices;
 	private float[] texturecoords;
 	private float[] normals;
@@ -106,6 +110,30 @@ public abstract class Primitive {
 	}
 	public void setOrigin(Vec3 origin) {
 		this.origin = origin;
+	}
+	public int getR() {
+		return r;
+	}
+	public void setR(int r) {
+		this.r = r;
+	}
+	public int getZ() {
+		return z;
+	}
+	public void setZ(int z) {
+		this.z = z;
+	}
+	public int getQ() {
+		return q;
+	}
+	public void setQ(int q) {
+		this.q = q;
+	}
+	public int getP() {
+		return p;
+	}
+	public void setP(int p) {
+		this.p = p;
 	}
 
 }

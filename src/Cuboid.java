@@ -28,15 +28,16 @@ public class Cuboid extends Primitive {
 				
 				// now the indices
 				this.createIndices();
-		
+				// do texturemapping
+				this.createTextureMap(this.isStreched());
 	}
 	
 	/**
 	 * produce array of indices for our vertices
 	 */
 	private void createIndices() {
-		
-		int[] indices = {3, 7, 2, 6, 1, 5, 0, 4, 4, 6, 6, 7, 5, 4, 4, 7, 7, 3, 4, 0, 0, 3, 3, 2, 0, 1};
+		//1,3,0,2,2,6,6,11,5,10,4,9,3,8,2,7,7,8,8,13,7,12
+		int[] indices = {1,3,0,2,2,6,6,11,5,10,4,9,3,8,2,7,7,8,8,13,7,12/*3, 7, 2, 6, 1, 5, 0, 4, 4, 6, 6, 7, 5, 4, 4, 7, 7, 3, 4, 0, 0, 3, 3, 2, 0, 1*/};
 		this.setIndices(indices);
 	}
 	/**
@@ -72,16 +73,82 @@ public class Cuboid extends Primitive {
 		
 		
 		float[] vertices = {
+			left, bottom, back,
+			right, bottom, back,
 			left, bottom, front,
 			right, bottom, front,
 			right, bottom, back,
 			left, bottom, back,
+			left, bottom, front, // back to origin
 			left, top, front,
 			right, top, front,
 			right, top, back,
 			left, top, back,
+			left, top, front, // back to origin
+			left, top, back,
+			right, top, back,
 		};
 		this.setVertices(vertices);
+	}
+	
+	private void createTextureMap(boolean streched) {
+		float[] texturecoords ={
+				0f, 1f,
+				1f, 1f,
+				0f, 0f,
+				1f, 0f,
+				0f, 1f,
+				1f, 1f,
+				0f, 0f,
+				1f, 0f,
+				0f, 1f,
+				1f, 1f,
+				0f, 0f,
+				1f, 0f,
+				0f, 1f,
+				1f, 1f,
+				0f, 0f,
+				1f, 0f,
+				0f, 1f,
+				1f, 1f,
+				0f, 0f,
+				1f, 0f,
+				0f, 1f,
+				1f, 1f,
+				0f, 0f,
+				1f, 0f,
+				0f, 1f,
+				1f, 1f,
+				0f, 0f,
+				1f, 0f,
+				0f, 1f,
+				1f, 1f,
+				0f, 0f,
+				1f, 0f
+		}; /*new float[this.getVertices().length*2]; 
+		int x = 3 ;
+		int y = 4;
+		int k = 0;
+		if(streched){
+			for(int i = 0; i < y; i++){
+				for(int j = 0; j < x; j++){
+					System.out.println("i,j: " + i + ", " + j);
+					texturecoords[k] = (float)j/(float)(x-1);
+					texturecoords[k+1] = (float)(y-i-1)/(float)(y-1);
+					k += 2;
+				}
+			}
+		}else{
+			for(int i = 0; i < y; i++){
+				for(int j = 0; j < x; j++){
+					System.out.println("i,j: " + i + ", " + j);
+					texturecoords[k] = (float)j;
+					texturecoords[k+1] = (float)(y-i-1);
+					k += 2;
+				}
+			}
+		}*/
+		this.setTexturecoords(texturecoords);
 	}
 
 	public int getZ() {
