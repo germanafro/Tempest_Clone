@@ -277,15 +277,17 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
 		String name = this.currObj;
 		GameObject gameObject = this.game.getGameObjects().get(name);
 		System.out.println("[DEBUG] change event triggered");
-		gameObject.setxScale(SlideX.getValue());
-		gameObject.setyScale(SlideY.getValue());
-		gameObject.setzScale(SlideZ.getValue());
-		gameObject.setScale(SlideScale.getValue());
-		gameObject.setrScale(SlideR.getValue());
-		gameObject.setP(SlideP.getValue());
-		gameObject.setQ(SlideQ.getValue());
-		SlideR.setMaximum(SlideScale.getValue());
-		gameObject.setDirty(true);
+		if(gameObject != null){
+			gameObject.setxScale(SlideX.getValue());
+			gameObject.setyScale(SlideY.getValue());
+			gameObject.setzScale(SlideZ.getValue());
+			gameObject.setScale(SlideScale.getValue());
+			gameObject.setrScale(SlideR.getValue());
+			gameObject.setP(SlideP.getValue());
+			gameObject.setQ(SlideQ.getValue());
+			SlideR.setMaximum(SlideScale.getValue());
+			gameObject.setDirty(true);
+		}
 	}
 
 

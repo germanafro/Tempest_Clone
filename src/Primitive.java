@@ -36,6 +36,7 @@ public abstract class Primitive {
 	private int[] indices;
 	private boolean streched = false;
 	private boolean alloc = true;
+	private boolean update = false;
 	protected String type;
 	private String texture;
 	private Vec3 origin;
@@ -113,6 +114,7 @@ public abstract class Primitive {
     	// receive vertices from this
     	float[] vertices = this.getVertices();
 		// Sending data to OpenGL requires the usage of (flipped) byte buffers
+    	System.out.println(Arrays.toString(vertices));
 		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length);
 		verticesBuffer.put(vertices);
 		verticesBuffer.flip();
@@ -142,7 +144,7 @@ public abstract class Primitive {
 		
 		
 		float[] textureCoords = this.getTexturecoords();
-		System.out.println(Arrays.toString(textureCoords));
+		//System.out.println(Arrays.toString(textureCoords));
 		FloatBuffer textureCoordsBuffer = BufferUtils.createFloatBuffer(textureCoords.length);
 		textureCoordsBuffer.put(textureCoords);
 		textureCoordsBuffer.flip();
@@ -152,7 +154,7 @@ public abstract class Primitive {
 		// OpenGL expects to draw the first vertices in counter clockwise order by default
 		// receive indices from this
 		int[] indices = this.getIndices();
-		System.out.println("[DEBUG] Indices: " + Arrays.toString( indices));
+		//System.out.println("[DEBUG] Indices: " + Arrays.toString( indices));
 		this.setIndicesCount(indices.length);
 		IntBuffer indicesBuffer = BufferUtils.createIntBuffer(this.getIndicesCount());
 		indicesBuffer.put(indices);
@@ -200,8 +202,7 @@ public abstract class Primitive {
 		
 		// Create a new Vertex Array Object in memory and select it (bind)
 		// A VAO can have up to 16 attributes (VBO's) assigned to it by default
-		System.out.println("[DEBUG] bindvertexarray: " + this.getVaoId() );
-			GL30.glBindVertexArray(this.getVaoId());
+		GL30.glBindVertexArray(this.getVaoId());
 		// Create a new Vertex Buffer Object (VBO) in memory and select it (bind)
 		// A VBO is a collection of Vectors which in this case resemble the location of each vertex.
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, this.getVboId());
@@ -239,7 +240,6 @@ public abstract class Primitive {
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 		
 		// _Second_ VAO for normal visualization (optional)
-		System.out.println("[DEBUG] bindvertexarray: " + this.getVaoNormalLinesId() );
 		GL30.glBindVertexArray(this.getVaoNormalLinesId());
 		
 		// Create a new VBO for normal lines and select it (bind)
@@ -262,7 +262,8 @@ public abstract class Primitive {
 
 	public void matricesTomodelMatrix(){
 		Matrix4[] matrices = this.getMatrices();
-		this.modelMatrix.setIdentity();
+		this.modelMatrix = null;
+		this.modelMatrix = new TranslationMatrix(new Vec3(0,0,0));
 		if (matrices != null){
 			for (Matrix4 matrix : matrices){
 				this.modelMatrix = (Matrix4) matrix.mul(this.modelMatrix);
@@ -473,5 +474,11 @@ public abstract class Primitive {
 	}
 	public void setAlloc(boolean alloc) {
 		this.alloc = alloc;
+	}
+	public boolean isUpdate() {
+		return update;
+	}
+	public void setUpdate(boolean update) {
+		this.update = update;
 	}
 }

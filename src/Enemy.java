@@ -1,8 +1,8 @@
 
 public class Enemy extends GameObject {
 
-	public Enemy(String name, Primitive geom, Game game) {
-		super(name, geom, game);
+	public Enemy(String name, Game game) {
+		super(name, game);
 		// TODO Auto-generated constructor stub
 	}
 

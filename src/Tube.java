@@ -10,8 +10,13 @@ public class Tube extends GameObject {
 	}
 	public Tube(String name, Game game) {
 		super(name, game);
+		this.setxScale(100);
+		this.setyScale(100);
+		this.setzScale(100);
+		this.setrScale(25);
+		this.setScale(400);
 		this.setGeom(new ArrayList<Primitive>());
-		Cylinder geom = new Cylinder(100, 100, 100, 25 , 400, game, "tube_neon.png");
+		Cylinder geom = new Cylinder(this.getxScale(), this.getyScale(), this.getzScale(), this.getrScale() , this.getScale(), game, "tube_neon.png");
 		this.addGeom(geom);
 		// TODO Auto-generated constructor stub
 	}

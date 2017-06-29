@@ -553,7 +553,6 @@ public class RenderEngine {
 		obj.setVaoNormalLinesId(GL30.glGenVertexArrays());
         obj.setVbonlId(GL15.glGenBuffers());
         obj.setVbonlcId(GL15.glGenBuffers());
-        obj.setModelMatrixLocation(GL20.glGetUniformLocation(pId, "modelMatrix"));
         obj.setAlloc(false);
 	}
     
@@ -597,11 +596,18 @@ public class RenderEngine {
         				
         				doAlloc(obj);
         			}
-        			//update dirty gameObjects
-        			if(gameObject.isDirty()){
-        				gameObject.buffer();
-        				gameObject.setDirty(false);
-        			}
+        			GL20.glUseProgram(0);
+        		}
+        		//update dirty gameObjects
+        		GL20.glUseProgram(pId);
+    			if(gameObject.isDirty()){
+    				gameObject.buffer();
+    				gameObject.setDirty(false);
+    			}
+    			GL20.glUseProgram(0);
+        		for(Primitive obj : gameObject.getGeom()){
+        			//gameObject.buffer();
+        			GL20.glUseProgram(pId);
         			
         			// bind the individual texture
         			GL11.glBindTexture(GL11.GL_TEXTURE_2D, obj.getTextureID());

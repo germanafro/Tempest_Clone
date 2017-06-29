@@ -28,23 +28,21 @@ public class GameObject {
 	private Game game;
 	private List<Primitive> geom;
 	private String name;
-	private int pId = 0;
-	private int xScale = 100;
-	private int yScale = 100;
-	private int zScale = 100;
-	private int rScale = 50;
-	private int scale = 100;
-	private int p = 1;
-	private int q = 1;
-	private float x = 0f;
-	private float y = 0f;
-	private float z = 0f;
+	protected int xScale = 100;
+	protected int yScale = 100;
+	protected int zScale = 100;
+	protected int rScale = 50;
+	protected int scale = 100;
+	protected int p = 1;
+	protected int q = 1;
+	protected float x = 0f;
+	protected float y = 0f;
+	protected float z = 0f;
 	private boolean dirty = true;
   	
   	public GameObject(String name, Game game){
   		this.game = game;
   		this.geom = new ArrayList<Primitive>();
-  		this.setpId(this.game.getRenderEngine().getpId());
 		this.setName(name);
 		this.addGeom(new Rectangle(2,2,100,game));
 	}
@@ -92,12 +90,6 @@ public class GameObject {
 	}
 	public void setGame(Game game) {
 		this.game = game;
-	}
-	public int getpId() {
-		return pId;
-	}
-	public void setpId(int pId) {
-		this.pId = pId;
 	}
 	public int getxScale() {
 		return xScale;
