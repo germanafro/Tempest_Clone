@@ -39,6 +39,9 @@ public abstract class GameObject {
 	protected float y = 0f;
 	protected float z = 0f;
 	private boolean dirty = true;
+	
+	private int alphatarget = 0;
+	private int ralpha = 0;
   	
   	public GameObject(String name, Game game){
   		this.game = game;
@@ -184,5 +187,17 @@ public abstract class GameObject {
 		
 	}
 	abstract void update();
+	public int getAlphatarget() {
+		return alphatarget;
+	}
+	public void setAlphatarget(int alphatarget) {
+		this.alphatarget = alphatarget;
+	}
+	public int getRalpha() {
+		return ralpha;
+	}
+	public void setRalpha(int ralpha) {
+		this.ralpha = ralpha;
+	}
 
 }

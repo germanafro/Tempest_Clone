@@ -112,8 +112,9 @@ public class Game {
 				break;
 			case "playing":
 				if(!this.isPause()){
-					this.destroyObject("player1");
-					this.addGameObject(new Player("player1", this));
+					//this.destroyObject("player1");
+					//this.addGameObject(new Player("player1", this));
+					this.gameEngine.moveObjects();
 					//player.move(1);
 				}else{
 					// dont do anything while the game is paused

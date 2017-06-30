@@ -29,6 +29,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_U;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_V;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_FORWARD_COMPAT;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
@@ -295,7 +296,10 @@ public class RenderEngine {
             		Player player = game.getPlayer();
             		Tube tube = game.getTube();
             		if(player != null && tube != null && !game.isPause()){
-            			player.move(-tube.getStepr());
+            			int alphatarget = player.getAlphatarget();
+            			if (player.getRalpha() - alphatarget < tube.getStepr()){ // protects from overflowing
+            				player.setAlphatarget(alphatarget - tube.getStepr());
+            			}
             		}
 
             	}
@@ -303,7 +307,10 @@ public class RenderEngine {
             		Player player = game.getPlayer();
             		Tube tube = game.getTube();
             		if(player != null && tube != null && !game.isPause()){
-            			player.move(tube.getStepr());
+            			int alphatarget = player.getAlphatarget();
+            			if (alphatarget - player.getRalpha() < tube.getStepr()){
+            				player.setAlphatarget(alphatarget + tube.getStepr());
+            			}
             		}
             	}
             	

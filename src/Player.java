@@ -18,7 +18,6 @@ public class Player extends GameObject {
 	Rectangle right;
 	Rectangle top;
 	Rectangle bottom;
-	private int zalpha;
 	private float x = 0f;
 	private float z = 2.8f;
 	private float y = -0.9f;
@@ -47,6 +46,7 @@ public class Player extends GameObject {
 		this.addGeom(right);
 		this.addGeom(top);
 		this.addGeom(bottom);
+		this.setDirty(true);
 	}
 	@Override
 	public void update(){
@@ -55,7 +55,7 @@ public class Player extends GameObject {
 				new TranslationMatrix(new Vec3(0,0,0)), // individual part1: each rectangle uses different z value depending on orientation
 				new RotationMatrix(0, mat.Axis.X), // individual part2: then is rotated to its proper orientation 
 				new TranslationMatrix(new Vec3(x,y,z)), // shared: offset to properly sit on tube
-				new RotationMatrix(zalpha, mat.Axis.Z) //shared: this will be the players movement option across  the tube
+				new RotationMatrix(getRalpha(), mat.Axis.Z) //shared: this will be the players movement option across  the tube
 				};
 		this.offset = 0.5f* new Float(this.getScale())/100f;
 		this.xoffset = offset * new Float(this.getxScale())/100f;
@@ -141,16 +141,7 @@ public class Player extends GameObject {
 	public void move(int delta){
 		//player can only move left or right along the tube
 		// z axis rotation should suffice
-		this.zalpha += delta;
+		this.setRalpha(this.getRalpha() + delta);
 		this.setDirty(true);
 	}
-	
-	public int getZalpha() {
-		return zalpha;
-	}
-	public void setZalpha(int zalpha) {
-		this.zalpha = zalpha;
-		this.setDirty(true);
-	}
-
 }
