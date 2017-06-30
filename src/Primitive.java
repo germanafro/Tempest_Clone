@@ -83,9 +83,9 @@ public abstract class Primitive {
 		this.setTexture("default.png");
 		this.setOrigin(new Vec3(0.0, 0.0, 0.0));
 		// assign textures id
-		if (game.getTextureIds().get(this.getTexture()) != null){
-			this.setTextureID(game.getTextureIds().get(this.getTexture()));
-		} else this.setTextureID(game.getTextureIds().get("default.png"));
+		if (game.getRenderEngine().getTextureIds().get(this.getTexture()) != null){
+			this.setTextureID(game.getRenderEngine().getTextureIds().get(this.getTexture()));
+		} else this.setTextureID(game.getRenderEngine().getTextureIds().get("default.png"));
 	}
 	
 	public Primitive(int x , int y, int scale, Game game, String texture){
@@ -96,9 +96,9 @@ public abstract class Primitive {
 		this.setTexture(texture);
 		this.setOrigin(new Vec3(0.0, 0.0, 0.0));
 		// assign textures id
-		if (game.getTextureIds().get(this.getTexture()) != null){
-			this.setTextureID(game.getTextureIds().get(this.getTexture()));
-		} else this.setTextureID(game.getTextureIds().get("default.png"));
+		if (game.getRenderEngine().getTextureIds().get(this.getTexture()) != null){
+			this.setTextureID(game.getRenderEngine().getTextureIds().get(this.getTexture()));
+		} else this.setTextureID(game.getRenderEngine().getTextureIds().get("default.png"));
 	}
 	/**
 	 * non trivial every child needs to specify it's own create method

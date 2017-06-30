@@ -17,6 +17,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_M;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_N;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_O;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_P;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
@@ -69,6 +70,7 @@ import static org.lwjgl.opengl.GL11.glPolygonMode;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -81,8 +83,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.Version;
@@ -126,12 +130,7 @@ public class RenderEngine {
   	private int vsId = 0;
     private int fsId = 0;
     private int pId = 0;
-    public int getpId() {
-		return pId;
-	}
-	public void setpId(int pId) {
-		this.pId = pId;
-	}
+	private Map<String, Integer> textureIds;
 
 	private int vsNormalsId = 0;
     private int fsNormalsId = 0;
@@ -167,6 +166,7 @@ public class RenderEngine {
     public RenderEngine(Game game){
 		this.game = game;
 		this.hud = this.game.getHud();
+		this.setTextureIds(new HashMap<String, Integer>());
 		this.hud.setVisible(true);
 	}
   	/**
@@ -289,22 +289,26 @@ public class RenderEngine {
             			hud.SlideY.setValue(val-1);
             		}
             	}
+            	
+            	//Player controls
             	if ( key == GLFW_KEY_A && action == GLFW_PRESS ){
-            		Player player = (Player) game.getGameObjects().get("player1");
-            		player.move(-5);
-            		/*//TODO remove me
-            		int val = hud.SlideX.getValue();
-            		if (val > hud.SlideX.getMinimum()){
-            			hud.SlideX.setValue(val-1);
-            		}*/
+            		Player player = game.getPlayer();
+            		Tube tube = game.getTube();
+            		if(player != null && tube != null && !game.isPause()){
+            			player.move(-tube.getStepr());
+            		}
+
             	}
             	if ( key == GLFW_KEY_D && action == GLFW_PRESS ){
-            		Player player = (Player) game.getGameObjects().get("player1");
-            		player.move(5);
-//            		int val = hud.SlideX.getValue();
-//            		if (val < hud.SlideX.getMaximum()){
-//            			hud.SlideX.setValue(val+1);
-//            		}
+            		Player player = game.getPlayer();
+            		Tube tube = game.getTube();
+            		if(player != null && tube != null && !game.isPause()){
+            			player.move(tube.getStepr());
+            		}
+            	}
+            	
+            	if ( key == GLFW_KEY_P && action == GLFW_PRESS){
+            		game.setPause(!game.isPause());
             	}
             	if ( key == GLFW_KEY_Q){
             		int val = hud.SlideScale.getValue();
@@ -526,12 +530,77 @@ public class RenderEngine {
         modelMatrixLocationNormals = GL20.glGetUniformLocation(pNormalsId, "modelMatrix");        
     }
  
-   
-    
     /**
-     * calculate geometric data for the Object with given id.
-     * loads the data into respective buffer
+     * Uses an external class to load a PNG image and bind it as texture
+     * @param filename
+     * @param textureUnit
+     * @return textureID
      */
+    private int loadPNGTexture(String filename, int textureUnit) {
+        ByteBuffer buf = null;
+        int tWidth = 0;
+        int tHeight = 0;
+         
+        try {
+            // Open the PNG file as an InputStream
+            InputStream in = new FileInputStream(filename);
+            // Link the PNG decoder to this stream
+            PNGDecoder decoder = new PNGDecoder(in);
+             
+            // Get the width and height of the texture
+            tWidth = decoder.getWidth();
+            tHeight = decoder.getHeight();
+             
+             
+            // Decode the PNG file in a ByteBuffer
+            buf = ByteBuffer.allocateDirect(
+                    4 * decoder.getWidth() * decoder.getHeight());
+            decoder.decode(buf, decoder.getWidth() * 4, Format.RGBA);
+            buf.flip();
+             
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+         
+        // Create a new texture object in memory and bind it
+        int texId = GL11.glGenTextures();
+        GL13.glActiveTexture(textureUnit);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
+         
+        // All RGB bytes are aligned to each other and each component is 1 byte
+        GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+         
+        // Upload the texture data and generate mip maps (for scaling)
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, tWidth, tHeight, 0, 
+                GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
+        GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+         
+        // Setup the ST coordinate system
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
+         
+        // Setup what to do when the texture has to be scaled
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, 
+                GL11.GL_NEAREST);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, 
+                GL11.GL_LINEAR_MIPMAP_LINEAR);
+
+        return texId;
+    }
+  	
+	public void loadTextures(){
+		String path = "assets/textures/";
+		File folder = new File(path);
+		File[] listOfFiles = folder.listFiles();
+		System.out.println("loading Textures: ");
+		for(File file : listOfFiles){
+			String name = file.getName();
+			System.out.println(name);
+			this.getTextureIds().put(name, this.loadPNGTexture(path + name, GL13.GL_TEXTURE0));
+		}
+	}
     
     /**
      * buffer all Objects
@@ -726,5 +795,17 @@ public class RenderEngine {
 	}
 	public void setErrorCallback(GLFWErrorCallback errorCallback) {
 		this.errorCallback = errorCallback;
+	}
+	 public int getpId() {
+			return pId;
+	}
+	public void setpId(int pId) {
+			this.pId = pId;
+	}
+	public Map<String, Integer> getTextureIds() {
+		return textureIds;
+	}
+	public void setTextureIds(Map<String, Integer> textureIds) {
+		this.textureIds = textureIds;
 	}
 }

@@ -27,7 +27,6 @@ public class Game {
 	private Level currLevel;
 	private String state = "startmenu";
 	private Map<String, GameObject> gameObjects;
-	private Map<String, Integer> textureIds;
 	private GameEngine gameEngine;
 	private RenderEngine renderEngine;
 	private boolean pause;
@@ -35,11 +34,11 @@ public class Game {
 	private Timer timer = new Timer();
 	
 	private Player player = null;
+	private Tube tube = null;
 	
 	public Game(){
 		this.setHud(new HUD(this));
 		this.setGameObjects(new HashMap<String, GameObject>());
-		this.setTextureIds(new HashMap<String, Integer>());
 		this.startNewGame();
 		this.setState("starting"); // TODO removeme ^_^ just for testing
 	}
@@ -76,7 +75,7 @@ public class Game {
 	public void run() {
 		// TODO Auto-generated method stub
 		this.renderEngine.run();
-		this.loadTextures(); // TODO: move back to render engine?
+		this.renderEngine.loadTextures(); // TODO: move back to render engine?
 		this.renderEngine.initObjects();
 		this.gameEngine.run();
 		timer.init();
@@ -103,7 +102,8 @@ public class Game {
 			case "starting":
 				this.addGameObject(new Player("player1", this));
 				this.addGameObject(new Tube("tube1", this));
-				player = (Player)this.gameObjects.get("player1");
+				setPlayer((Player)this.gameObjects.get("player1"));
+				tube = (Tube)this.gameObjects.get("tube1");
 				this.setState("playing");
 			case "playing":
 				if(!this.isPause()){
@@ -166,77 +166,6 @@ public class Game {
 		this.hud.registerNewObject(gameObject.getName());
 		for(Primitive obj : gameObject.getGeom()){
 			this.gameObjects.put(gameObject.getName(), gameObject);
-		}
-	}
-	 /**
-     * Uses an external class to load a PNG image and bind it as texture
-     * @param filename
-     * @param textureUnit
-     * @return textureID
-     */
-    private int loadPNGTexture(String filename, int textureUnit) {
-        ByteBuffer buf = null;
-        int tWidth = 0;
-        int tHeight = 0;
-         
-        try {
-            // Open the PNG file as an InputStream
-            InputStream in = new FileInputStream(filename);
-            // Link the PNG decoder to this stream
-            PNGDecoder decoder = new PNGDecoder(in);
-             
-            // Get the width and height of the texture
-            tWidth = decoder.getWidth();
-            tHeight = decoder.getHeight();
-             
-             
-            // Decode the PNG file in a ByteBuffer
-            buf = ByteBuffer.allocateDirect(
-                    4 * decoder.getWidth() * decoder.getHeight());
-            decoder.decode(buf, decoder.getWidth() * 4, Format.RGBA);
-            buf.flip();
-             
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
-         
-        // Create a new texture object in memory and bind it
-        int texId = GL11.glGenTextures();
-        GL13.glActiveTexture(textureUnit);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
-         
-        // All RGB bytes are aligned to each other and each component is 1 byte
-        GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
-         
-        // Upload the texture data and generate mip maps (for scaling)
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, tWidth, tHeight, 0, 
-                GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
-        GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
-         
-        // Setup the ST coordinate system
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
-         
-        // Setup what to do when the texture has to be scaled
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, 
-                GL11.GL_NEAREST);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, 
-                GL11.GL_LINEAR_MIPMAP_LINEAR);
-
-        return texId;
-    }
-  	
-	public void loadTextures(){
-		String path = "assets/textures/";
-		File folder = new File(path);
-		File[] listOfFiles = folder.listFiles();
-		System.out.println("loading Textures: ");
-		for(File file : listOfFiles){
-			String name = file.getName();
-			System.out.println(name);
-			this.getTextureIds().put(name, this.loadPNGTexture(path + name, GL13.GL_TEXTURE0));
 		}
 	}
 	
@@ -308,12 +237,20 @@ public class Game {
 		this.hud = hud;
 	}
 
-	public Map<String, Integer> getTextureIds() {
-		return textureIds;
+	public Tube getTube() {
+		return tube;
 	}
 
-	public void setTextureIds(Map<String, Integer> textureIds) {
-		this.textureIds = textureIds;
+	public void setTube(Tube tube) {
+		this.tube = tube;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
 	}
 
 }

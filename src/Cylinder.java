@@ -18,7 +18,7 @@ public class Cylinder extends Primitive {
 		this.setZ(z);
 		this.type = "cylinder";
 		this.setxTiles(2);
-		this.setyTiles(10);
+		this.setyTiles(3);
 	}
 	public Cylinder(int x, int y, int z, int r, int scale, Game game, String texture) {
 		super(x, y, scale, game, texture);
@@ -27,7 +27,7 @@ public class Cylinder extends Primitive {
 		this.r = r;
 		this.type = "cylinder";
 		this.setxTiles(2);
-		this.setyTiles(10);
+		this.setyTiles(3);
 	}
 
 	@Override
@@ -104,7 +104,7 @@ public class Cylinder extends Primitive {
 		float zscale = new Float(this.getZ())/100f;
 		float front = 0.5f * scale * zscale;
 		float back = -0.5f * scale * zscale;
-		float stepz = (front - back)/x;
+		float stepz = (front - back)/(x-1f);
 		double stepr = 360d/y; // num of sides
 		float[] vertices;
 		float[] normals;

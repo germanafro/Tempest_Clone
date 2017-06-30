@@ -1,7 +1,10 @@
 import java.util.ArrayList;
 
 public class Tube extends GameObject {
-
+	private int stepsz = 10;
+	private int stepsr = 10;
+	private float stepz = 0;
+	private int stepr = 0;
 	public Tube(String name, Primitive geom, Game game) {
 		super(name, game);
 		this.setGeom(new ArrayList<Primitive>());
@@ -17,6 +20,9 @@ public class Tube extends GameObject {
 		this.setScale(400);
 		this.setGeom(new ArrayList<Primitive>());
 		Cylinder geom = new Cylinder(this.getxScale(), this.getyScale(), this.getzScale(), this.getrScale() , this.getScale(), game, "tube_neon.png");
+		geom.setyTiles(stepsr); // number of tiles
+		setStepr(360/stepsr);
+		setStepz(1f*((float)this.getScale())/100f * ((float)this.getzScale())/100f);
 		this.addGeom(geom);
 		// TODO Auto-generated constructor stub
 	}
@@ -24,6 +30,18 @@ public class Tube extends GameObject {
 	void update() {
 		// TODO Auto-generated method stub
 		
+	}
+	public int getStepr() {
+		return stepr;
+	}
+	public void setStepr(int stepr) {
+		this.stepr = stepr;
+	}
+	public float getStepz() {
+		return stepz;
+	}
+	public void setStepz(float stepz) {
+		this.stepz = stepz;
 	}
 
 }
