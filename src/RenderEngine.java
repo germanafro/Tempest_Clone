@@ -290,16 +290,21 @@ public class RenderEngine {
             		}
             	}
             	if ( key == GLFW_KEY_A && action == GLFW_PRESS ){
+            		Player player = (Player) game.getGameObjects().get("player1");
+            		player.move(-5);
+            		/*//TODO remove me
             		int val = hud.SlideX.getValue();
             		if (val > hud.SlideX.getMinimum()){
             			hud.SlideX.setValue(val-1);
-            		}
+            		}*/
             	}
             	if ( key == GLFW_KEY_D && action == GLFW_PRESS ){
-            		int val = hud.SlideX.getValue();
-            		if (val < hud.SlideX.getMaximum()){
-            			hud.SlideX.setValue(val+1);
-            		}
+            		Player player = (Player) game.getGameObjects().get("player1");
+            		player.move(5);
+//            		int val = hud.SlideX.getValue();
+//            		if (val < hud.SlideX.getMaximum()){
+//            			hud.SlideX.setValue(val+1);
+//            		}
             	}
             	if ( key == GLFW_KEY_Q){
             		int val = hud.SlideScale.getValue();
@@ -601,6 +606,7 @@ public class RenderEngine {
         		//update dirty gameObjects
         		GL20.glUseProgram(pId);
     			if(gameObject.isDirty()){
+    				gameObject.update();
     				gameObject.buffer();
     				gameObject.setDirty(false);
     			}

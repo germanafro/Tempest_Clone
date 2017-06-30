@@ -21,7 +21,7 @@ import mat.Matrix4;
 import mat.TranslationMatrix;
 import mat.Vec3;
 
-public class GameObject {
+public abstract class GameObject {
 	
 	
     // identity
@@ -179,5 +179,10 @@ public class GameObject {
 	public void setDirty(boolean dirty) {
 		this.dirty = dirty;
 	}
+	public void move(int alpha) {
+		// TODO Auto-generated method stub
+		
+	}
+	abstract void update();
 
 }

@@ -9,8 +9,10 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import mat.Matrix4;
+import mat.RotationMatrix;
 import mat.TranslationMatrix;
 import mat.Vec3;
+import mat.Vec4;
 
 /**
  * base class for geometrical objects
@@ -114,7 +116,7 @@ public abstract class Primitive {
     	// receive vertices from this
     	float[] vertices = this.getVertices();
 		// Sending data to OpenGL requires the usage of (flipped) byte buffers
-    	System.out.println(Arrays.toString(vertices));
+    	//System.out.println(Arrays.toString(vertices));
 		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length);
 		verticesBuffer.put(vertices);
 		verticesBuffer.flip();

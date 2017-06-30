@@ -6,4 +6,10 @@ public class Enemy extends GameObject {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
+	void update() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

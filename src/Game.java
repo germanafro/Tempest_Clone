@@ -31,8 +31,10 @@ public class Game {
 	private GameEngine gameEngine;
 	private RenderEngine renderEngine;
 	private boolean pause;
-	
 	private HUD hud;
+	private Timer timer = new Timer();
+	
+	private Player player = null;
 	
 	public Game(){
 		this.setHud(new HUD(this));
@@ -77,6 +79,7 @@ public class Game {
 		this.loadTextures(); // TODO: move back to render engine?
 		this.renderEngine.initObjects();
 		this.gameEngine.run();
+		timer.init();
 		this.loop();
 		
         // Release window and window callbacks
@@ -91,16 +94,21 @@ public class Game {
 	}
 	
 	private void loop(){
+		long window = this.getRenderEngine().getWindow();
+		
 		while(!glfwWindowShouldClose(this.getRenderEngine().getWindow())){
 			//TODO Step 1 do game calculations
+			float delta = timer.getDelta();
 			switch(state){
 			case "starting":
 				this.addGameObject(new Player("player1", this));
 				this.addGameObject(new Tube("tube1", this));
+				player = (Player)this.gameObjects.get("player1");
 				this.setState("playing");
 			case "playing":
 				if(!this.isPause()){
 					
+					//player.move(1);
 				}else{
 					// dont do anything while the game is paused
 				}
@@ -111,6 +119,8 @@ public class Game {
 				break;
 			
 			}
+			timer.updateUPS();
+			
 			
 			
 			//Step 2 render game
@@ -120,7 +130,36 @@ public class Game {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			timer.updateFPS();
+            /* Update timer */
+			timer.update();
+			this.hud.getLabelUPS().setText("UPS: " + timer.getUps());
+			this.hud.getLabelFPS().setText("FPS: " + timer.getFps());
+			
+			//Step3 fps cap if vsynch is off
+	        //this.sync(60);
 		}
+	}
+	/**
+	 * limit fps and cpu usage
+	 * @param fps
+	 */
+	public void sync(int fps) {
+        double lastLoopTime = timer.getLastLoopTime();
+        double now = timer.getTime();
+        float targetTime = 1f / fps;
+
+        while (now - lastLoopTime < targetTime) {
+            Thread.yield();
+
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+
+            now = timer.getTime();
+        }
 	}
 
 	public void addGameObject(GameObject gameObject) {

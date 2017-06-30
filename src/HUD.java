@@ -46,6 +46,8 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
     private JLabel LabelR; 
     private JLabel LabelP; 
     private JLabel LabelQ; 
+    private JLabel LabelFPS; 
+    private JLabel LabelUPS; 
     //private List<Primitive> currObject = new ArrayList<Primitive>();
     private String currObj;
     private JPanel panel = new JPanel();
@@ -59,9 +61,9 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
     	this.setGame(game);
     	// Elements and config
     	this.setTitle("HUD");        
-        this.setSize(300,600);
+        this.setSize(400,800);
         
-        panel.setLayout(new GridLayout(16,0));
+        panel.setLayout(new GridLayout(20,0));
         
         Border black = new LineBorder(Color.black);
         JMenuBar menubar = new JMenuBar();
@@ -70,8 +72,6 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
         this.objectMenu = new JMenu("Select Object");
         this.newobjects = new ArrayList<JMenuItem>();
         this.objects = new ArrayList<JMenuItem>();
-        //this.currObject.add(new Rectangle(2,2,100));
-        //registerNewObject("rectangle");
         // add new objects here
         this.newobjects.add(new JMenuItem("player"));
         this.newobjects.add(new JMenuItem("tube"));
@@ -89,6 +89,11 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
         this.LabelZ = new JLabel("Z");
         this.LabelScale = new JLabel("Scale (%)");
         this.LabelR = new JLabel("inner Radius (%)");
+        this.LabelP = new JLabel("P");
+        this.LabelQ = new JLabel("Q");
+        
+        this.LabelFPS = new JLabel("FPS: 0");
+        this.LabelUPS = new JLabel("FPS: 0");
         //Sliders
         this.SlideX = new JSlider();
         this.SlideX.setValue(100);
@@ -151,7 +156,6 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
         this.SlideP.createStandardLabels(1);
         this.SlideP.setPaintTicks(true);
         this.SlideP.setPaintLabels(true);
-        this.LabelP = new JLabel("P");
        
         
         this.SlideQ = new JSlider();
@@ -163,7 +167,6 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
         this.SlideQ.createStandardLabels(1);
         this.SlideQ.setPaintTicks(true);
         this.SlideQ.setPaintLabels(true);
-        this.LabelQ = new JLabel("Q");
         
          
         
@@ -192,6 +195,8 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
         panel.add(this.SlideP);
         panel.add(this.LabelQ);
         panel.add(this.SlideQ);
+        panel.add(this.LabelFPS);
+        panel.add(this.LabelUPS);
         this.add(panel);
 	}
     
@@ -339,6 +344,26 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
 
 	public void setGame(Game game) {
 		this.game = game;
+	}
+
+
+	public JLabel getLabelFPS() {
+		return LabelFPS;
+	}
+
+
+	public void setLabelFPS(JLabel labelFPS) {
+		LabelFPS = labelFPS;
+	}
+
+
+	public JLabel getLabelUPS() {
+		return LabelUPS;
+	}
+
+
+	public void setLabelUPS(JLabel labelUPS) {
+		LabelUPS = labelUPS;
 	}
 
 }
