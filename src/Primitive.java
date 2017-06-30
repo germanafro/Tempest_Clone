@@ -36,9 +36,12 @@ public abstract class Primitive {
 	private float[] texturecoords;
 	private float[] normals;
 	private int[] indices;
+	
 	private boolean streched = false;
 	private boolean alloc = true;
 	private boolean update = false;
+	private boolean destroy = false;
+	
 	protected String type;
 	private String texture;
 	private Vec3 origin;
@@ -482,5 +485,11 @@ public abstract class Primitive {
 	}
 	public void setUpdate(boolean update) {
 		this.update = update;
+	}
+	public boolean isDestroy() {
+		return destroy;
+	}
+	public void setDestroy(boolean destroy) {
+		this.destroy = destroy;
 	}
 }

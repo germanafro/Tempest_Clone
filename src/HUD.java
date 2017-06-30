@@ -4,7 +4,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,13 +27,10 @@ import javax.swing.event.ChangeListener;
  */
 public class HUD extends JFrame implements ActionListener, ChangeListener{
 
-	private JMenuItem rectangle;
-    private JMenuItem sphere;
-    private JMenuItem torus;
-    private JMenuItem cuboid;
     private JMenu objectMenu;
+    private JMenu editMenu;
     private List<JMenuItem> newobjects;
-    private List<JMenuItem> objects;
+	private Map<String, JMenuItem> objects;
     public JSlider SlideX;
     public JSlider SlideY;
     public JSlider SlideZ;
@@ -50,6 +50,7 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
     private JLabel LabelUPS; 
     //private List<Primitive> currObject = new ArrayList<Primitive>();
     private String currObj;
+    private JMenuItem currObject;
     private JPanel panel = new JPanel();
     private boolean dirty = false;
     private Game game;
@@ -69,9 +70,9 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
         JMenuBar menubar = new JMenuBar();
         menubar.setBorder(black);
         JMenu menu = new JMenu("New Object");
-        this.objectMenu = new JMenu("Select Object");
+        this.setObjectMenu(new JMenu("Select Object"));
         this.newobjects = new ArrayList<JMenuItem>();
-        this.objects = new ArrayList<JMenuItem>();
+        this.setObjects(new HashMap<String, JMenuItem>());
         // add new objects here
         this.newobjects.add(new JMenuItem("player"));
         this.newobjects.add(new JMenuItem("tube"));
@@ -79,8 +80,15 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
         	obj.addActionListener(this);
         	menu.add(obj);
         }
+        //edit menu
+        editMenu = new JMenu("Edit");
+        JMenuItem delete = new JMenuItem("delete");
+        delete.addActionListener(this);
+        editMenu.add(delete);
+        
         menubar.add(menu);
-        menubar.add(this.objectMenu);
+        menubar.add(this.getObjectMenu());
+        menubar.add(editMenu);
         this.setJMenuBar(menubar);
         //Labels
         this.selected = new JLabel("current Object: none");
@@ -230,13 +238,19 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
 			gameObject =new Tube("tube", this.game);
 			this.game.addGameObject(gameObject);
 		}
+		else if(e.getSource() == this.editMenu.getItem(0) ){
+			this.deleteObject();
+		}
 		else{
-			for (JMenuItem menuitem : this.objects){
+			Iterator<JMenuItem> menuitems = this.getObjects().values().iterator();
+	    	while(menuitems.hasNext()){
+	    		JMenuItem menuitem = menuitems.next();
 				System.out.println("checking selector: " + menuitem.getText() + " == " + ((JMenuItem) e.getSource()).getText() + " is " + (e.getSource() == menuitem));
 				if(e.getSource() == menuitem){
 					String name = menuitem.getText();
 					gameObject = this.game.getGameObjects().get(name);
 					this.currObj = name;
+					this.currObject = menuitem;
 					this.selected.setText(" current Object: " + name);
 					int x = gameObject.getxScale();
 					int y = gameObject.getyScale();
@@ -263,11 +277,25 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
 		this.setDirty(true);
 	}
 
-	public void registerNewObject(String type){
-		JMenuItem obj = new JMenuItem(type);
-		this.objects.add(obj);
+	public void registerNewObject(String name){
+		JMenuItem obj = new JMenuItem(name);
+		this.getObjects().put(name, obj);
     	obj.addActionListener(this);
-    	this.objectMenu.add(obj);
+    	obj.getActionListeners()[0].actionPerformed(new ActionEvent(obj, ActionEvent.ACTION_PERFORMED, null));
+    	this.getObjectMenu().add(obj);
+	}
+	public void deleteObject(){
+		this.game.destroyObject(this.currObj);
+
+		if (this.objects.size() > 0){
+			JMenuItem newobj = this.objects.get(0);
+			this.currObj = newobj.getText();
+			this.currObject = newobj;
+		}
+		else{
+			this.currObj = null;
+			this.currObject = null;
+		}
 	}
 
 	@Override
@@ -364,6 +392,36 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
 
 	public void setLabelUPS(JLabel labelUPS) {
 		LabelUPS = labelUPS;
+	}
+
+
+	public Map<String, JMenuItem> getObjects() {
+		return objects;
+	}
+
+
+	public void setObjects(Map<String, JMenuItem> objects) {
+		this.objects = objects;
+	}
+
+
+	public JMenuItem getCurrObject() {
+		return currObject;
+	}
+
+
+	public void setCurrObject(JMenuItem currObject) {
+		this.currObject = currObject;
+	}
+
+
+	public JMenu getObjectMenu() {
+		return objectMenu;
+	}
+
+
+	public void setObjectMenu(JMenu objectMenu) {
+		this.objectMenu = objectMenu;
 	}
 
 }

@@ -629,6 +629,20 @@ public class RenderEngine {
         obj.setVbonlcId(GL15.glGenBuffers());
         obj.setAlloc(false);
 	}
+    public void deleteAlloc(Primitive obj){
+    				// free memory
+    	System.out.println("cleaning: " + obj.getType());
+    				GL15.glDeleteBuffers(obj.getVboId());
+    	    		GL15.glDeleteBuffers(obj.getVaoId());
+    				GL15.glDeleteBuffers(obj.getVboId());
+    	        	GL15.glDeleteBuffers(obj.getVbocId());
+    	        	GL15.glDeleteBuffers(obj.getVbonId());
+    	        	GL15.glDeleteBuffers(obj.getVbotId());
+    				GL15.glDeleteBuffers(obj.getVboiId());
+    				GL15.glDeleteBuffers(obj.getVaoNormalLinesId());
+    	        	GL15.glDeleteBuffers(obj.getVbonlId());
+    	        	GL15.glDeleteBuffers(obj.getVbonlcId());
+    }
     
     /**
      * changes of notice: checks for hud dirty bit. if true reloads the geometric Object into the buffer
@@ -654,6 +668,16 @@ public class RenderEngine {
              
             GL20.glUseProgram(0);
 
+            for (GameObject gameObject : this.game.getDeleteQueue()){
+            	for(Primitive obj : gameObject.getGeom()){
+    				GL20.glUseProgram(pId);
+					this.deleteAlloc(obj);
+					GL20.glUseProgram(0);
+    			}
+            	gameObject.setGeom(null);
+            }
+            this.game.setDeleteQueue(new ArrayList<GameObject>());
+            
             // ================================== Draw objects =====================================
             
             Iterator<GameObject> gameObjects = this.game.getGameObjects().values().iterator();
@@ -672,11 +696,12 @@ public class RenderEngine {
         			}
         			GL20.glUseProgram(0);
         		}
+        		
         		//update dirty gameObjects
         		GL20.glUseProgram(pId);
     			if(gameObject.isDirty()){
     				gameObject.update();
-    				gameObject.buffer();
+    				gameObject.buffer(); // TODO encapsulate in update()
     				gameObject.setDirty(false);
     			}
     			GL20.glUseProgram(0);

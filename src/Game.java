@@ -13,6 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
@@ -27,6 +30,7 @@ public class Game {
 	private Level currLevel;
 	private String state = "startmenu";
 	private Map<String, GameObject> gameObjects;
+	private List<GameObject> deleteQueue = new ArrayList<GameObject>();
 	private GameEngine gameEngine;
 	private RenderEngine renderEngine;
 	private boolean pause;
@@ -105,9 +109,11 @@ public class Game {
 				setPlayer((Player)this.gameObjects.get("player1"));
 				tube = (Tube)this.gameObjects.get("tube1");
 				this.setState("playing");
+				break;
 			case "playing":
 				if(!this.isPause()){
-					
+					this.destroyObject("player1");
+					this.addGameObject(new Player("player1", this));
 					//player.move(1);
 				}else{
 					// dont do anything while the game is paused
@@ -138,6 +144,9 @@ public class Game {
 			
 			//Step3 fps cap if vsynch is off
 	        //this.sync(60);
+			
+			//clean up
+			
 		}
 	}
 	/**
@@ -163,29 +172,26 @@ public class Game {
 	}
 
 	public void addGameObject(GameObject gameObject) {
+		this.gameObjects.put(gameObject.getName(), gameObject);
 		this.hud.registerNewObject(gameObject.getName());
-		for(Primitive obj : gameObject.getGeom()){
-			this.gameObjects.put(gameObject.getName(), gameObject);
-		}
 	}
 	
 	public void destroyObject(String name){
-		//temp save obj
+		//TODO this might desynch 
+		JMenuItem item = hud.getObjects().get(name);
+		if (item != null) {
+			System.out.println("item: " + item.getText());
+			Map<String, JMenuItem> items = hud.getObjects();
+			JMenu objectMenu = hud.getObjectMenu();
+			items.remove(name);
+			objectMenu.remove(item);
+			item.removeActionListener(hud);
+			hud.setCurrObject(null);
+		}
 		GameObject gameObject = this.getGameObjects().get(name);
-		// remove from registry
-		this.getGameObjects().remove(name);
-		for(Primitive obj : gameObject.getGeom()){
-			// free memory
-			GL15.glDeleteBuffers(obj.getVboId());
-    		GL15.glDeleteBuffers(obj.getVaoId());
-			GL15.glDeleteBuffers(obj.getVboId());
-        	GL15.glDeleteBuffers(obj.getVbocId());
-        	GL15.glDeleteBuffers(obj.getVbonId());
-        	GL15.glDeleteBuffers(obj.getVbotId());
-			GL15.glDeleteBuffers(obj.getVboiId());
-			GL15.glDeleteBuffers(obj.getVaoNormalLinesId());
-        	GL15.glDeleteBuffers(obj.getVbonlId());
-        	GL15.glDeleteBuffers(obj.getVbonlcId());
+		if(gameObject != null){
+			this.getGameObjects().remove(name);
+			this.deleteQueue.add(gameObject);
 		}
 	}
 
@@ -251,6 +257,14 @@ public class Game {
 
 	public void setPlayer(Player player) {
 		this.player = player;
+	}
+
+	public List<GameObject> getDeleteQueue() {
+		return deleteQueue;
+	}
+
+	public void setDeleteQueue(List<GameObject> deleteQueue) {
+		this.deleteQueue = deleteQueue;
 	}
 
 }
