@@ -47,7 +47,10 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
     private JLabel LabelP; 
     private JLabel LabelQ; 
     private JLabel LabelFPS; 
-    private JLabel LabelUPS; 
+    private JLabel LabelUPS;
+    private JLabel Kills; 
+    private JLabel Level;
+    private JLabel Leben;
     //private List<Primitive> currObject = new ArrayList<Primitive>();
     private String currObj;
     private JMenuItem currObject;
@@ -102,6 +105,9 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
         
         this.LabelFPS = new JLabel("FPS: 0");
         this.LabelUPS = new JLabel("FPS: 0");
+        this.Kills = new JLabel("Abschuesse: 0");
+        this.Level = new JLabel("Level: 0");
+        
         //Sliders
         this.SlideX = new JSlider();
         this.SlideX.setValue(100);
@@ -205,6 +211,9 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
         panel.add(this.SlideQ);
         panel.add(this.LabelFPS);
         panel.add(this.LabelUPS);
+        panel.add(this.Kills);
+        panel.add(this.Level);
+        panel.add(this.Leben);
         this.add(panel);
 	}
     
@@ -422,6 +431,26 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
 
 	public void setObjectMenu(JMenu objectMenu) {
 		this.objectMenu = objectMenu;
+	}
+
+
+	public JLabel getKills() {
+		return Kills;
+	}
+
+
+	public void setKills(JLabel kills) {
+		Kills = kills;
+	}
+
+
+	public JLabel getLevel() {
+		return Level;
+	}
+
+
+	public void setLevel(JLabel level) {
+		Level = level;
 	}
 
 }
