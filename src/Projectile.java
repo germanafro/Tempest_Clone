@@ -36,6 +36,12 @@ public class Projectile extends GameObject {
 	}
 	
 	@Override
+	
+	public void move(){
+		this.setZpos(this.getZpos() - 3);
+		this.setDirty(true);
+	}
+	
 	public void update(){
 		//shared
 		Matrix4[] matrices = this.getMatrices();

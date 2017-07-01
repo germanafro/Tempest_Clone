@@ -29,6 +29,7 @@ import de.matthiasmann.twl.utils.PNGDecoder.Format;
 //TODO place holder
 public class Game {
 	private Level currLevel;
+	private int levelNr = 1;
 	private String state = "startmenu";
 	private Map<String, GameObject> gameObjects;
 	private List<GameObject> deleteQueue = new ArrayList<GameObject>();
@@ -47,6 +48,9 @@ public class Game {
 	private Sound bgm = null;
 	private float bgmvolume = -10f;
 	private float sfxvolume = 0f;
+	private Level level = null; //TODO unterschied currLevel?
+	
+	
 	public Game(){
 		this.setHud(new HUD(this));
 		this.setGameObjects(new HashMap<String, GameObject>());
@@ -117,8 +121,13 @@ public class Game {
 				this.bgm = this.getLevel().getBgm();
 				this.bgmLoop();
 				this.setState("playing");
+				
 				break;
 			case "playing":
+				if(this.nextLevel()){
+					this.setLevelNr(this.getLevelNr() + 1);
+					this.setState("pause");
+				}
 				this.gameEngine.spawnEnemy();
 				this.gameEngine.queueObjects();
 				this.gameEngine.moveObjects();
@@ -153,16 +162,22 @@ public class Game {
 			timer.update();
 			this.hud.getLabelUPS().setText("UPS: " + timer.getUps());
 			this.hud.getLabelFPS().setText("FPS: " + timer.getFps());
-			
-			//TODO fps cap if vsynch is off
+			this.hud.getKills().setText("Abschuesse: " + this.getLevel().getKills());
+			this.hud.getLevel().setText("Level: " + this.getLevelNr());
+			//Step3 fps cap if vsynch is off
 	        //this.sync(60);
 			
-			
+			//clean up
 			
 		}
 		//clean up
 		if(bgm != null) bgm.stop();
 	}
+	private boolean nextLevel() {
+		if(this.getLevel().isFinished())return true;
+		return false;
+	}
+
 	/**
 	 * limit fps and cpu usage
 	 * @param fps the targetet fps
@@ -306,6 +321,13 @@ public class Game {
 
 	public void setLevel(Level level) {
 		this.level = level;
+	}
+	public int getLevelNr() {
+		return levelNr;
+	}
+
+	public void setLevelNr(int levelNr) {
+		this.levelNr = levelNr;
 	}
 
 }

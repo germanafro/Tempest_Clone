@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class GameEngine {
 	
@@ -51,28 +52,33 @@ public class GameEngine {
 			String name = gameObject.getName();
 			boolean zreached = false;
 			boolean alphareached = false;
-    		if(gameObject.getAlphatarget() > gameObject.getRalpha()){
-    			gameObject.move(1, 0);
-    		} else if(gameObject.getAlphatarget() < gameObject.getRalpha()){
-    			gameObject.move(-1, 0);
-    		}
-    		else{
-    			 alphareached = true;
-    		}
-    		if(gameObject.getZtarget() > gameObject.getZpos()){
-    			gameObject.move(0, 1);
-    		}else if(gameObject.getZtarget() < gameObject.getZpos()){
-    			gameObject.move(0, -1);
-    		}else{
-    			zreached = true;
-    			if(name.contains("projectile")){
+			
+			//drop ifelse cases?
+			if(name.toLowerCase().contains("enemy")){
+				if(gameObject.getAlphatarget() == gameObject.getRalpha()){
+					gameObject.movementLogic(game.getLevel().getTube().getStepr());
+				}
+				// new Function for different moving beheavior
+				gameObject.move();
+				
+				if(gameObject.getZpos() >= gameObject.getZtarget()){
+					zreached = true;
     				game.destroyObject(name);
-    			}else if(name.contains("enemy")){
-    				game.destroyObject(name);
-    			}else{
-    				gameObject.setMoving(!(alphareached && zreached)); // false if both are true (nand)
-    			}
-    		}
+				}
+				if(gameObject.getAlphatarget() == gameObject.getRalpha()){
+					alphareached = true;
+				}
+			}
+			
+			else if(name.toLowerCase().contains("player")){
+				gameObject.move();
+				}
+			else if(name.toLowerCase().contains("playerprojectile")){
+				gameObject.move();
+			}
+			gameObject.setMoving(!(alphareached && zreached)); // false if both are true (nand)
+	    			
+	    		
     		// check collision with player
     		if(name.toLowerCase().contains("enemy")){
     			Player player = game.getLevel().getPlayer();
@@ -89,28 +95,67 @@ public class GameEngine {
     			}
     		// check collision with playerprojectile
     		}else if(name.toLowerCase().contains("playerprojectile")){
-    			//TODO
+    			
+    			int projectileAlpha = gameObject.getRalpha() % 360;
+    			
+    			
+    			//TODO work with iterator over GameObject<> Map ?
+    			Set<String> keys = game.getGameObjects().keySet();
+    			
+    			for(String enemysName: keys){
+    				if(enemysName.contains("enemy")){
+	    				if(game.getGameObjects().containsKey(enemysName)){
+	    					//System.out.print("[DEBUG] Gegner in GameObject<>");
+	    					GameObject enemyObject = game.getGameObjects().get(enemysName);
+	    					boolean touchZ = Math.abs(enemyObject.getZpos() - gameObject.getZpos()) < 20;
+	    					int enemyAlpha = enemyObject.getRalpha();
+	    					
+	    					if(projectileAlpha < 0) projectileAlpha = 360 + projectileAlpha;
+	    					if(enemyAlpha < 0) enemyAlpha = 360 + enemyAlpha;
+	    					//System.out.println("EnemyAlpha: " + enemyAlpha + "projectileAlpha: " + projectileAlpha);
+	    					//System.out.println("Level Step: " + this.game.getLevel().getTube().getStepr());
+	    					boolean touchR = Math.abs(projectileAlpha - enemyAlpha) < this.game.getLevel().getTube().getStepr();
+	    					 if(touchZ && touchR){
+	    						// System.out.println("[Debug]Zerstöre" + gameObject.getName());
+	    						// System.out.println("[Debug]Zerstöre" + enemyObject.getName());
+	    						 gameObject.setDestroy(true);
+	    						 enemyObject.setDestroy(true);
+	    						 game.getLevel().setKills(game.getLevel().getKills() + 1);
+	    					 }
+    					 
+    					 }
+    					
+    				}
+    			}
+    			
     		}
     	}
 	}
 	
 	public void spawnEnemy(){
+		Level level = game.getLevel();
 		Timer timer = game.getTimer();
         double now = timer.getTime();
-        float spawnspeed = game.getLevel().getSpawnspeed(); // limiter for Enemy spawn speed
+        double spawnspeed = game.getLevel().getSpawnspeed(); // limiter for Enemy spawn speed
     	double enemyTime = game.getLevel().getEnemyTime();
     	Random random = new Random();
 
         if (now - enemyTime > spawnspeed) {
-        	game.getLevel().setEnemyTime(timer.getTime());
-        	game.getLevel().setSpawnspeed(0.3f + random.nextFloat()); // randomize next enemy spawn :P 
+        	level.setEnemyTime(timer.getTime());
         	Enemy enemy = new Enemy("enemy", game);
+        	level.setEnemycount(level.getEnemycount() + 1);
+        	//System.out.println("Enemy Count: " + level.getEnemycount());
+        	if(level.getEnemycount() % level.getSpawnCurve() == 0){
+        		level.setSpawnspeed(((level.getSpawnspeed() - 0.05)));
+        		//System.out.println("Spawnspeed: " + level.getSpawnspeed());
+        		
+        		} 
         	Player player = this.game.getLevel().getPlayer();
         	enemy.setX(player.getX());
         	enemy.setY(player.getY());
         	enemy.setZ(2.5f);
-        	enemy.setRalpha(random.nextInt(360));
-        	enemy.setAlphatarget(game.getLevel().getTube().getStepr() * (random.nextInt(360) -180));
+        	enemy.setRalpha((random.nextInt(360) * game.getLevel().getTube().getStepr()) % 360);
+        	enemy.setAlphatarget(enemy.getRalpha()); //game.getLevel().getTube().getStepr() * (random.nextInt(360) -180)
         	enemy.setZpos(-100);
         	enemy.setZtarget(0);
         	game.addGameObject(enemy);
@@ -118,6 +163,8 @@ public class GameEngine {
         }
 	}
 
+
+	
 	private void playerLoseLife(Player player) {
 		// TODO Auto-generated method stub
 		System.out.println("ouch!");

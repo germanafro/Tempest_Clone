@@ -14,17 +14,31 @@ public class Level {
 	private List<Enemy> enemies = new ArrayList<Enemy>(); // enemy pool to choose from
 	private int numEnemies = 0; // max number of enemies spawned
 	private int enemycount = 0; // count enemies already spawned
-	private float spawnspeed = 1f; // limiter for Enemy spawn speed
+	private double spawnspeed = 1; // limiter for Enemy spawn speed
+	
 	private double enemyTime = 0f;
 	private Sound bgm = null;
 
+	//May vary Difficulty by killcount
+	private int kills = 0;
+	private int killGoal = 20;
+	private boolean isFinished;
 	
-	
+	// Every spawnCurve Enemies spawn, the frequency with which the enemies spawn rises
+	private int spawnCurve = 10;
+
+
 	public Level(Tube tube, int numEnemies, Game game){
 		this.tube = tube;
 		this.player = new Player("player1", game);
 		this.numEnemies = numEnemies;
 		
+	}
+	public int getKills() {
+		return kills;
+	}
+	public void setKills(int kills) {
+		this.kills = kills;
 	}
 	public Player getPlayer() {
 		return player;
@@ -50,10 +64,10 @@ public class Level {
 	public void setEnemies(List<Enemy> enemies) {
 		this.enemies = enemies;
 	}
-	public float getSpawnspeed() {
+	public double getSpawnspeed() {
 		return spawnspeed;
 	}
-	public void setSpawnspeed(float spawnspeed) {
+	public void setSpawnspeed(double spawnspeed) {
 		this.spawnspeed = spawnspeed;
 	}
 	public double getEnemyTime() {
@@ -70,7 +84,23 @@ public class Level {
 	}
 	public Sound getBgm() {
 		return bgm;
+	public boolean isFinished() {
+		return (this.getKills() >= this.getKillGoal()) ? true : false;
 	}
+	public void setFinished(boolean isFinished) {
+		this.isFinished = isFinished;
+	}
+	public int getKillGoal() {
+		return killGoal;
+	}
+	public void setKillGoal(int killGoal) {
+		this.killGoal = killGoal;
+	}
+	public int getSpawnCurve() {
+		return spawnCurve;
+	}
+	public void setSpawnCurve(int spawnCurve) {
+		this.spawnCurve = spawnCurve;
 	public void setBgm(Sound bgm) {
 		this.bgm = bgm;
 	}
