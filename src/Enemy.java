@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Random;
 
 import mat.Matrix4;
 import mat.RotationMatrix;
@@ -6,15 +7,18 @@ import mat.TranslationMatrix;
 import mat.Vec3;
 
 public class Enemy extends GameObject {
-	int counter;
+	int speed = 1; // Movement along the z Axis
+	int enemyType = 1; //1 to n(3) possible Enemytypes
 	Rectangle front;
 	Rectangle back;
 	Rectangle left;
 	Rectangle right;
 	Rectangle top;
 	Rectangle bottom;
+	
 	public Enemy(String name, Game game) {
 		super(name, game);
+		this.setEnemyType(1);
 		//this.setZtarget();
 		this.xScale = 40;
 		this.yScale = 5;
@@ -37,22 +41,41 @@ public class Enemy extends GameObject {
 	@Override
 	public void move(){
 		if(this.getAlphatarget() > this.getRalpha()){
-			this.setRalpha(this.getRalpha());
+			this.setRalpha(this.getRalpha() + 1); //TODO change ralpha to double
 		} else if(this.getAlphatarget() < this.getRalpha()){
-			this.setRalpha(this.getRalpha());
+			this.setRalpha(this.getRalpha() - 1); //TODO same here
 		}
 
 
 		if(this.getZtarget() > this.getZpos()){
-			this.setZpos(this.getZpos() + 1);
+			this.setZpos(this.getZpos() + speed);
 		}else if(this.getZtarget() < this.getZpos()){
-			this.setZpos(this.getZpos() - 1);
+			this.setZpos(this.getZpos() - speed);
 		}
 		this.setDirty(true);
 	}
 	
-	public void movementLogic(){
-		
+	@Override
+	public void movementLogic(int step){
+		int type = this.getEnemyType();
+		switch(type){
+		case 1:
+			Random rnd = new Random();
+			int i = rnd.nextInt(200);
+			if(i >= 199) {
+				if(i % 2 == 0){
+					this.setAlphatarget(this.getAlphatarget() + step);
+				}else{
+					this.setAlphatarget(this.getAlphatarget() - step);
+			}
+			break;
+			}
+		case 2:
+			break;
+		case 3:
+			break;
+		default: break;
+		}
 	}
 	
 	@Override
@@ -99,7 +122,15 @@ public class Enemy extends GameObject {
 		bottom.matricesTomodelMatrix();
 		this.buffer();
 	}
+
 	
+	
+	public int getEnemyType() {
+		return enemyType;
+	}
+	public void setEnemyType(int enemyType) {
+		this.enemyType = enemyType;
+	}
 	@Override
 	public void setxScale(int x){
 		this.xScale = x;

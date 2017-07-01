@@ -28,6 +28,7 @@ import de.matthiasmann.twl.utils.PNGDecoder.Format;
 //TODO place holder
 public class Game {
 	private Level currLevel;
+	private int levelNr = 1;
 	private String state = "startmenu";
 	private Map<String, GameObject> gameObjects;
 	private List<GameObject> deleteQueue = new ArrayList<GameObject>();
@@ -42,7 +43,8 @@ public class Game {
 	public double shootTime = 0f;
 	public int shotsFired = 0;
 	private int uniqueid = 0;
-	private Level level = null;
+	private Level level = null; //TODO unterschied currLevel?
+	
 	
 	public Game(){
 		this.setHud(new HUD(this));
@@ -112,8 +114,13 @@ public class Game {
 				this.addGameObject(level.getPlayer());
 				this.addGameObject(level.getTube());
 				this.setState("playing");
+				
 				break;
 			case "playing":
+				if(this.nextLevel()){
+					this.setLevelNr(this.getLevelNr() + 1);
+					this.setState("pause");
+				}
 				this.gameEngine.spawnEnemy();
 				this.gameEngine.queueObjects();
 				this.gameEngine.moveObjects();
@@ -149,6 +156,11 @@ public class Game {
 			
 		}
 	}
+	private boolean nextLevel() {
+		if(this.getLevel().isFinished())return true;
+		return false;
+	}
+
 	/**
 	 * limit fps and cpu usage
 	 * @param fps
@@ -281,6 +293,13 @@ public class Game {
 
 	public void setLevel(Level level) {
 		this.level = level;
+	}
+	public int getLevelNr() {
+		return levelNr;
+	}
+
+	public void setLevelNr(int levelNr) {
+		this.levelNr = levelNr;
 	}
 
 }

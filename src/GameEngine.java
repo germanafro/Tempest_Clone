@@ -52,8 +52,15 @@ public class GameEngine {
 			String name = gameObject.getName();
 			boolean zreached = false;
 			boolean alphareached = false;
+			
+			//drop ifelse cases?
 			if(name.toLowerCase().contains("enemy")){
+				if(gameObject.getAlphatarget() == gameObject.getRalpha()){
+					gameObject.movementLogic(game.getLevel().getTube().getStepr());
+				}
+				// new Function for different moving beheavior
 				gameObject.move();
+				
 				if(gameObject.getZpos() >= gameObject.getZtarget()){
 					zreached = true;
     				game.destroyObject(name);
@@ -91,25 +98,29 @@ public class GameEngine {
     			
     			int projectileAlpha = gameObject.getRalpha() % 360;
     			
-    			Set<String> schl = game.getGameObjects().keySet();
     			
-    			for(String enemysName: schl){
+    			//TODO work with iterator over GameObject<> Map ?
+    			Set<String> keys = game.getGameObjects().keySet();
+    			
+    			for(String enemysName: keys){
     				if(enemysName.contains("enemy")){
 	    				if(game.getGameObjects().containsKey(enemysName)){
-	    					System.out.print("[DEBUG] Gegner in GameObject<>");
+	    					//System.out.print("[DEBUG] Gegner in GameObject<>");
 	    					GameObject enemyObject = game.getGameObjects().get(enemysName);
-	    					boolean touchZ = Math.abs(enemyObject.getZpos() - gameObject.getZpos()) < 5;
+	    					boolean touchZ = Math.abs(enemyObject.getZpos() - gameObject.getZpos()) < 20;
 	    					int enemyAlpha = enemyObject.getRalpha();
 	    					
 	    					if(projectileAlpha < 0) projectileAlpha = 360 + projectileAlpha;
 	    					if(enemyAlpha < 0) enemyAlpha = 360 + enemyAlpha;
-	    					System.out.println("EnemyAlpha: " + enemyAlpha + "projectileAlpha: " + projectileAlpha);
-	    					System.out.println("Level Step: " + this.game.getLevel().getTube().getStepr());
+	    					//System.out.println("EnemyAlpha: " + enemyAlpha + "projectileAlpha: " + projectileAlpha);
+	    					//System.out.println("Level Step: " + this.game.getLevel().getTube().getStepr());
 	    					boolean touchR = Math.abs(projectileAlpha - enemyAlpha) < this.game.getLevel().getTube().getStepr();
 	    					 if(touchZ && touchR){
-	    						 System.out.println("Zerstöre" + gameObject.getName());
+	    						// System.out.println("[Debug]Zerstöre" + gameObject.getName());
+	    						// System.out.println("[Debug]Zerstöre" + enemyObject.getName());
 	    						 gameObject.setDestroy(true);
 	    						 enemyObject.setDestroy(true);
+	    						 game.getLevel().setKills(game.getLevel().getKills() + 1);
 	    					 }
     					 
     					 }
@@ -122,16 +133,23 @@ public class GameEngine {
 	}
 	
 	public void spawnEnemy(){
+		Level level = game.getLevel();
 		Timer timer = game.getTimer();
         double now = timer.getTime();
-        float spawnspeed = game.getLevel().getSpawnspeed(); // limiter for Enemy spawn speed
+        double spawnspeed = game.getLevel().getSpawnspeed(); // limiter for Enemy spawn speed
     	double enemyTime = game.getLevel().getEnemyTime();
     	Random random = new Random();
 
         if (now - enemyTime > spawnspeed) {
-        	game.getLevel().setEnemyTime(timer.getTime());
-        	game.getLevel().setSpawnspeed(0.3f + random.nextFloat()); // randomize next enemy spawn :P 
+        	level.setEnemyTime(timer.getTime());
         	Enemy enemy = new Enemy("enemy", game);
+        	level.setEnemycount(level.getEnemycount() + 1);
+        	//System.out.println("Enemy Count: " + level.getEnemycount());
+        	if(level.getEnemycount() % level.getSpawnCurve() == 0){
+        		level.setSpawnspeed(((level.getSpawnspeed() - 0.05)));
+        		//System.out.println("Spawnspeed: " + level.getSpawnspeed());
+        		
+        		} 
         	Player player = this.game.getLevel().getPlayer();
         	enemy.setX(player.getX());
         	enemy.setY(player.getY());
@@ -145,6 +163,8 @@ public class GameEngine {
         }
 	}
 
+
+	
 	private void playerLoseLife(Player player) {
 		// TODO Auto-generated method stub
 		System.out.println("ouch!");

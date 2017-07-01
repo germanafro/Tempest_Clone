@@ -46,8 +46,10 @@ public class Player extends GameObject {
 	@Override
 	public void move(){
 		if(this.getAlphatarget() > this.getRalpha()){
+			System.out.println(getRalpha());
 			this.setRalpha(this.getRalpha() + 1);
 		} else if(this.getAlphatarget() < this.getRalpha()){
+			System.out.println(getRalpha());
 			this.setRalpha(this.getRalpha() - 1);
 		}
 
