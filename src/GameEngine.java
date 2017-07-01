@@ -82,12 +82,12 @@ public class GameEngine {
     		// check collision with player
     		if(name.toLowerCase().contains("enemy")){
     			Player player = game.getLevel().getPlayer();
-    			boolean touchz = Math.abs(player.getZpos() - gameObject.getZpos()) < 20;
+    			boolean touchz = Math.abs(player.getZpos() - gameObject.getZpos()) < 22;
     			int playeralpha = player.getRalpha()%360;
     			int enemyalpha = gameObject.getRalpha()%360;
     			if (playeralpha < 0) playeralpha = 360 + playeralpha;
     			if (enemyalpha < 0) enemyalpha = 360 + enemyalpha;
-    			boolean touchr = Math.abs(playeralpha - enemyalpha) <= this.game.getLevel().getTube().getStepr(); 
+    			boolean touchr = Math.abs(playeralpha - enemyalpha) <= this.game.getLevel().getTube().getStepr()/2; 
     			if (touchz && touchr){
     				gameObject.setDestroy(true);
     				this.game.sfxPlay(new Sound("sfx/Grenade-SoundBible.com-1777900486.mp3"));
@@ -108,14 +108,14 @@ public class GameEngine {
 	    				if(game.getGameObjects().containsKey(enemysName)){
 	    					//System.out.print("[DEBUG] Gegner in GameObject<>");
 	    					GameObject enemyObject = game.getGameObjects().get(enemysName);
-	    					boolean touchZ = Math.abs(enemyObject.getZpos() - gameObject.getZpos()) < 20;
+	    					boolean touchZ = Math.abs(enemyObject.getZpos() - gameObject.getZpos()) < 22;
 	    					int enemyAlpha = enemyObject.getRalpha();
 	    					
 	    					if(projectileAlpha < 0) projectileAlpha = 360 + projectileAlpha;
 	    					if(enemyAlpha < 0) enemyAlpha = 360 + enemyAlpha;
 	    					//System.out.println("EnemyAlpha: " + enemyAlpha + "projectileAlpha: " + projectileAlpha);
 	    					//System.out.println("Level Step: " + this.game.getLevel().getTube().getStepr());
-	    					boolean touchR = Math.abs(projectileAlpha - enemyAlpha) <= this.game.getLevel().getTube().getStepr();
+	    					boolean touchR = Math.abs(projectileAlpha - enemyAlpha) <= this.game.getLevel().getTube().getStepr()/2;
 	    					 if(touchZ && touchR){
 	    						// System.out.println("[Debug]Zerstöre" + gameObject.getName());
 	    						// System.out.println("[Debug]Zerstöre" + enemyObject.getName());

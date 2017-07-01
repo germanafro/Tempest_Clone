@@ -152,13 +152,13 @@ public class RenderEngine {
     private float deltaRotZ = 5f;
     
     // toggles & interactions
-    private boolean showMesh = true;
+    private boolean showMesh = false;
     private boolean showNormals = false;
     private boolean useBackfaceCulling = false;
-    private boolean useDepthTest = false;
+    private boolean useDepthTest = true;
     private int useNormalColoring = 0;
     private int useNormalColoringLocation = 0;
-    private int useTexture = 0;
+    private int useTexture = 1;
     private int useTextureLocation = 0;
     
     // HUD TODO remove me
