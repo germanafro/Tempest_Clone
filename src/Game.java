@@ -148,7 +148,8 @@ public class Game {
 			timer.update();
 			this.hud.getLabelUPS().setText("UPS: " + timer.getUps());
 			this.hud.getLabelFPS().setText("FPS: " + timer.getFps());
-			
+			this.hud.getKills().setText("Abschuesse: " + this.getLevel().getKills());
+			this.hud.getLevel().setText("Level: " + this.getLevelNr());
 			//Step3 fps cap if vsynch is off
 	        //this.sync(60);
 			
