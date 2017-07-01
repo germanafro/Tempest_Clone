@@ -217,7 +217,7 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
 	public void actionPerformed(ActionEvent e) {
 		// rectangle - make sure these indexes are right
 		JMenuItem source = (JMenuItem) e.getSource();
-		System.out.println("you just slected: " + source.getText());
+		//System.out.println("you just slected: " + source.getText());
 		GameObject gameObject = null;
 		if(e.getSource() == this.newobjects.get(0)){
 			this.selected.setText(" current Object: player");
@@ -245,7 +245,7 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
 			Iterator<JMenuItem> menuitems = this.getObjects().values().iterator();
 	    	while(menuitems.hasNext()){
 	    		JMenuItem menuitem = menuitems.next();
-				System.out.println("checking selector: " + menuitem.getText() + " == " + ((JMenuItem) e.getSource()).getText() + " is " + (e.getSource() == menuitem));
+				//System.out.println("checking selector: " + menuitem.getText() + " == " + ((JMenuItem) e.getSource()).getText() + " is " + (e.getSource() == menuitem));
 				if(e.getSource() == menuitem){
 					String name = menuitem.getText();
 					gameObject = this.game.getGameObjects().get(name);

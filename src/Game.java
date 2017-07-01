@@ -31,6 +31,8 @@ public class Game {
 	private String state = "startmenu";
 	private Map<String, GameObject> gameObjects;
 	private List<GameObject> deleteQueue = new ArrayList<GameObject>();
+	private List<GameObject> moveQueue = new ArrayList<GameObject>();
+	private List<GameObject> dirtyQueue = new ArrayList<GameObject>();
 	private GameEngine gameEngine;
 	private RenderEngine renderEngine;
 	private boolean pause;
@@ -39,9 +41,8 @@ public class Game {
 	public float shootingSpeed = 1f/2; // limiter for player shooting speed
 	public double shootTime = 0f;
 	public int shotsFired = 0;
-	
-	private Player player = null;
-	private Tube tube = null;
+	private int uniqueid = 0;
+	private Level level = null;
 	
 	public Game(){
 		this.setHud(new HUD(this));
@@ -107,22 +108,17 @@ public class Game {
 			float delta = timer.getDelta();
 			switch(state){
 			case "starting":
-				this.addGameObject(new Player("player1", this));
-				this.addGameObject(new Tube("tube1", this));
-				setPlayer((Player)this.gameObjects.get("player1"));
-				tube = (Tube)this.gameObjects.get("tube1");
+				this.setLevel(Levels.Level1(this));
+				this.addGameObject(level.getPlayer());
+				this.addGameObject(level.getTube());
 				this.setState("playing");
 				break;
 			case "playing":
-				if(!this.isPause()){
-					//this.destroyObject("player1");
-					//this.addGameObject(new Player("player1", this));
-					this.gameEngine.moveObjects();
-					//player.move(1);
-				}else{
-					// dont do anything while the game is paused
-				}
+				this.gameEngine.spawnEnemy();
+				this.gameEngine.queueObjects();
+				this.gameEngine.moveObjects();
 				break;
+			case "pause":
 			case "startmenu":
 			case "ending":
 			default:
@@ -177,16 +173,15 @@ public class Game {
 
 	public void addGameObject(GameObject gameObject) {
 		String name = gameObject.getName();
-		if (gameObjects.containsKey(name)) gameObject.setName(name + gameObjects.size());
+		if (gameObjects.containsKey(name)) gameObject.setName(name + uniqueid++);
 		this.gameObjects.put(gameObject.getName(), gameObject);
 		this.hud.registerNewObject(gameObject.getName());
 	}
 	
 	public void destroyObject(String name){
-		//TODO this might desynch 
 		JMenuItem item = hud.getObjects().get(name);
 		if (item != null) {
-			System.out.println("item: " + item.getText());
+			//System.out.println("item: " + item.getText());
 			Map<String, JMenuItem> items = hud.getObjects();
 			JMenu objectMenu = hud.getObjectMenu();
 			items.remove(name);
@@ -196,7 +191,7 @@ public class Game {
 		}
 		GameObject gameObject = this.getGameObjects().get(name);
 		if(gameObject != null){
-			this.deleteQueue.add(gameObject);
+			gameObject.setDestroy(true);
 		}
 	}
 
@@ -248,22 +243,6 @@ public class Game {
 		this.hud = hud;
 	}
 
-	public Tube getTube() {
-		return tube;
-	}
-
-	public void setTube(Tube tube) {
-		this.tube = tube;
-	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
-	public void setPlayer(Player player) {
-		this.player = player;
-	}
-
 	public List<GameObject> getDeleteQueue() {
 		return deleteQueue;
 	}
@@ -278,6 +257,30 @@ public class Game {
 
 	public void setTimer(Timer timer) {
 		this.timer = timer;
+	}
+
+	public List<GameObject> getMoveQueue() {
+		return moveQueue;
+	}
+
+	public void setMoveQueue(List<GameObject> moveQueue) {
+		this.moveQueue = moveQueue;
+	}
+
+	public List<GameObject> getDirtyQueue() {
+		return dirtyQueue;
+	}
+
+	public void setDirtyQueue(List<GameObject> dirtyQueue) {
+		this.dirtyQueue = dirtyQueue;
+	}
+
+	public Level getLevel() {
+		return level;
+	}
+
+	public void setLevel(Level level) {
+		this.level = level;
 	}
 
 }

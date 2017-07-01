@@ -293,8 +293,8 @@ public class RenderEngine {
             	
             	//Player controls
             	if ( key == GLFW_KEY_A && action == GLFW_PRESS ){
-            		Player player = game.getPlayer();
-            		Tube tube = game.getTube();
+            		Player player = game.getLevel().getPlayer();
+            		Tube tube = game.getLevel().getTube();
             		if(player != null && tube != null && !game.isPause()){
             			int alphatarget = player.getAlphatarget();
             			if (player.getRalpha() - alphatarget < tube.getStepr()){ // protects from overflowing
@@ -304,8 +304,8 @@ public class RenderEngine {
 
             	}
             	if ( key == GLFW_KEY_D && action == GLFW_PRESS ){
-            		Player player = game.getPlayer();
-            		Tube tube = game.getTube();
+            		Player player = game.getLevel().getPlayer();
+            		Tube tube = game.getLevel().getTube();
             		if(player != null && tube != null && !game.isPause()){
             			int alphatarget = player.getAlphatarget();
             			if (alphatarget - player.getRalpha() < tube.getStepr()){
@@ -321,8 +321,8 @@ public class RenderEngine {
 
                     if (now - lastshot > targetTime) {
                     	game.shootTime = timer.getTime();
-                    	Player player = game.getPlayer();
-                		Tube tube = game.getTube();
+                    	Player player = game.getLevel().getPlayer();
+                		Tube tube = game.getLevel().getTube();
                 		if(player != null && tube != null && !game.isPause()){
                 			Projectile proj = new Projectile("playerprojectile" + game.shotsFired++, game);
                 			proj.setX(player.getX());
@@ -330,6 +330,7 @@ public class RenderEngine {
                 			proj.setZ(player.getZ());
                 			proj.setRalpha(player.getRalpha());
                 			proj.setAlphatarget(player.getAlphatarget());
+                			proj.setZpos(0);
                 			proj.setZtarget(-100);
                 			game.addGameObject(proj);
                 		}
@@ -661,7 +662,7 @@ public class RenderEngine {
 	}
     public void deleteAlloc(Primitive obj){
     				// free memory
-    	System.out.println("cleaning: " + obj.getType());
+    	//System.out.println("cleaning: " + obj.getType());
     				GL15.glDeleteBuffers(obj.getVboId());
     	        	GL15.glDeleteBuffers(obj.getVbocId());
     	        	GL15.glDeleteBuffers(obj.getVbonId());

@@ -58,6 +58,8 @@ public abstract class GameObject {
 			new RotationMatrix(ralpha, mat.Axis.Z) // now rotate along z axis to move left ~ right along tube
 			};
 	private boolean dirty = true;
+	private boolean moving = false;
+	private boolean destroy = false;
 
   	
   	public GameObject(String name, Game game){
@@ -81,7 +83,7 @@ public abstract class GameObject {
 		Matrix4[] matrices = this.getMatrices();
 		matrices[0] = new RotationMatrix(0, mat.Axis.X); // individual part2: then is rotated to its proper orientation 
 		matrices[1] = new TranslationMatrix(new Vec3(0,0,0)); // individual part1: each rectangle uses different z value depending on orientation
-		matrices[2] = new TranslationMatrix(new Vec3(x,y,z + zpos * game.getTube().getStepz())); // shared: offset to properly sit on tube
+		matrices[2] = new TranslationMatrix(new Vec3(x,y,z + zpos * game.getLevel().getTube().getStepz())); // shared: offset to properly sit on tube
 		matrices[3] = new RotationMatrix(getRalpha(), mat.Axis.Z); //shared: this will be the players movement option across  the tube
 		for(Primitive obj : this.getGeom()){
 			obj.setMatrices(matrices);
@@ -217,6 +219,8 @@ public abstract class GameObject {
 	}
 	public void setAlphatarget(int alphatarget) {
 		this.alphatarget = alphatarget;
+		this.setMoving(true);
+		this.setDirty(true);
 	}
 	public int getRalpha() {
 		return ralpha;
@@ -235,12 +239,30 @@ public abstract class GameObject {
 	}
 	public void setZtarget(int ztarget) {
 		this.ztarget = ztarget;
+		this.setMoving(true);
+		this.setDirty(true);
 	}
 	public Matrix4[] getMatrices() {
 		return matrices;
 	}
 	public void setMatrices(Matrix4[] matrices) {
 		this.matrices = matrices;
+	}
+
+	public boolean isMoving() {
+		return moving;
+	}
+
+	public void setMoving(boolean moving) {
+		this.moving = moving;
+	}
+
+	public boolean isDestroy() {
+		return destroy;
+	}
+
+	public void setDestroy(boolean destroy) {
+		this.destroy = destroy;
 	}
 	
 

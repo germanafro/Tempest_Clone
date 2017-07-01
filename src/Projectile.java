@@ -41,7 +41,7 @@ public class Projectile extends GameObject {
 		Matrix4[] matrices = this.getMatrices();
 		matrices[0] = new RotationMatrix(0, mat.Axis.X); // individual part2: then is rotated to its proper orientation 
 		matrices[1] = new TranslationMatrix(new Vec3(0,0,0)); // individual part1: each rectangle uses different z value depending on orientation
-		matrices[2] = new TranslationMatrix(new Vec3(x,y,z + zpos * getGame().getTube().getStepz())); // shared: offset to properly sit on tube
+		matrices[2] = new TranslationMatrix(new Vec3(x,y,z + zpos * getGame().getLevel().getTube().getStepz())); // shared: offset to properly sit on tube
 		matrices[3] = new RotationMatrix(getRalpha(), mat.Axis.Z); //shared: this will be the players movement option across  the tube
 		this.offset = 0.5f* new Float(this.getScale())/100f;
 		this.xoffset = offset * new Float(this.getxScale())/100f;

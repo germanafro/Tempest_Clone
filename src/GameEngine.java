@@ -1,6 +1,9 @@
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
 
 public class GameEngine {
 	
@@ -26,31 +29,99 @@ public class GameEngine {
 	 * implement smoother movements
 	 * through decreasing delta and remembering a target to reach
 	 */
-	public void moveObjects(){
+	public void queueObjects(){
+		game.setDirtyQueue(new ArrayList<GameObject>());
+		game.setMoveQueue(new ArrayList<GameObject>());
 		Iterator<GameObject> gameObjects = this.game.getGameObjects().values().iterator();
     	while(gameObjects.hasNext()){
     		GameObject gameObject = gameObjects.next();
-    		//System.out.println("processing moveObject:" + gameObject.getName());
-    		//System.out.println("alphatarget: " + gameObject.getAlphatarget() + " alpha: " + gameObject.getRalpha());
-    		//System.out.println("Ztarget: " + gameObject.getZtarget() + " Zpos: " + gameObject.getZpos());
+    		
+    		if(gameObject.isDestroy()){
+    			game.getDeleteQueue().add(gameObject);
+    		}else{
+    			if(gameObject.isMoving()) game.getMoveQueue().add(gameObject);
+    			if(gameObject.isDirty())  game.getDirtyQueue().add(gameObject);
+    		}
+    	}
+	}
+	
+	public void moveObjects(){
+		
+		for(GameObject gameObject : game.getMoveQueue()){
+			String name = gameObject.getName();
+			boolean zreached = false;
+			boolean alphareached = false;
     		if(gameObject.getAlphatarget() > gameObject.getRalpha()){
     			gameObject.move(1, 0);
     		} else if(gameObject.getAlphatarget() < gameObject.getRalpha()){
     			gameObject.move(-1, 0);
     		}
     		else{
-    			//TODO stay idle for now}
+    			 alphareached = true;
     		}
     		if(gameObject.getZtarget() > gameObject.getZpos()){
     			gameObject.move(0, 1);
     		}else if(gameObject.getZtarget() < gameObject.getZpos()){
     			gameObject.move(0, -1);
     		}else{
-    			String name = gameObject.getName();
+    			zreached = true;
     			if(name.contains("projectile")){
     				game.destroyObject(name);
+    			}else if(name.contains("enemy")){
+    				game.destroyObject(name);
+    			}else{
+    				gameObject.setMoving(!(alphareached && zreached)); // false if both are true (nand)
     			}
     		}
+    		// check collision with player
+    		if(name.toLowerCase().contains("enemy")){
+    			Player player = game.getLevel().getPlayer();
+    			boolean touchz = Math.abs(player.getZpos() - gameObject.getZpos()) < 20;
+    			int playeralpha = player.getRalpha()%360;
+    			int enemyalpha = gameObject.getRalpha()%360;
+    			if (playeralpha < 0) playeralpha = 360 + playeralpha;
+    			if (enemyalpha < 0) enemyalpha = 360 + enemyalpha;
+    			boolean touchr = Math.abs(playeralpha - enemyalpha) < this.game.getLevel().getTube().getStepr(); //TODO convert negative degrees to positive 
+    			if (touchz && touchr){
+    				gameObject.setDestroy(true);
+    				this.playerLoseLife(player);
+    				
+    			}
+    		// check collision with playerprojectile
+    		}else if(name.toLowerCase().contains("playerprojectile")){
+    			//TODO
+    		}
     	}
+	}
+	
+	public void spawnEnemy(){
+		Timer timer = game.getTimer();
+        double now = timer.getTime();
+        float spawnspeed = game.getLevel().getSpawnspeed(); // limiter for Enemy spawn speed
+    	double enemyTime = game.getLevel().getEnemyTime();
+    	Random random = new Random();
+
+        if (now - enemyTime > spawnspeed) {
+        	game.getLevel().setEnemyTime(timer.getTime());
+        	game.getLevel().setSpawnspeed(0.3f + random.nextFloat()); // randomize next enemy spawn :P 
+        	Enemy enemy = new Enemy("enemy", game);
+        	Player player = this.game.getLevel().getPlayer();
+        	enemy.setX(player.getX());
+        	enemy.setY(player.getY());
+        	enemy.setZ(2.5f);
+        	enemy.setRalpha(random.nextInt(360));
+        	enemy.setAlphatarget(game.getLevel().getTube().getStepr() * (random.nextInt(360) -180));
+        	enemy.setZpos(-100);
+        	enemy.setZtarget(0);
+        	game.addGameObject(enemy);
+        	
+        }
+	}
+
+	private void playerLoseLife(Player player) {
+		// TODO Auto-generated method stub
+		System.out.println("ouch!");
+		if(player.loseLife() < 1) game.setState("ending");
+		
 	}
 }

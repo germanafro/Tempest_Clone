@@ -14,16 +14,21 @@ public class Player extends GameObject {
 	Rectangle right;
 	Rectangle top;
 	Rectangle bottom;
+	private int lifes = 4;
 	
 	public Player(String name, Game game) {
 		super(name, game);
 		this.x = 0f;
-		this.z = 2.5f;
+		this.z = 2.2f;
 		this.y = -1.2f;
-		this.xScale = 10;
+		this.xScale = 40;
 		this.yScale = 5;
-		this.zScale = 20;
-		front = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), "player_jet.png");
+		this.zScale = 80;
+		this.zpos = 0;
+		this.setZtarget(0);
+		this.setRalpha(0);
+		this.setAlphatarget(0); 
+		front = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), "default.png");
 		back = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), "player_jet.png");
 		left = new Rectangle(this.getzScale(),this.getyScale(),this.getScale(), this.getGame(), "player_jet.png");
 		right = new Rectangle(this.getzScale(),this.getyScale(),this.getScale(), this.getGame(), "player_jet.png");
@@ -120,5 +125,14 @@ public class Player extends GameObject {
 			obj.setScale(scale);
 		}
 		this.setDirty(true);
+	}
+	public int getLifes() {
+		return lifes;
+	}
+	public void setLifes(int lifes) {
+		this.lifes = lifes;
+	}
+	public int loseLife() {
+		return --lifes;
 	}
 }
