@@ -38,6 +38,7 @@ public class Game {
 	private Timer timer = new Timer();
 	public float shootingSpeed = 1f/2; // limiter for player shooting speed
 	public double shootTime = 0f;
+	public int shotsFired = 0;
 	
 	private Player player = null;
 	private Tube tube = null;

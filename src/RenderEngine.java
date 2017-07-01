@@ -324,7 +324,7 @@ public class RenderEngine {
                     	Player player = game.getPlayer();
                 		Tube tube = game.getTube();
                 		if(player != null && tube != null && !game.isPause()){
-                			Projectile proj = new Projectile("playerprojectile", game);
+                			Projectile proj = new Projectile("playerprojectile" + game.shotsFired++, game);
                 			proj.setX(player.getX());
                 			proj.setY(player.getY());
                 			proj.setZ(player.getZ());
@@ -663,15 +663,15 @@ public class RenderEngine {
     				// free memory
     	System.out.println("cleaning: " + obj.getType());
     				GL15.glDeleteBuffers(obj.getVboId());
-    	    		GL15.glDeleteBuffers(obj.getVaoId());
-    				GL15.glDeleteBuffers(obj.getVboId());
     	        	GL15.glDeleteBuffers(obj.getVbocId());
     	        	GL15.glDeleteBuffers(obj.getVbonId());
     	        	GL15.glDeleteBuffers(obj.getVbotId());
     				GL15.glDeleteBuffers(obj.getVboiId());
-    				GL15.glDeleteBuffers(obj.getVaoNormalLinesId());
+       				GL30.glDeleteVertexArrays(obj.getVaoId());
+    			
     	        	GL15.glDeleteBuffers(obj.getVbonlId());
     	        	GL15.glDeleteBuffers(obj.getVbonlcId());
+    	        	GL30.glDeleteVertexArrays(obj.getVaoNormalLinesId());
     }
     
     /**
@@ -730,11 +730,11 @@ public class RenderEngine {
         		
         		//update dirty gameObjects
         		GL20.glUseProgram(pId);
-    		//	if(gameObject.isDirty()){
+    			if(gameObject.isDirty()){
     				gameObject.update();
     				gameObject.buffer(); // TODO encapsulate in update()
-    				//gameObject.setDirty(false);
-    			//}
+    				gameObject.setDirty(false);
+    			}
     			GL20.glUseProgram(0);
         		for(Primitive obj : gameObject.getGeom()){
         			//gameObject.buffer();
