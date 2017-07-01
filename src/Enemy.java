@@ -6,6 +6,7 @@ import mat.TranslationMatrix;
 import mat.Vec3;
 
 public class Enemy extends GameObject {
+	int counter;
 	Rectangle front;
 	Rectangle back;
 	Rectangle left;
@@ -14,7 +15,7 @@ public class Enemy extends GameObject {
 	Rectangle bottom;
 	public Enemy(String name, Game game) {
 		super(name, game);
-		// TODO Auto-generated constructor stub
+		//this.setZtarget();
 		this.xScale = 40;
 		this.yScale = 5;
 		this.zScale = 80;
@@ -33,6 +34,27 @@ public class Enemy extends GameObject {
 		this.addGeom(bottom);
 		this.setDirty(true);
 	}
+	@Override
+	public void move(){
+		if(this.getAlphatarget() > this.getRalpha()){
+			this.setRalpha(this.getRalpha());
+		} else if(this.getAlphatarget() < this.getRalpha()){
+			this.setRalpha(this.getRalpha());
+		}
+
+
+		if(this.getZtarget() > this.getZpos()){
+			this.setZpos(this.getZpos() + 1);
+		}else if(this.getZtarget() < this.getZpos()){
+			this.setZpos(this.getZpos() - 1);
+		}
+		this.setDirty(true);
+	}
+	
+	public void movementLogic(){
+		
+	}
+	
 	@Override
 	public void update(){
 		//shared

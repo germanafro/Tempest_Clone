@@ -51,28 +51,26 @@ public class GameEngine {
 			String name = gameObject.getName();
 			boolean zreached = false;
 			boolean alphareached = false;
-    		if(gameObject.getAlphatarget() > gameObject.getRalpha()){
-    			gameObject.move(1, 0);
-    		} else if(gameObject.getAlphatarget() < gameObject.getRalpha()){
-    			gameObject.move(-1, 0);
-    		}
-    		else{
-    			 alphareached = true;
-    		}
-    		if(gameObject.getZtarget() > gameObject.getZpos()){
-    			gameObject.move(0, 1);
-    		}else if(gameObject.getZtarget() < gameObject.getZpos()){
-    			gameObject.move(0, -1);
-    		}else{
-    			zreached = true;
-    			if(name.contains("projectile")){
+			if(name.toLowerCase().contains("enemy")){
+				gameObject.move();
+				if(gameObject.getZpos() >= gameObject.getZtarget()){
+					zreached = true;
     				game.destroyObject(name);
-    			}else if(name.contains("enemy")){
-    				game.destroyObject(name);
-    			}else{
-    				gameObject.setMoving(!(alphareached && zreached)); // false if both are true (nand)
-    			}
-    		}
+				}
+				if(gameObject.getAlphatarget() == gameObject.getRalpha()){
+					alphareached = true;
+				}
+			}
+			
+			else if(name.toLowerCase().contains("player")){
+				gameObject.move();
+				}
+			else if(name.toLowerCase().contains("playerprojectile")){
+				gameObject.move();
+			}
+			gameObject.setMoving(!(alphareached && zreached)); // false if both are true (nand)
+	    			
+	    		
     		// check collision with player
     		if(name.toLowerCase().contains("enemy")){
     			Player player = game.getLevel().getPlayer();
@@ -88,9 +86,28 @@ public class GameEngine {
     				
     			}
     		// check collision with playerprojectile
-    		}else if(name.toLowerCase().contains("playerprojectile")){
-    			//TODO
-    		}
+    		}/*else if(name.toLowerCase().contains("playerprojectile")){
+    			
+    			int projectileAlpha = gameObject.getRalpha() % 360;
+    			game.getGameObjects().keySet();
+    			
+    			for(String enemiesName: game.getGameObjects().keySet()){
+    				if(game.getGameObjects().containsKey(enemiesName)){
+    					GameObject enemieObject = game.getGameObjects().get(enemiesName);
+    					
+    					boolean touchZ = Math.abs(enemieObject.getZpos() - gameObject.getZpos()) < 20;
+    					int enemyAlpha = enemieObject.getRalpha();
+    					if(projectileAlpha < 0) projectileAlpha = 360 + projectileAlpha;
+    					if(enemyAlpha < 0) enemyAlpha = 360 + enemyAlpha;
+    					boolean touchR = Math.abs(projectileAlpha - enemyAlpha) < this.game.getLevel().getTube().getStepr();
+    					 if(touchZ && touchR){
+    						 gameObject.setDestroy(true);
+    					 }
+    					
+    				}
+    			}
+    			
+    		}*/
     	}
 	}
 	
@@ -109,8 +126,8 @@ public class GameEngine {
         	enemy.setX(player.getX());
         	enemy.setY(player.getY());
         	enemy.setZ(2.5f);
-        	enemy.setRalpha(random.nextInt(360));
-        	enemy.setAlphatarget(game.getLevel().getTube().getStepr() * (random.nextInt(360) -180));
+        	enemy.setRalpha((random.nextInt(360) * game.getLevel().getTube().getStepr()) % 360);
+        	enemy.setAlphatarget(enemy.getRalpha()); //game.getLevel().getTube().getStepr() * (random.nextInt(360) -180)
         	enemy.setZpos(-100);
         	enemy.setZtarget(0);
         	game.addGameObject(enemy);

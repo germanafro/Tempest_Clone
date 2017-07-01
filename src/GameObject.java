@@ -69,12 +69,13 @@ public abstract class GameObject {
 		this.addGeom(new Rectangle(100,100,100,game));
 	}
   	
-  	public void move(int alpha, int z) {
+  	public void move() { //Alte Parameter, nur zur Sicherheit: int alpha, int z
 		// z axis rotation
+  		/*
 		this.setRalpha(this.getRalpha() + alpha);
 		this.setZpos(this.getZpos() + z);
-		this.setDirty(true);
-	}
+		this.setDirty(true);*/
+			}
 	public void update(){
 		//shared
 		this.xoffset = offset * new Float(this.getxScale())/100f * new Float(this.getScale())/100f;

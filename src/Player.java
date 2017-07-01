@@ -44,6 +44,16 @@ public class Player extends GameObject {
 		this.setDirty(true);
 	}
 	@Override
+	public void move(){
+		if(this.getAlphatarget() > this.getRalpha()){
+			this.setRalpha(this.getRalpha() + 1);
+		} else if(this.getAlphatarget() < this.getRalpha()){
+			this.setRalpha(this.getRalpha() - 1);
+		}
+
+		this.setDirty(true);
+	}
+	@Override
 	public void update(){
 		//shared
 		Matrix4[] matrices = this.getMatrices();
