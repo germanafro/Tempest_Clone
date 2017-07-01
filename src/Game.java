@@ -103,7 +103,6 @@ public class Game {
 				this.bgm = this.getLevel().getBgm();
 				this.bgmLoop();
 				this.setState("playing");
-				
 				break;
 			case "playing":
 				if(this.nextLevel()){
@@ -135,7 +134,6 @@ public class Game {
 			timer.updateUPS();
 			
 			
-			
 			//Step 2 render game
 			try {
 				this.getRenderEngine().render();
@@ -157,7 +155,7 @@ public class Game {
 			
 		}
 		//clean up
-		if(bgm != null) bgm.stop();
+		if(bgm != null) {bgm.stop(); bgm.close();}
 	}
 	private boolean nextLevel() {
 		if(this.getLevel().isFinished())return true;
@@ -218,6 +216,7 @@ public class Game {
 		GameObject gameObject = this.getGameObjects().get(name);
 		if(gameObject != null){
 			gameObject.setDestroy(true);
+			gameObject.getSpawnSound().close();
 		}
 	}
 

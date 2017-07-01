@@ -189,7 +189,6 @@ public class RenderEngine {
     }
  
     private void init() {
-    	
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
     	GLFWErrorCallback.createPrint(System.err).set();
@@ -689,21 +688,16 @@ public class RenderEngine {
         // Run once unless the user has attempted to close
         // the window or has pressed the ESCAPE key.
         if (!glfwWindowShouldClose(getWindow())) {
-        	
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-          
             // =============================== Update matrices ====================================
             // Upload matrices to the uniform variables to shader program 0
 			GL20.glUseProgram(pId);
             GL20.glUniformMatrix4fv(projectionMatrixLocation, false , toFFB(projectionMatrix));
             GL20.glUniformMatrix4fv(viewMatrixLocation, false, toFFB(viewMatrix));
             
-            
             // Upload normal coloring and texture toggle
             GL20.glUniform1i(useNormalColoringLocation, useNormalColoring);
-             
             GL20.glUseProgram(0);
-
             for (GameObject gameObject : this.game.getDeleteQueue()){
             	for(Primitive obj : gameObject.getGeom()){
     				GL20.glUseProgram(pId);
@@ -714,7 +708,6 @@ public class RenderEngine {
         		this.game.getGameObjects().remove(gameObject.getName());
             }
             this.game.setDeleteQueue(new ArrayList<GameObject>());
-            
             // ================================== Draw objects =====================================
             
             Iterator<GameObject> gameObjects = this.game.getGameObjects().values().iterator();
@@ -814,11 +807,11 @@ public class RenderEngine {
 	            		GL30.glBindVertexArray(0);
 	            		GL20.glUseProgram(0);
             		}
+                	GL11.glFlush();
         		}//end obj loop
         	}// end gameObject loop
             // Swap the color buffer. We never draw directly to the screen, only in this buffer. So we need to display it
     		glfwSwapBuffers(getWindow());
-            
             // Poll for window events. The key callback above will only be invoked during this call.
             glfwPollEvents();
         	

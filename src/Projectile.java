@@ -40,6 +40,7 @@ public class Projectile extends GameObject {
 	public void move(){
 		this.setZpos(this.getZpos() - 3);
 		this.setDirty(true);
+		this.setMoving(true);
 	}
 	
 	public void update(){

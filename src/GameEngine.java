@@ -70,13 +70,25 @@ public class GameEngine {
 				}
 			}
 			
-			else if(name.toLowerCase().contains("player")){
-				gameObject.move();
-				}
 			else if(name.toLowerCase().contains("playerprojectile")){
 				gameObject.move();
+				if(gameObject.getZpos() <= gameObject.getZtarget()){
+					zreached = true;
+    				game.destroyObject(name);
+				}
+				if(gameObject.getAlphatarget() == gameObject.getRalpha()){
+					alphareached = true;
+				}
+			}
+			else if(name.toLowerCase().contains("player")){
+				gameObject.move();
+				zreached = true;
+				if(gameObject.getAlphatarget() == gameObject.getRalpha()){
+					alphareached = true;
+				}
 			}
 			gameObject.setMoving(!(alphareached && zreached)); // false if both are true (nand)
+			// delete enemies and projectiles, that reached the end
 	    			
 	    		
     		// check collision with player
@@ -124,12 +136,9 @@ public class GameEngine {
 	    						 this.game.sfxPlay(new Sound("sfx/Blast-SoundBible.com-2068539061.mp3"));
 	    						 game.getLevel().setKills(game.getLevel().getKills() + 1);
 	    					 }
-    					 
     					 }
-    					
     				}
-    			}
-    			
+    			}	
     		}
     	}
 	}

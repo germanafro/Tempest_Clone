@@ -65,5 +65,8 @@ public class Sound {
     }
     public void stop(){
             clip.stop();
-        }
     }
+    public void close(){
+    	clip.close();
+    }
+ }
