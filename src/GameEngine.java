@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class GameEngine {
 	
@@ -86,28 +87,37 @@ public class GameEngine {
     				
     			}
     		// check collision with playerprojectile
-    		}/*else if(name.toLowerCase().contains("playerprojectile")){
+    		}else if(name.toLowerCase().contains("playerprojectile")){
     			
     			int projectileAlpha = gameObject.getRalpha() % 360;
-    			game.getGameObjects().keySet();
     			
-    			for(String enemiesName: game.getGameObjects().keySet()){
-    				if(game.getGameObjects().containsKey(enemiesName)){
-    					GameObject enemieObject = game.getGameObjects().get(enemiesName);
-    					
-    					boolean touchZ = Math.abs(enemieObject.getZpos() - gameObject.getZpos()) < 20;
-    					int enemyAlpha = enemieObject.getRalpha();
-    					if(projectileAlpha < 0) projectileAlpha = 360 + projectileAlpha;
-    					if(enemyAlpha < 0) enemyAlpha = 360 + enemyAlpha;
-    					boolean touchR = Math.abs(projectileAlpha - enemyAlpha) < this.game.getLevel().getTube().getStepr();
-    					 if(touchZ && touchR){
-    						 gameObject.setDestroy(true);
+    			Set<String> schl = game.getGameObjects().keySet();
+    			
+    			for(String enemysName: schl){
+    				if(enemysName.contains("enemy")){
+	    				if(game.getGameObjects().containsKey(enemysName)){
+	    					System.out.print("[DEBUG] Gegner in GameObject<>");
+	    					GameObject enemyObject = game.getGameObjects().get(enemysName);
+	    					boolean touchZ = Math.abs(enemyObject.getZpos() - gameObject.getZpos()) < 5;
+	    					int enemyAlpha = enemyObject.getRalpha();
+	    					
+	    					if(projectileAlpha < 0) projectileAlpha = 360 + projectileAlpha;
+	    					if(enemyAlpha < 0) enemyAlpha = 360 + enemyAlpha;
+	    					System.out.println("EnemyAlpha: " + enemyAlpha + "projectileAlpha: " + projectileAlpha);
+	    					System.out.println("Level Step: " + this.game.getLevel().getTube().getStepr());
+	    					boolean touchR = Math.abs(projectileAlpha - enemyAlpha) < this.game.getLevel().getTube().getStepr();
+	    					 if(touchZ && touchR){
+	    						 System.out.println("Zerstöre" + gameObject.getName());
+	    						 gameObject.setDestroy(true);
+	    						 enemyObject.setDestroy(true);
+	    					 }
+    					 
     					 }
     					
     				}
     			}
     			
-    		}*/
+    		}
     	}
 	}
 	
