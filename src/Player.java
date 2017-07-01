@@ -8,28 +8,18 @@ import mat.Vec3;
 public class Player extends GameObject {
 	
 
-	float offset= 0f;
-	float xoffset = 0f;
-	float yoffset = 0f;
-	float zoffset = 0f;
 	Rectangle front;
 	Rectangle back;
 	Rectangle left;
 	Rectangle right;
 	Rectangle top;
 	Rectangle bottom;
-	private float x = 0f;
-	private float z = 2.8f;
-	private float y = -0.9f;
 	
-	public Player(String name, Primitive geom, Game game) {
-		super(name, game);
-		this.setGeom(new ArrayList<Primitive>());
-		this.addGeom(geom);
-		this.setDirty(true);
-	}
 	public Player(String name, Game game) {
 		super(name, game);
+		this.x = 0f;
+		this.z = 2.5f;
+		this.y = -1.2f;
 		this.xScale = 10;
 		this.yScale = 5;
 		this.zScale = 20;
@@ -51,47 +41,46 @@ public class Player extends GameObject {
 	@Override
 	public void update(){
 		//shared
-		Matrix4[] matrices = {
-				new TranslationMatrix(new Vec3(0,0,0)), // individual part1: each rectangle uses different z value depending on orientation
-				new RotationMatrix(0, mat.Axis.X), // individual part2: then is rotated to its proper orientation 
-				new TranslationMatrix(new Vec3(x,y,z)), // shared: offset to properly sit on tube
-				new RotationMatrix(getRalpha(), mat.Axis.Z) //shared: this will be the players movement option across  the tube
-				};
+		Matrix4[] matrices = this.getMatrices();
+		matrices[0] = new RotationMatrix(0, mat.Axis.X); // individual part2: then is rotated to its proper orientation 
+		matrices[1] = new TranslationMatrix(new Vec3(0,0,0)); // individual part1: each rectangle uses different z value depending on orientation
+		matrices[2] = new TranslationMatrix(new Vec3(x,y,z)); // shared: offset to properly sit on tube
+		matrices[3] = new RotationMatrix(getRalpha(), mat.Axis.Z); //shared: this will be the players movement option across  the tube
 		this.offset = 0.5f* new Float(this.getScale())/100f;
 		this.xoffset = offset * new Float(this.getxScale())/100f;
 		this.yoffset = offset * new Float(this.getyScale())/100f;
 		this.zoffset = offset * new Float(this.getzScale())/100f;
 		//individual
-		matrices[0] = new TranslationMatrix(new Vec3(0,0,zoffset));
-		matrices[1] = new RotationMatrix(0, mat.Axis.X);
+		matrices[0] = new RotationMatrix(0, mat.Axis.X);
+		matrices[1] = new TranslationMatrix(new Vec3(0,0,zoffset));
 		front.setMatrices(matrices);
 		front.matricesTomodelMatrix();
 		
-		matrices[0] = new TranslationMatrix(new Vec3(0,0,zoffset));
-		matrices[1] = new RotationMatrix(180, mat.Axis.X);
+		matrices[1] = new TranslationMatrix(new Vec3(0,0,-zoffset));
+		matrices[0] = new RotationMatrix(180, mat.Axis.X);
 		back.setMatrices(matrices);
 		back.matricesTomodelMatrix();
 		
-		matrices[0] = new TranslationMatrix(new Vec3(0,0,xoffset));
-		matrices[1] = new RotationMatrix(90, mat.Axis.Y);
+		matrices[1] = new TranslationMatrix(new Vec3(-xoffset,0,0));
+		matrices[0] = new RotationMatrix(90, mat.Axis.Y);
 		left.setMatrices(matrices);
 		left.matricesTomodelMatrix();
 		
-		matrices[0] = new TranslationMatrix(new Vec3(0,0,xoffset));
-		matrices[1] = new RotationMatrix(-90, mat.Axis.Y);
+		matrices[1] = new TranslationMatrix(new Vec3(xoffset,0,0));
+		matrices[0] = new RotationMatrix(-90, mat.Axis.Y);
 		right.setMatrices(matrices);
 		right.matricesTomodelMatrix();
 		
-		matrices[0] = new TranslationMatrix(new Vec3(0,0,yoffset));
-		matrices[1] = new RotationMatrix(90, mat.Axis.X);
+		matrices[1] = new TranslationMatrix(new Vec3(0,yoffset,0));
+		matrices[0] = new RotationMatrix(-90, mat.Axis.X);
 		top.setMatrices(matrices);
 		top.matricesTomodelMatrix();
 		
-		matrices[0] = new TranslationMatrix(new Vec3(0,0,yoffset));
-		matrices[1] = new RotationMatrix(-90, mat.Axis.X);
+		matrices[1] = new TranslationMatrix(new Vec3(0,-yoffset,0));
+		matrices[0] = new RotationMatrix(90, mat.Axis.X);
 		bottom.setMatrices(matrices);
 		bottom.matricesTomodelMatrix();
-		this.setDirty(false);
+		this.buffer();
 	}
 	
 	@Override
@@ -130,18 +119,6 @@ public class Player extends GameObject {
 		for (Primitive obj : this.getGeom()){
 			obj.setScale(scale);
 		}
-		this.setDirty(true);
-	}
-	
-	/**
-	 * move the player character along the tube
-	 * @param alpha the angle by which the player should move
-	 */
-	@Override
-	public void move(int delta){
-		//player can only move left or right along the tube
-		// z axis rotation should suffice
-		this.setRalpha(this.getRalpha() + delta);
 		this.setDirty(true);
 	}
 }

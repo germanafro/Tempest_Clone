@@ -21,9 +21,9 @@ import mat.Vec4;
  */
 public abstract class Primitive {
 	// x,y,z directional stretch
-	private int x = 1;
-	private int y = 1;
-	private int z = 1;
+	private int x = 100;
+	private int y = 100;
+	private int z = 100;
 	//x,y,z number of vertices in direction, where applicable
 	private int xTiles = 3;
 	private int yTiles = 3;

@@ -313,6 +313,29 @@ public class RenderEngine {
             			}
             		}
             	}
+            	if ( key == GLFW_KEY_SPACE){
+            		Timer timer = game.getTimer();
+            		double lastshot = game.shootTime;
+                    double now = timer.getTime();
+                    float targetTime = game.shootingSpeed;
+
+                    if (now - lastshot > targetTime) {
+                    	game.shootTime = timer.getTime();
+                    	Player player = game.getPlayer();
+                		Tube tube = game.getTube();
+                		if(player != null && tube != null && !game.isPause()){
+                			Projectile proj = new Projectile("playerprojectile", game);
+                			proj.setX(player.getX());
+                			proj.setY(player.getY());
+                			proj.setZ(player.getZ());
+                			proj.setRalpha(player.getRalpha());
+                			proj.setAlphatarget(player.getAlphatarget());
+                			proj.setZtarget(-100);
+                			game.addGameObject(proj);
+                		}
+                    }
+            		
+            	}
             	
             	if ( key == GLFW_KEY_P && action == GLFW_PRESS){
             		game.setPause(!game.isPause());
@@ -682,6 +705,7 @@ public class RenderEngine {
 					GL20.glUseProgram(0);
     			}
             	gameObject.setGeom(null);
+        		this.game.getGameObjects().remove(gameObject.getName());
             }
             this.game.setDeleteQueue(new ArrayList<GameObject>());
             
@@ -706,11 +730,11 @@ public class RenderEngine {
         		
         		//update dirty gameObjects
         		GL20.glUseProgram(pId);
-    			if(gameObject.isDirty()){
+    		//	if(gameObject.isDirty()){
     				gameObject.update();
     				gameObject.buffer(); // TODO encapsulate in update()
-    				gameObject.setDirty(false);
-    			}
+    				//gameObject.setDirty(false);
+    			//}
     			GL20.glUseProgram(0);
         		for(Primitive obj : gameObject.getGeom()){
         			//gameObject.buffer();

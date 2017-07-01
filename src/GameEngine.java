@@ -29,11 +29,27 @@ public class GameEngine {
 	public void moveObjects(){
 		Iterator<GameObject> gameObjects = this.game.getGameObjects().values().iterator();
     	while(gameObjects.hasNext()){
-    		GameObject gameObject = gameObjects.next(); 
+    		GameObject gameObject = gameObjects.next();
+    		//System.out.println("processing moveObject:" + gameObject.getName());
+    		//System.out.println("alphatarget: " + gameObject.getAlphatarget() + " alpha: " + gameObject.getRalpha());
+    		//System.out.println("Ztarget: " + gameObject.getZtarget() + " Zpos: " + gameObject.getZpos());
     		if(gameObject.getAlphatarget() > gameObject.getRalpha()){
-    			gameObject.move(1);
+    			gameObject.move(1, 0);
     		} else if(gameObject.getAlphatarget() < gameObject.getRalpha()){
-    			gameObject.move(-1);
+    			gameObject.move(-1, 0);
+    		}
+    		else{
+    			//TODO stay idle for now}
+    		}
+    		if(gameObject.getZtarget() > gameObject.getZpos()){
+    			gameObject.move(0, 1);
+    		}else if(gameObject.getZtarget() < gameObject.getZpos()){
+    			gameObject.move(0, -1);
+    		}else{
+    			String name = gameObject.getName();
+    			if(name.contains("projectile")){
+    				game.destroyObject(name);
+    			}
     		}
     	}
 	}

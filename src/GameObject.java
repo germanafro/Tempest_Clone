@@ -18,6 +18,7 @@ import org.lwjgl.opengl.GL30;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 import mat.Matrix4;
+import mat.RotationMatrix;
 import mat.TranslationMatrix;
 import mat.Vec3;
 
@@ -25,9 +26,16 @@ public abstract class GameObject {
 	
 	
     // identity
-	private Game game;
+	protected Game game;
 	private List<Primitive> geom;
 	private String name;
+	
+	
+	//geom
+	protected float offset= 0f;
+	protected float xoffset = 0f;
+	protected float yoffset = 0f;
+	protected float zoffset = 0f;
 	protected int xScale = 100;
 	protected int yScale = 100;
 	protected int zScale = 100;
@@ -38,37 +46,58 @@ public abstract class GameObject {
 	protected float x = 0f;
 	protected float y = 0f;
 	protected float z = 0f;
-	private boolean dirty = true;
 	
 	private int alphatarget = 0;
 	private int ralpha = 0;
+	private int ztarget = 0;
+	protected int zpos = 0;
+	protected Matrix4[] matrices = {
+			new RotationMatrix(0, mat.Axis.X),  // rotate object
+			new TranslationMatrix(new Vec3(0,0,0)), //initial individual offset to determine position relative to other geoms in this object
+			new TranslationMatrix(new Vec3(x,y,z)), // shared offset for all geoms for synchronous movement and propper placement in tube
+			new RotationMatrix(ralpha, mat.Axis.Z) // now rotate along z axis to move left ~ right along tube
+			};
+	private boolean dirty = true;
+
   	
   	public GameObject(String name, Game game){
   		this.game = game;
   		this.geom = new ArrayList<Primitive>();
 		this.setName(name);
-		this.addGeom(new Rectangle(2,2,100,game));
+		this.addGeom(new Rectangle(100,100,100,game));
 	}
-  	/**
-  	 * move the Object one step along the grid
-  	 * @param x steps in x direction
-  	 * @param y steps in y direction
-  	 * @param z steps in z direction
-  	 */
-  	public void move(int x, int y, int z){
-  		for(Primitive obj : this.getGeom()){
-  			Vec3 origin = obj.getOrigin();
-  			origin.x += x * this.getGame().getXStep();
-  			origin.y += y * this.getGame().getYStep();
-  			origin.z += z * this.getGame().getZStep();
-  			obj.setOrigin(origin);
-  		}
-  	}
+  	
+  	public void move(int alpha, int z) {
+		// z axis rotation
+		this.setRalpha(this.getRalpha() + alpha);
+		this.setZpos(this.getZpos() + z);
+		this.setDirty(true);
+	}
+	public void update(){
+		//shared
+		this.xoffset = offset * new Float(this.getxScale())/100f * new Float(this.getScale())/100f;
+		this.yoffset = offset * new Float(this.getyScale())/100f * new Float(this.getScale())/100f;
+		this.zoffset = offset * new Float(this.getzScale())/100f * new Float(this.getScale())/100f;
+		Matrix4[] matrices = this.getMatrices();
+		matrices[0] = new RotationMatrix(0, mat.Axis.X); // individual part2: then is rotated to its proper orientation 
+		matrices[1] = new TranslationMatrix(new Vec3(0,0,0)); // individual part1: each rectangle uses different z value depending on orientation
+		matrices[2] = new TranslationMatrix(new Vec3(x,y,z + zpos * game.getTube().getStepz())); // shared: offset to properly sit on tube
+		matrices[3] = new RotationMatrix(getRalpha(), mat.Axis.Z); //shared: this will be the players movement option across  the tube
+		for(Primitive obj : this.getGeom()){
+			obj.setMatrices(matrices);
+			obj.matricesTomodelMatrix();
+		}
+		this.buffer();
+	}
+  	
   	public void buffer(){
   		for(Primitive obj : this.getGeom()){
   			obj.buffer();
   		}
+  		this.setDirty(false);
   	}
+  	
+  	
   	
 	public List<Primitive> getGeom() {
 		return geom;
@@ -182,11 +211,7 @@ public abstract class GameObject {
 	public void setDirty(boolean dirty) {
 		this.dirty = dirty;
 	}
-	public void move(int alpha) {
-		// TODO Auto-generated method stub
-		
-	}
-	abstract void update();
+	
 	public int getAlphatarget() {
 		return alphatarget;
 	}
@@ -199,5 +224,24 @@ public abstract class GameObject {
 	public void setRalpha(int ralpha) {
 		this.ralpha = ralpha;
 	}
+	public int getZpos() {
+		return zpos;
+	}
+	public void setZpos(int zpos) {
+		this.zpos = zpos;
+	}
+	public int getZtarget() {
+		return ztarget;
+	}
+	public void setZtarget(int ztarget) {
+		this.ztarget = ztarget;
+	}
+	public Matrix4[] getMatrices() {
+		return matrices;
+	}
+	public void setMatrices(Matrix4[] matrices) {
+		this.matrices = matrices;
+	}
+	
 
 }

@@ -36,6 +36,8 @@ public class Game {
 	private boolean pause;
 	private HUD hud;
 	private Timer timer = new Timer();
+	public float shootingSpeed = 1f/2; // limiter for player shooting speed
+	public double shootTime = 0f;
 	
 	private Player player = null;
 	private Tube tube = null;
@@ -173,6 +175,8 @@ public class Game {
 	}
 
 	public void addGameObject(GameObject gameObject) {
+		String name = gameObject.getName();
+		if (gameObjects.containsKey(name)) gameObject.setName(name + gameObjects.size());
 		this.gameObjects.put(gameObject.getName(), gameObject);
 		this.hud.registerNewObject(gameObject.getName());
 	}
@@ -191,7 +195,6 @@ public class Game {
 		}
 		GameObject gameObject = this.getGameObjects().get(name);
 		if(gameObject != null){
-			this.getGameObjects().remove(name);
 			this.deleteQueue.add(gameObject);
 		}
 	}
@@ -266,6 +269,14 @@ public class Game {
 
 	public void setDeleteQueue(List<GameObject> deleteQueue) {
 		this.deleteQueue = deleteQueue;
+	}
+
+	public Timer getTimer() {
+		return timer;
+	}
+
+	public void setTimer(Timer timer) {
+		this.timer = timer;
 	}
 
 }
