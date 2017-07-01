@@ -87,9 +87,10 @@ public class GameEngine {
     			int enemyalpha = gameObject.getRalpha()%360;
     			if (playeralpha < 0) playeralpha = 360 + playeralpha;
     			if (enemyalpha < 0) enemyalpha = 360 + enemyalpha;
-    			boolean touchr = Math.abs(playeralpha - enemyalpha) < this.game.getLevel().getTube().getStepr(); //TODO convert negative degrees to positive 
+    			boolean touchr = Math.abs(playeralpha - enemyalpha) <= this.game.getLevel().getTube().getStepr(); 
     			if (touchz && touchr){
     				gameObject.setDestroy(true);
+    				this.game.sfxPlay(new Sound("sfx/Grenade-SoundBible.com-1777900486.mp3"));
     				this.playerLoseLife(player);
     				
     			}
@@ -114,12 +115,13 @@ public class GameEngine {
 	    					if(enemyAlpha < 0) enemyAlpha = 360 + enemyAlpha;
 	    					//System.out.println("EnemyAlpha: " + enemyAlpha + "projectileAlpha: " + projectileAlpha);
 	    					//System.out.println("Level Step: " + this.game.getLevel().getTube().getStepr());
-	    					boolean touchR = Math.abs(projectileAlpha - enemyAlpha) < this.game.getLevel().getTube().getStepr();
+	    					boolean touchR = Math.abs(projectileAlpha - enemyAlpha) <= this.game.getLevel().getTube().getStepr();
 	    					 if(touchZ && touchR){
 	    						// System.out.println("[Debug]Zerstöre" + gameObject.getName());
 	    						// System.out.println("[Debug]Zerstöre" + enemyObject.getName());
 	    						 gameObject.setDestroy(true);
 	    						 enemyObject.setDestroy(true);
+	    						 this.game.sfxPlay(new Sound("sfx/Blast-SoundBible.com-2068539061.mp3"));
 	    						 game.getLevel().setKills(game.getLevel().getKills() + 1);
 	    					 }
     					 
