@@ -2,29 +2,15 @@ import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sound.sampled.FloatControl;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 
-import de.matthiasmann.twl.utils.PNGDecoder;
-import de.matthiasmann.twl.utils.PNGDecoder.Format;
 
 //TODO place holder
 public class Game {
@@ -106,8 +92,6 @@ public class Game {
 	}
 	
 	private void loop(){
-		long window = this.getRenderEngine().getWindow();
-		
 		while(!glfwWindowShouldClose(this.getRenderEngine().getWindow())){
 			//TODO Step 1 do game calculations
 			float delta = timer.getDelta();
