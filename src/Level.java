@@ -84,6 +84,10 @@ public class Level {
 	}
 	public Sound getBgm() {
 		return bgm;
+	}
+	public void setBgm(Sound bgm) {
+		this.bgm = bgm;
+	}
 	public boolean isFinished() {
 		return (this.getKills() >= this.getKillGoal()) ? true : false;
 	}
@@ -101,8 +105,6 @@ public class Level {
 	}
 	public void setSpawnCurve(int spawnCurve) {
 		this.spawnCurve = spawnCurve;
-	public void setBgm(Sound bgm) {
-		this.bgm = bgm;
 	}
 	
 }

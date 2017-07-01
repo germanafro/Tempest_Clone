@@ -28,7 +28,6 @@ import de.matthiasmann.twl.utils.PNGDecoder.Format;
 
 //TODO place holder
 public class Game {
-	private Level currLevel;
 	private int levelNr = 1;
 	private String state = "startmenu";
 	private Map<String, GameObject> gameObjects;
@@ -48,7 +47,6 @@ public class Game {
 	private Sound bgm = null;
 	private float bgmvolume = -10f;
 	private float sfxvolume = 0f;
-	private Level level = null; //TODO unterschied currLevel?
 	
 	
 	public Game(){
@@ -265,14 +263,6 @@ public class Game {
 
 	public void setState(String state) {
 		this.state = state;
-	}
-
-	public Level getCurrLevel() {
-		return currLevel;
-	}
-
-	public void setCurrLevel(Level currLevel) {
-		this.currLevel = currLevel;
 	}
 
 	public HUD getHud() {
