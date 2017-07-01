@@ -295,7 +295,7 @@ public class RenderEngine {
             	if ( key == GLFW_KEY_A && action == GLFW_PRESS ){
             		Player player = game.getLevel().getPlayer();
             		Tube tube = game.getLevel().getTube();
-            		if(player != null && tube != null && !game.isPause()){
+            		if(player != null && tube != null && game.getState() == "playing"){
             			int alphatarget = player.getAlphatarget();
             			if (player.getRalpha() - alphatarget < tube.getStepr()){ // protects from overflowing
             				player.setAlphatarget(alphatarget - tube.getStepr());
@@ -306,7 +306,7 @@ public class RenderEngine {
             	if ( key == GLFW_KEY_D && action == GLFW_PRESS ){
             		Player player = game.getLevel().getPlayer();
             		Tube tube = game.getLevel().getTube();
-            		if(player != null && tube != null && !game.isPause()){
+            		if(player != null && tube != null && game.getState() == "playing"){
             			int alphatarget = player.getAlphatarget();
             			if (alphatarget - player.getRalpha() < tube.getStepr()){
             				player.setAlphatarget(alphatarget + tube.getStepr());
@@ -323,7 +323,7 @@ public class RenderEngine {
                     	game.shootTime = timer.getTime();
                     	Player player = game.getLevel().getPlayer();
                 		Tube tube = game.getLevel().getTube();
-                		if(player != null && tube != null && !game.isPause()){
+                		if(player != null && tube != null && game.getState() == "playing"){
                 			Projectile proj = new Projectile("playerprojectile" + game.shotsFired++, game);
                 			proj.setX(player.getX());
                 			proj.setY(player.getY());
@@ -340,7 +340,11 @@ public class RenderEngine {
             	}
             	
             	if ( key == GLFW_KEY_P && action == GLFW_PRESS){
-            		game.setPause(!game.isPause());
+            		if(game.getState().equals("pause")){
+            			game.bgmLoop();
+            			game.setState("playing");
+            		}
+            		else game.setState("pause");
             	}
             	if ( key == GLFW_KEY_Q){
             		int val = hud.SlideScale.getValue();

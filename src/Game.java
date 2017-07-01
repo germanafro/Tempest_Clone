@@ -131,14 +131,18 @@ public class Game {
 				this.gameEngine.moveObjects();
 				break;
 			case "pause":
+				this.bgm.stop();
+				break;
 			case "startmenu":
+				break;
 			case "ending":
 				this.bgm.stop();
 				this.bgm = new Sound("bgm/07 We're the Resistors.mp3");
 				this.bgm.loop();
 				this.setState("end");
+				break;
 			case "end":
-				
+				break;
 				
 			default:
 				break;
@@ -318,6 +322,70 @@ public class Game {
 
 	public void setLevelNr(int levelNr) {
 		this.levelNr = levelNr;
+	}
+
+	public GameEngine getGameEngine() {
+		return gameEngine;
+	}
+
+	public void setGameEngine(GameEngine gameEngine) {
+		this.gameEngine = gameEngine;
+	}
+
+	public float getShootingSpeed() {
+		return shootingSpeed;
+	}
+
+	public void setShootingSpeed(float shootingSpeed) {
+		this.shootingSpeed = shootingSpeed;
+	}
+
+	public double getShootTime() {
+		return shootTime;
+	}
+
+	public void setShootTime(double shootTime) {
+		this.shootTime = shootTime;
+	}
+
+	public int getShotsFired() {
+		return shotsFired;
+	}
+
+	public void setShotsFired(int shotsFired) {
+		this.shotsFired = shotsFired;
+	}
+
+	public int getUniqueid() {
+		return uniqueid;
+	}
+
+	public void setUniqueid(int uniqueid) {
+		this.uniqueid = uniqueid;
+	}
+
+	public Sound getBgm() {
+		return bgm;
+	}
+
+	public void setBgm(Sound bgm) {
+		this.bgm = bgm;
+	}
+
+	public float getBgmvolume() {
+		return bgmvolume;
+	}
+
+	public void setBgmvolume(float bgmvolume) {
+		this.bgmvolume = bgmvolume;
+	}
+
+	public float getSfxvolume() {
+		return sfxvolume;
+	}
+
+	public void setSfxvolume(float sfxvolume) {
+		this.sfxvolume = sfxvolume;
 	}
 
 }
