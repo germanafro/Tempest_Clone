@@ -332,6 +332,7 @@ public class RenderEngine {
                 			proj.setAlphatarget(player.getAlphatarget());
                 			proj.setZpos(0);
                 			proj.setZtarget(-100);
+                			proj.setSpawnSound(player.getProjectileSound());
                 			game.addGameObject(proj);
                 		}
                     }
@@ -780,37 +781,37 @@ public class RenderEngine {
             GL30.glBindVertexArray(0);
             GL20.glUseProgram(0);
             
-            // ================================ Draw normal lines =================================
-            
-            if (showNormals){
-	            
-	            GL20.glUseProgram(pNormalsId);
-	            
-	            // Upload matrices to the uniform variables
-	            GL20.glUniformMatrix4fv(projectionMatrixLocationNormals, false , toFFB(projectionMatrix));
-	            GL20.glUniformMatrix4fv(viewMatrixLocationNormals, false, toFFB(viewMatrix));
-	            GL20.glUniformMatrix4fv(modelMatrixLocationNormals, false, toFFB(modelMatrix));
-	             
-	            // Bind to the VAO that has all the information about the normal lines
-	            GL30.glBindVertexArray(obj.getVaoNormalLinesId());
-	            GL20.glEnableVertexAttribArray(0);
-	            GL20.glEnableVertexAttribArray(1);
-	             
-	            // Bind to the VBO that has all the information about the order of the vertices
-	            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, obj.getVbonId());
-	             
-	            // Draw the vertices
-	            GL11.glDrawArrays(GL11.GL_LINES, 0, obj.getVerticesCount()*2);
-	            
-	            // Put everything back to default (deselect)
-	            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-	            GL20.glDisableVertexAttribArray(0);
-	            GL20.glDisableVertexAttribArray(1);
-	            GL30.glBindVertexArray(0);
-	            GL20.glUseProgram(0);
-            }
-        	}//end for loop
-        	}
+            		// ================================ Draw normal lines =================================
+            		
+            		if (showNormals){
+            		
+	            		GL20.glUseProgram(pNormalsId);
+	            		
+	            		// Upload matrices to the uniform variables
+	            		GL20.glUniformMatrix4fv(projectionMatrixLocationNormals, false , toFFB(projectionMatrix));
+	            		GL20.glUniformMatrix4fv(viewMatrixLocationNormals, false, toFFB(viewMatrix));
+	            		GL20.glUniformMatrix4fv(modelMatrixLocationNormals, false, toFFB(modelMatrix));
+	            		
+	            		// Bind to the VAO that has all the information about the normal lines
+	            		GL30.glBindVertexArray(obj.getVaoNormalLinesId());
+	            		GL20.glEnableVertexAttribArray(0);
+	            		GL20.glEnableVertexAttribArray(1);
+	            		
+	            		// Bind to the VBO that has all the information about the order of the vertices
+	            		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, obj.getVbonId());
+	            		
+	            		// Draw the vertices
+	            		GL11.glDrawArrays(GL11.GL_LINES, 0, obj.getVerticesCount()*2);
+	            		
+	            		// Put everything back to default (deselect)
+	            		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+	            		GL20.glDisableVertexAttribArray(0);
+	            		GL20.glDisableVertexAttribArray(1);
+	            		GL30.glBindVertexArray(0);
+	            		GL20.glUseProgram(0);
+            		}
+        		}//end obj loop
+        	}// end gameObject loop
             // Swap the color buffer. We never draw directly to the screen, only in this buffer. So we need to display it
     		glfwSwapBuffers(getWindow());
             

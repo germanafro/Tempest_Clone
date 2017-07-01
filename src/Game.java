@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.sound.sampled.FloatControl;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
@@ -43,7 +44,9 @@ public class Game {
 	public int shotsFired = 0;
 	private int uniqueid = 0;
 	private Level level = null;
-	
+	private Sound bgm = null;
+	private float bgmvolume = -10f;
+	private float sfxvolume = 0f;
 	public Game(){
 		this.setHud(new HUD(this));
 		this.setGameObjects(new HashMap<String, GameObject>());
@@ -111,6 +114,8 @@ public class Game {
 				this.setLevel(Levels.Level1(this));
 				this.addGameObject(level.getPlayer());
 				this.addGameObject(level.getTube());
+				this.bgm = this.getLevel().getBgm();
+				this.bgmLoop();
 				this.setState("playing");
 				break;
 			case "playing":
@@ -121,6 +126,13 @@ public class Game {
 			case "pause":
 			case "startmenu":
 			case "ending":
+				this.bgm.stop();
+				this.bgm = new Sound("bgm/07 We're the Resistors.mp3");
+				this.bgm.loop();
+				this.setState("end");
+			case "end":
+				
+				
 			default:
 				break;
 			
@@ -142,16 +154,18 @@ public class Game {
 			this.hud.getLabelUPS().setText("UPS: " + timer.getUps());
 			this.hud.getLabelFPS().setText("FPS: " + timer.getFps());
 			
-			//Step3 fps cap if vsynch is off
+			//TODO fps cap if vsynch is off
 	        //this.sync(60);
 			
-			//clean up
+			
 			
 		}
+		//clean up
+		if(bgm != null) bgm.stop();
 	}
 	/**
 	 * limit fps and cpu usage
-	 * @param fps
+	 * @param fps the targetet fps
 	 */
 	public void sync(int fps) {
         double lastLoopTime = timer.getLastLoopTime();
@@ -170,12 +184,23 @@ public class Game {
             now = timer.getTime();
         }
 	}
+	
+	public void bgmLoop(){
+		this.bgm.setVolume(this.bgmvolume );
+		this.bgm.loop();
+		
+	}
+	public void sfxPlay(Sound sound){
+		sound.setVolume(this.sfxvolume );
+		sound.play();
+	}
 
 	public void addGameObject(GameObject gameObject) {
 		String name = gameObject.getName();
 		if (gameObjects.containsKey(name)) gameObject.setName(name + uniqueid++);
 		this.gameObjects.put(gameObject.getName(), gameObject);
 		this.hud.registerNewObject(gameObject.getName());
+		this.sfxPlay(gameObject.getSpawnSound());
 	}
 	
 	public void destroyObject(String name){

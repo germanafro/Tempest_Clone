@@ -281,8 +281,8 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
 		JMenuItem obj = new JMenuItem(name);
 		this.getObjects().put(name, obj);
     	obj.addActionListener(this);
-    	obj.getActionListeners()[0].actionPerformed(new ActionEvent(obj, ActionEvent.ACTION_PERFORMED, null));
     	this.getObjectMenu().add(obj);
+    	obj.getActionListeners()[0].actionPerformed(new ActionEvent(obj, ActionEvent.ACTION_PERFORMED, null));
 	}
 	public void deleteObject(){
 		this.game.destroyObject(this.currObj);

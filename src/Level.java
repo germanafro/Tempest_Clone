@@ -16,6 +16,9 @@ public class Level {
 	private int enemycount = 0; // count enemies already spawned
 	private float spawnspeed = 1f; // limiter for Enemy spawn speed
 	private double enemyTime = 0f;
+	private Sound bgm = null;
+
+	
 	
 	public Level(Tube tube, int numEnemies, Game game){
 		this.tube = tube;
@@ -64,6 +67,12 @@ public class Level {
 	}
 	public void setEnemycount(int enemycount) {
 		this.enemycount = enemycount;
+	}
+	public Sound getBgm() {
+		return bgm;
+	}
+	public void setBgm(Sound bgm) {
+		this.bgm = bgm;
 	}
 	
 }

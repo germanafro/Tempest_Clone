@@ -46,6 +46,8 @@ public abstract class GameObject {
 	protected float x = 0f;
 	protected float y = 0f;
 	protected float z = 0f;
+	private String projectileSound = "sfx/laser4.mp3";
+	private Sound spawnSound = new Sound("sfx/phaserDown2.mp3");
 	
 	private int alphatarget = 0;
 	private int ralpha = 0;
@@ -263,6 +265,22 @@ public abstract class GameObject {
 
 	public void setDestroy(boolean destroy) {
 		this.destroy = destroy;
+	}
+
+	public String getProjectileSound() {
+		return projectileSound;
+	}
+
+	public void setProjectileSound(String sound) {
+		this.projectileSound = sound;
+	}
+
+	public Sound getSpawnSound() {
+		return spawnSound;
+	}
+
+	public void setSpawnSound(String sound) {
+		this.spawnSound = new Sound(sound);
 	}
 	
 

@@ -10,6 +10,8 @@ public interface Levels {
 		
 		Level level = new Level(tube, 10, game);
 		level.setEnemies(enemies);
+		
+		level.setBgm(new Sound("bgm/sawsquarenoise_-_01_-_Interstellar.mp3"));
 		return level;
 	}
 }
