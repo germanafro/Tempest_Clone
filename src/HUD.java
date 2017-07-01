@@ -50,7 +50,7 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
     private JLabel LabelUPS;
     private JLabel Kills; 
     private JLabel Level;
-    private JLabel Leben;
+    //private JLabel Leben;
     //private List<Primitive> currObject = new ArrayList<Primitive>();
     private String currObj;
     private JMenuItem currObject;
@@ -213,7 +213,7 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
         panel.add(this.LabelUPS);
         panel.add(this.Kills);
         panel.add(this.Level);
-        panel.add(this.Leben);
+        //panel.add(this.Leben);
         this.add(panel);
 	}
     
