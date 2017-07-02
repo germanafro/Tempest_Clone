@@ -42,7 +42,7 @@ public class GameEngine {
     		}else{
     			if(gameObject.isMoving()) game.getMoveQueue().add(gameObject);
     			if(gameObject.isDirty())  game.getDirtyQueue().add(gameObject);
-    		}
+    		} 
     	}
 	}
 	

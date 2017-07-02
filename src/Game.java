@@ -37,11 +37,11 @@ public class Game {
 	private float sfxvolume = 0f;
 	public Map<String, Sound> mapSFX = null;
 	public Map<String, Sound> mapBGM = null;
+	public GameObject background = null;
 	
 	public Game(){
 		this.setHud(new HUD(this));
 		this.setGameObjects(new HashMap<String, GameObject>());
-		this.startNewGame();
 	}
 
 	private void startNewGame() {
@@ -100,10 +100,16 @@ public class Game {
 			//TODO Step 1 do game calculations
 			float delta = timer.getDelta();
 			switch(state){
+			case "startmenu":
+				bgm = mapBGM.get("09 Come and Find Me - B mix.mp3");
+				background = new Background("background", this);
+				this.setState("starting");
+				break;
 			case "starting":
 				this.setLevel(Levels.Level1(this));
 				this.addGameObject(level.getPlayer());
 				this.addGameObject(level.getTube());
+				this.addGameObject(background);
 				this.bgmLoop(this.getLevel().getBgm());
 				this.setState("playing");
 				break;
@@ -111,6 +117,8 @@ public class Game {
 				if(this.nextLevel()){
 					this.setLevelNr(this.getLevelNr() + 1);
 					this.setState("pause");
+					this.hud.getKills().setText("Abschuesse: " + this.getLevel().getKills());
+					this.hud.getLevel().setText("Level: " + this.getLevelNr());
 				}
 				this.gameEngine.spawnEnemy();
 				this.gameEngine.queueObjects();
@@ -118,10 +126,6 @@ public class Game {
 				break;
 			case "pause":
 				this.bgm.stop();
-				break;
-			case "startmenu":
-				bgm = mapBGM.get("09 Come and Find Me - B mix.mp3");
-				this.setState("starting");
 				break;
 			case "ending":
 				this.bgm.stop();
@@ -151,8 +155,6 @@ public class Game {
 			timer.update();
 			this.hud.getLabelUPS().setText("UPS: " + timer.getUps());
 			this.hud.getLabelFPS().setText("FPS: " + timer.getFps());
-			this.hud.getKills().setText("Abschuesse: " + this.getLevel().getKills());
-			this.hud.getLevel().setText("Level: " + this.getLevelNr());
 			//Step3 fps cap if vsynch is off
 	        //this.sync(60);
 			
