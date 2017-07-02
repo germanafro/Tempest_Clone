@@ -38,7 +38,6 @@ public class Game {
 	private float sfxvolume = 0f;
 	public Map<String, Sound> mapSFX = null;
 	public Map<String, Sound> mapBGM = null;
-	public GameObject background = null;
 	
 	public Game(){
 		this.setHud(new HUD(this));
@@ -105,21 +104,22 @@ public class Game {
 			switch(state){
 			case "startmenu":
 				bgm = mapBGM.get("09 Come and Find Me - B mix.mp3");
-				background = new Background("background", this);
-				this.setState("starting");
+				this.setLevelNr(1);
+				this.setState("load");
 				break;
 			case "starting":
-				this.setLevel(Levels.Level1(this));
+				//TODO add countdown
 				this.addGameObject(level.getPlayer());
 				this.addGameObject(level.getTube());
-				this.addGameObject(background);
-				this.bgmLoop(this.getLevel().getBgm());
+				this.addGameObject(level.getBackground());
+				this.bgmLoop(level.getBgm());
 				this.setState("playing");
 				break;
 			case "playing":
 				if(this.nextLevel()){
 					this.setLevelNr(this.getLevelNr() + 1);
 					this.setState("load");
+					break;
 				}
 				//TODO this belongs into game engine? not sure~~
 				this.hud.getKills().setText("Abschuesse: " + this.getLevel().getKills());
@@ -136,17 +136,21 @@ public class Game {
 				gameObjects.clear();
 				this.shotsFired = 0;
 				this.enemyFired = 0;
-				if(this.getLevelNr() == 2){
+				this.setState("starting");
+				switch(this.getLevelNr()){
+				case 1:
+					this.setLevel(Levels.Level1(this));
+					break;
+				case 2:
 					this.setLevel(Levels.Level2(this));
-				}else if (this.getLevelNr() == 3){
+					break;
+				case 3:
 					this.setLevel(Levels.Level3(this));
-				}else{
+					break;
+				default:
 					this.setState("ending");
+					break;
 				}
-				this.addGameObject(level.getPlayer());
-				this.addGameObject(level.getTube());
-				
-				this.setState("playing");
 				break;
 			case "reset":
 				break;
@@ -154,6 +158,7 @@ public class Game {
 				this.bgm.stop();
 				break;
 			case "ending":
+				//TODO add ending credits :P
 				this.bgm.stop();
 				this.bgm = mapBGM.get("07 We're the Resistors.mp3");
 				this.bgm.loop();

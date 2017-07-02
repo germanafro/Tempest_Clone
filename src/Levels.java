@@ -23,7 +23,7 @@ public interface Levels {
 		Level level = new Level(tube, 10, game);
 		level.setEnemies(enemies);
 		
-		level.setBgm("sawsquarenoise_-_01_-_Interstellar.mp3");
+		level.setBgm("sawsquarenoise_-_02_-_Fire_Darer.mp3");
 		return level;
 	}
 	public static Level Level3(Game game){
@@ -35,7 +35,7 @@ public interface Levels {
 		Level level = new Level(tube, 10, game);
 		level.setEnemies(enemies);
 		
-		level.setBgm("sawsquarenoise_-_01_-_Interstellar.mp3");
+		level.setBgm("sawsquarenoise_-_03_-_Field_Force.mp3");
 		return level;
 	}
 }

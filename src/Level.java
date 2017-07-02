@@ -11,6 +11,7 @@ import java.util.List;
 public class Level {
 	private Tube tube = null;
 	private Player player = null;
+	private Background background = null;
 	private List<Enemy> enemies = new ArrayList<Enemy>(); // enemy pool to choose from
 	private int numEnemies = 0; // max number of enemies spawned
 	private int enemycount = 0; // count enemies already spawned
@@ -30,6 +31,7 @@ public class Level {
 	public Level(Tube tube, int numEnemies, Game game){
 		this.tube = tube;
 		this.player = new Player("player1", game);
+		this.setBackground(new Background("background", game));
 		this.numEnemies = numEnemies;
 		
 	}
@@ -106,6 +108,12 @@ public class Level {
 	}
 	public void setSpawnCurve(int spawnCurve) {
 		this.spawnCurve = spawnCurve;
+	}
+	public Background getBackground() {
+		return background;
+	}
+	public void setBackground(Background background) {
+		this.background = background;
 	}
 	
 }
