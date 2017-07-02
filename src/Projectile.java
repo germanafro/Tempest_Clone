@@ -38,9 +38,16 @@ public class Projectile extends GameObject {
 	@Override
 	
 	public void move(){
-		this.setZpos(this.getZpos() - 3);
-		this.setDirty(true);
-		this.setMoving(true);
+		if(this.getName().contains("player")){
+			this.setZpos(this.getZpos() - 3);
+			this.setDirty(true);
+			this.setMoving(true);
+		}
+		else if(this.getName().contains("enemy")){
+			this.setZpos(this.getZpos() + 3);
+			this.setDirty(true);
+			this.setMoving(true);
+		}
 	}
 	
 	public void update(){

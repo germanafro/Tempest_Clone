@@ -22,7 +22,6 @@ public class Level {
 	//May vary Difficulty by killcount
 	private int kills = 0;
 	private int killGoal = 20;
-	private boolean isFinished;
 	
 	// Every spawnCurve Enemies spawn, the frequency with which the enemies spawn rises
 	private int spawnCurve = 10;
@@ -65,7 +64,12 @@ public class Level {
 		this.enemies = enemies;
 	}
 	public double getSpawnspeed() {
-		return spawnspeed;
+		if(this.spawnspeed < 0){
+			return 0.1;
+		}else{
+			return spawnspeed;
+		}
+		
 	}
 	public void setSpawnspeed(double spawnspeed) {
 		this.spawnspeed = spawnspeed;
@@ -90,9 +94,6 @@ public class Level {
 	}
 	public boolean isFinished() {
 		return (this.getKills() >= this.getKillGoal()) ? true : false;
-	}
-	public void setFinished(boolean isFinished) {
-		this.isFinished = isFinished;
 	}
 	public int getKillGoal() {
 		return killGoal;

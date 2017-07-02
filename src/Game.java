@@ -30,6 +30,7 @@ public class Game {
 	public float shootingSpeed = 1f/10; // limiter for player shooting speed
 	public double shootTime = 0f;
 	public int shotsFired = 0;
+	public int enemyFired = 0;
 	private int uniqueid = 0;
 	private Level level = null;
 	private Sound bgm = null;
@@ -374,6 +375,14 @@ public class Game {
 
 	public void setShotsFired(int shotsFired) {
 		this.shotsFired = shotsFired;
+	}
+
+	public int getEnemyFired() {
+		return enemyFired;
+	}
+
+	public void setEnemyFired(int enemyFired) {
+		this.enemyFired = enemyFired;
 	}
 
 	public int getUniqueid() {

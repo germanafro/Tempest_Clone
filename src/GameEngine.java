@@ -58,9 +58,19 @@ public class GameEngine {
 				if(gameObject.getAlphatarget() == gameObject.getRalpha()){
 					alphareached = true;
 					gameObject.movementLogic(game.getLevel().getTube().getStepr());
+					if(gameObject.getEnemyType() == 1){
+						gameObject.shootingLogic();
+					}
 				}
 				// new Function for different moving beheavior
 				gameObject.move();
+				if(name.toLowerCase().contains("enemyProjectile")){
+					if(this.checkCollision(gameObject, this.game.getLevel().getPlayer())){
+						gameObject.setDestroy(true);
+						this.game.sfxPlay("Blast-SoundBible.com-2068539061.mp3");
+						this.getGame().getLevel().getPlayer().loseLife();						
+					}
+				}
 				
 				if(gameObject.getZpos() >= gameObject.getZtarget()){
 					zreached = true;
@@ -78,6 +88,7 @@ public class GameEngine {
 					alphareached = true;
 				}
 			}
+			
 			else if(name.toLowerCase().contains("player")){
 				gameObject.move();
 				zreached = true;
@@ -150,12 +161,10 @@ public class GameEngine {
         	level.setEnemyTime(timer.getTime());
         	Enemy enemy = new Enemy("enemy", game);
         	level.setEnemycount(level.getEnemycount() + 1);
-        	//System.out.println("Enemy Count: " + level.getEnemycount());
         	if(level.getEnemycount() % level.getSpawnCurve() == 0){
-        		level.setSpawnspeed(((level.getSpawnspeed() - 0.05)));
-        		//System.out.println("Spawnspeed: " + level.getSpawnspeed());
-        		
+        		level.setSpawnspeed(((level.getSpawnspeed() - 0.05)));        		
         		} 
+        	
         	Player player = this.game.getLevel().getPlayer();
         	enemy.setX(player.getX());
         	enemy.setY(player.getY());

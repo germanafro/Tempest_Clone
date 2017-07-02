@@ -284,6 +284,9 @@ public abstract class GameObject {
 	public void setSpawnSound(String sound) {
 		this.spawnSound = sound;
 	}
-	
+	public int getEnemyType(){
+		return 0;
+	}
+	public void shootingLogic(){}
 
 }
