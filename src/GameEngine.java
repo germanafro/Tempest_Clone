@@ -31,8 +31,8 @@ public class GameEngine {
 	 * through decreasing delta and remembering a target to reach
 	 */
 	public void queueObjects(){
-		game.setDirtyQueue(new ArrayList<GameObject>());
-		game.setMoveQueue(new ArrayList<GameObject>());
+		game.getDirtyQueue().clear();
+		game.getMoveQueue().clear();
 		Iterator<GameObject> gameObjects = this.game.getGameObjects().values().iterator();
     	while(gameObjects.hasNext()){
     		GameObject gameObject = gameObjects.next();
@@ -56,6 +56,7 @@ public class GameEngine {
 			//drop ifelse cases?
 			if(name.toLowerCase().contains("enemy")){
 				if(gameObject.getAlphatarget() == gameObject.getRalpha()){
+					alphareached = true;
 					gameObject.movementLogic(game.getLevel().getTube().getStepr());
 				}
 				// new Function for different moving beheavior
@@ -64,9 +65,6 @@ public class GameEngine {
 				if(gameObject.getZpos() >= gameObject.getZtarget()){
 					zreached = true;
     				game.destroyObject(name);
-				}
-				if(gameObject.getAlphatarget() == gameObject.getRalpha()){
-					alphareached = true;
 				}
 			}
 			
@@ -94,53 +92,50 @@ public class GameEngine {
     		// check collision with player
     		if(name.toLowerCase().contains("enemy")){
     			Player player = game.getLevel().getPlayer();
-    			boolean touchz = Math.abs(player.getZpos() - gameObject.getZpos()) < 22;
-    			int playeralpha = player.getRalpha()%360;
-    			int enemyalpha = gameObject.getRalpha()%360;
-    			if (playeralpha < 0) playeralpha = 360 + playeralpha;
-    			if (enemyalpha < 0) enemyalpha = 360 + enemyalpha;
-    			boolean touchr = Math.abs(playeralpha - enemyalpha) <= this.game.getLevel().getTube().getStepr()/2; 
-    			if (touchz && touchr){
+    			// size in steps = size / stepsize
+    			
+    			if (checkCollision(gameObject, player)){
+    				this.game.sfxPlay("Grenade-SoundBible.com-1777900486.mp3");
     				gameObject.setDestroy(true);
-    				this.game.sfxPlay(new Sound("sfx/Grenade-SoundBible.com-1777900486.mp3"));
+    				//this.game.sfxPlay(new Sound("sfx/Grenade-SoundBible.com-1777900486.mp3"));
     				this.playerLoseLife(player);
     				
     			}
     		// check collision with playerprojectile
     		}else if(name.toLowerCase().contains("playerprojectile")){
     			
-    			int projectileAlpha = gameObject.getRalpha() % 360;
-    			
-    			
     			//TODO work with iterator over GameObject<> Map ?
     			Set<String> keys = game.getGameObjects().keySet();
-    			
     			for(String enemysName: keys){
     				if(enemysName.contains("enemy")){
-	    				if(game.getGameObjects().containsKey(enemysName)){
-	    					//System.out.print("[DEBUG] Gegner in GameObject<>");
-	    					GameObject enemyObject = game.getGameObjects().get(enemysName);
-	    					boolean touchZ = Math.abs(enemyObject.getZpos() - gameObject.getZpos()) < 22;
-	    					int enemyAlpha = enemyObject.getRalpha();
-	    					
-	    					if(projectileAlpha < 0) projectileAlpha = 360 + projectileAlpha;
-	    					if(enemyAlpha < 0) enemyAlpha = 360 + enemyAlpha;
-	    					//System.out.println("EnemyAlpha: " + enemyAlpha + "projectileAlpha: " + projectileAlpha);
-	    					//System.out.println("Level Step: " + this.game.getLevel().getTube().getStepr());
-	    					boolean touchR = Math.abs(projectileAlpha - enemyAlpha) <= this.game.getLevel().getTube().getStepr()/2;
-	    					 if(touchZ && touchR){
-	    						// System.out.println("[Debug]Zerstöre" + gameObject.getName());
-	    						// System.out.println("[Debug]Zerstöre" + enemyObject.getName());
-	    						 gameObject.setDestroy(true);
-	    						 enemyObject.setDestroy(true);
-	    						 this.game.sfxPlay(new Sound("sfx/Blast-SoundBible.com-2068539061.mp3"));
-	    						 game.getLevel().setKills(game.getLevel().getKills() + 1);
-	    					 }
-    					 }
+	    				GameObject enemyObject = game.getGameObjects().get(enemysName);
+	    				if(checkCollision(gameObject, enemyObject)){
+	    					// System.out.println("[Debug]Zerstöre" + gameObject.getName());
+	    					// System.out.println("[Debug]Zerstöre" + enemyObject.getName());
+	    					 gameObject.setDestroy(true);
+	    					 enemyObject.setDestroy(true);
+	    					 this.game.sfxPlay("Blast-SoundBible.com-2068539061.mp3");
+	    					 //this.game.sfxPlay(new Sound("sfx/Blast-SoundBible.com-2068539061.mp3"));
+	    					 game.getLevel().setKills(game.getLevel().getKills() + 1);
+	    				}
     				}
-    			}	
-    		}
-    	}
+    			}
+    		}	
+   		}
+   	}
+	
+	public boolean checkCollision(GameObject obj1, GameObject obj2){
+		boolean touchz = Math.abs(obj1.getZ() - obj2.getZ()) < obj1.zoffset + obj2.zoffset;
+		int alpha1 = obj1.getRalpha()%360;
+		int alpha2 = obj2.getRalpha()%360;
+		// turn left into right orientation
+		if (alpha1 < 0) alpha1 = 360 + alpha1;
+		if (alpha2 < 0) alpha2 = 360 + alpha2;
+		Tube tube = game.getLevel().getTube();
+		float radius = 1f* (tube.getScale()/100f) *  (float)(tube.getrScale())/100f;
+		int deltaradius = Math.abs(alpha1-alpha2);
+		boolean touchr = deltaradius*2*radius/360 < (obj1.xoffset + obj2.xoffset)/3;  // rough estimate but seems to be satisfying
+		return touchz && touchr;
 	}
 	
 	public void spawnEnemy(){
@@ -164,11 +159,10 @@ public class GameEngine {
         	Player player = this.game.getLevel().getPlayer();
         	enemy.setX(player.getX());
         	enemy.setY(player.getY());
-        	enemy.setZ(2.5f);
         	enemy.setRalpha((random.nextInt(360) * game.getLevel().getTube().getStepr()) % 360);
         	enemy.setAlphatarget(enemy.getRalpha()); //game.getLevel().getTube().getStepr() * (random.nextInt(360) -180)
-        	enemy.setZpos(-100);
-        	enemy.setZtarget(0);
+        	enemy.setZpos(-41);
+        	enemy.setZtarget(41);
         	game.addGameObject(enemy);
         	
         }

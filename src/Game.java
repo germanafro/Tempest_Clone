@@ -2,11 +2,13 @@ import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.sound.sampled.AudioInputStream;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
@@ -25,7 +27,7 @@ public class Game {
 	private boolean pause;
 	private HUD hud;
 	private Timer timer = new Timer();
-	public float shootingSpeed = 1f/2; // limiter for player shooting speed
+	public float shootingSpeed = 1f/10; // limiter for player shooting speed
 	public double shootTime = 0f;
 	public int shotsFired = 0;
 	private int uniqueid = 0;
@@ -33,13 +35,13 @@ public class Game {
 	private Sound bgm = null;
 	private float bgmvolume = -10f;
 	private float sfxvolume = 0f;
-	
+	public Map<String, Sound> mapSFX = null;
+	public Map<String, Sound> mapBGM = null;
 	
 	public Game(){
 		this.setHud(new HUD(this));
 		this.setGameObjects(new HashMap<String, GameObject>());
 		this.startNewGame();
-		this.setState("starting"); // TODO removeme ^_^ just for testing
 	}
 
 	private void startNewGame() {
@@ -75,6 +77,8 @@ public class Game {
 		// TODO Auto-generated method stub
 		this.renderEngine.run();
 		this.renderEngine.loadTextures(); // TODO: move back to render engine?
+		this.loadMapSFX();
+		this.loadMapBGM();
 		this.renderEngine.initObjects();
 		this.gameEngine.run();
 		timer.init();
@@ -100,8 +104,7 @@ public class Game {
 				this.setLevel(Levels.Level1(this));
 				this.addGameObject(level.getPlayer());
 				this.addGameObject(level.getTube());
-				this.bgm = this.getLevel().getBgm();
-				this.bgmLoop();
+				this.bgmLoop(this.getLevel().getBgm());
 				this.setState("playing");
 				break;
 			case "playing":
@@ -117,10 +120,12 @@ public class Game {
 				this.bgm.stop();
 				break;
 			case "startmenu":
+				bgm = mapBGM.get("09 Come and Find Me - B mix.mp3");
+				this.setState("starting");
 				break;
 			case "ending":
 				this.bgm.stop();
-				this.bgm = new Sound("bgm/07 We're the Resistors.mp3");
+				this.bgm = mapBGM.get("07 We're the Resistors.mp3");
 				this.bgm.loop();
 				this.setState("end");
 				break;
@@ -184,12 +189,15 @@ public class Game {
         }
 	}
 	
-	public void bgmLoop(){
+	public void bgmLoop(String name){
+		if(bgm != null)	this.bgm.stop();
+		this.bgm = mapBGM.get(name);
 		this.bgm.setVolume(this.bgmvolume );
 		this.bgm.loop();
 		
 	}
-	public void sfxPlay(Sound sound){
+	public void sfxPlay(String name){
+		Sound sound = this.mapSFX.get(name);
 		sound.setVolume(this.sfxvolume );
 		sound.play();
 	}
@@ -216,9 +224,38 @@ public class Game {
 		GameObject gameObject = this.getGameObjects().get(name);
 		if(gameObject != null){
 			gameObject.setDestroy(true);
-			gameObject.getSpawnSound().close();
 		}
 	}
+	
+	private  void loadMapSFX(){
+    	mapSFX = new HashMap<String, Sound>();
+    	File folder = new File("assets/sounds/sfx/");
+		File[] listOfFiles = folder.listFiles();
+		System.out.println("loading Textures: ");
+		for(File file : listOfFiles){
+			String name = file.getName();
+			System.out.println(name);
+			if(name.toLowerCase().contains(".mp3")) {
+				Sound sfx = new Sound("sfx/" + name);
+				mapSFX.put(file.getName(), sfx); 
+			}
+        }
+    }
+	
+	private  void loadMapBGM(){
+    	mapBGM = new HashMap<String, Sound>();
+    	File folder = new File("assets/sounds/bgm/");
+		File[] listOfFiles = folder.listFiles();
+		System.out.println("loading Textures: ");
+		for(File file : listOfFiles){
+			String name = file.getName();
+			System.out.println(name);
+			if(name.toLowerCase().contains(".mp3")) {
+				Sound bgm = new Sound("bgm/" + name);
+				mapBGM.put(file.getName(), bgm); 
+			}
+        }
+    }
 
 	public RenderEngine getRenderEngine() {
 		return renderEngine;

@@ -19,13 +19,13 @@ public class Player extends GameObject {
 	public Player(String name, Game game) {
 		super(name, game);
 		this.x = 0f;
-		this.z = 2.2f;
+		this.z = 0f;
 		this.y = -1.2f;
 		this.xScale = 40;
 		this.yScale = 5;
 		this.zScale = 80;
-		this.zpos = 0;
-		this.setZtarget(0);
+		this.zpos = 41;
+		this.setZtarget(41);
 		this.setRalpha(0);
 		this.setAlphatarget(0); 
 		front = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), "default.png");
@@ -46,10 +46,8 @@ public class Player extends GameObject {
 	@Override
 	public void move(){
 		if(this.getAlphatarget() > this.getRalpha()){
-			System.out.println(getRalpha());
 			this.setRalpha(this.getRalpha() + 1);
 		} else if(this.getAlphatarget() < this.getRalpha()){
-			System.out.println(getRalpha());
 			this.setRalpha(this.getRalpha() - 1);
 		}
 
@@ -58,6 +56,7 @@ public class Player extends GameObject {
 	@Override
 	public void update(){
 		//shared
+		z = zpos * game.getLevel().getTube().getStepz();
 		Matrix4[] matrices = this.getMatrices();
 		matrices[0] = new RotationMatrix(0, mat.Axis.X); // individual part2: then is rotated to its proper orientation 
 		matrices[1] = new TranslationMatrix(new Vec3(0,0,0)); // individual part1: each rectangle uses different z value depending on orientation

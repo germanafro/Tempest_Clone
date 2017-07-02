@@ -318,7 +318,7 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
 		// can be optimized a little more by checking for source and changing only respective value ~see above :P
 		String name = this.currObj;
 		GameObject gameObject = this.game.getGameObjects().get(name);
-		System.out.println("[DEBUG] change event triggered");
+		//System.out.println("[DEBUG] change event triggered");
 		if(gameObject != null){
 			gameObject.setxScale(SlideX.getValue());
 			gameObject.setyScale(SlideY.getValue());

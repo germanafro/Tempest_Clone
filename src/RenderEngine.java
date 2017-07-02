@@ -329,8 +329,8 @@ public class RenderEngine {
                 			proj.setZ(player.getZ());
                 			proj.setRalpha(player.getRalpha());
                 			proj.setAlphatarget(player.getAlphatarget());
-                			proj.setZpos(0);
-                			proj.setZtarget(-100);
+                			proj.setZpos(35);
+                			proj.setZtarget(-50);
                 			proj.setSpawnSound(player.getProjectileSound());
                 			game.addGameObject(proj);
                 		}
@@ -340,7 +340,7 @@ public class RenderEngine {
             	
             	if ( key == GLFW_KEY_P && action == GLFW_PRESS){
             		if(game.getState().equals("pause")){
-            			game.bgmLoop();
+            			game.getBgm().loop();
             			game.setState("playing");
             		}
             		else game.setState("pause");
@@ -633,7 +633,7 @@ public class RenderEngine {
 		for(File file : listOfFiles){
 			String name = file.getName();
 			System.out.println(name);
-			this.getTextureIds().put(name, this.loadPNGTexture(path + name, GL13.GL_TEXTURE0));
+			if(name.toLowerCase().contains(".png"))this.getTextureIds().put(name, this.loadPNGTexture(path + name, GL13.GL_TEXTURE0));
 		}
 	}
     
@@ -807,7 +807,6 @@ public class RenderEngine {
 	            		GL30.glBindVertexArray(0);
 	            		GL20.glUseProgram(0);
             		}
-                	GL11.glFlush();
         		}//end obj loop
         	}// end gameObject loop
             // Swap the color buffer. We never draw directly to the screen, only in this buffer. So we need to display it

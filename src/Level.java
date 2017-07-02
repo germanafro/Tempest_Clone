@@ -17,7 +17,7 @@ public class Level {
 	private double spawnspeed = 1; // limiter for Enemy spawn speed
 	
 	private double enemyTime = 0f;
-	private Sound bgm = null;
+	private String bgm = null;
 
 	//May vary Difficulty by killcount
 	private int kills = 0;
@@ -82,10 +82,10 @@ public class Level {
 	public void setEnemycount(int enemycount) {
 		this.enemycount = enemycount;
 	}
-	public Sound getBgm() {
+	public String getBgm() {
 		return bgm;
 	}
-	public void setBgm(Sound bgm) {
+	public void setBgm(String bgm) {
 		this.bgm = bgm;
 	}
 	public boolean isFinished() {

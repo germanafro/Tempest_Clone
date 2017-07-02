@@ -46,8 +46,8 @@ public abstract class GameObject {
 	protected float x = 0f;
 	protected float y = 0f;
 	protected float z = 0f;
-	private String projectileSound = "sfx/laser4.mp3";
-	private Sound spawnSound = new Sound("sfx/phaserDown2.mp3");
+	private String projectileSound = "laser4.mp3";
+	private String spawnSound = "phaserDown2.mp3";
 	
 	private int alphatarget = 0;
 	private int ralpha = 0;
@@ -83,10 +83,11 @@ public abstract class GameObject {
 		this.xoffset = offset * new Float(this.getxScale())/100f * new Float(this.getScale())/100f;
 		this.yoffset = offset * new Float(this.getyScale())/100f * new Float(this.getScale())/100f;
 		this.zoffset = offset * new Float(this.getzScale())/100f * new Float(this.getScale())/100f;
+		z = zpos * game.getLevel().getTube().getStepz();
 		Matrix4[] matrices = this.getMatrices();
 		matrices[0] = new RotationMatrix(0, mat.Axis.X); // individual part2: then is rotated to its proper orientation 
 		matrices[1] = new TranslationMatrix(new Vec3(0,0,0)); // individual part1: each rectangle uses different z value depending on orientation
-		matrices[2] = new TranslationMatrix(new Vec3(x,y,z + zpos * game.getLevel().getTube().getStepz())); // shared: offset to properly sit on tube
+		matrices[2] = new TranslationMatrix(new Vec3(x,y,z)); // shared: offset to properly sit on tube
 		matrices[3] = new RotationMatrix(getRalpha(), mat.Axis.Z); //shared: this will be the players movement option across  the tube
 		for(Primitive obj : this.getGeom()){
 			obj.setMatrices(matrices);
@@ -276,12 +277,12 @@ public abstract class GameObject {
 		this.projectileSound = sound;
 	}
 
-	public Sound getSpawnSound() {
+	public String getSpawnSound() {
 		return spawnSound;
 	}
 
 	public void setSpawnSound(String sound) {
-		this.spawnSound = new Sound(sound);
+		this.spawnSound = sound;
 	}
 	
 
