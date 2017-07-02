@@ -20,7 +20,7 @@ public class Background extends GameObject {
 		this.setRalpha(0);
 		this.setAlphatarget(0);  
 		front = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), "background.png");
-		this.setGeom(new ArrayList<Primitive>());
+		this.getGeom().clear();
 		this.addGeom(front);
 		this.setDirty(true);
 	}

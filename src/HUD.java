@@ -244,7 +244,7 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
 			this.SlideX.setValue(100);
 			this.SlideY.setValue(100);
 			this.SlideScale.setValue(100);
-			gameObject =new Tube("tube", this.game);
+			gameObject =new Tube("tube", 10, this.game);
 			this.game.addGameObject(gameObject);
 		}
 		else if(e.getSource() == this.editMenu.getItem(0) ){

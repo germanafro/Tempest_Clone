@@ -34,7 +34,7 @@ public class Player extends GameObject {
 		right = new Rectangle(this.getzScale(),this.getyScale(),this.getScale(), this.getGame(), "player_jet.png");
 		top = new Rectangle(this.getxScale(),this.getzScale(),this.getScale(), this.getGame(), "player_jet.png");
 		bottom = new Rectangle(this.getxScale(),this.getzScale(),this.getScale(), this.getGame(), "player_jet.png");
-		this.setGeom(new ArrayList<Primitive>());
+		this.getGeom().clear();
 		this.addGeom(front);
 		this.addGeom(back);
 		this.addGeom(left);

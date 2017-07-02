@@ -22,7 +22,7 @@ public class Enemy extends GameObject {
 		this.xScale = 40;
 		this.yScale = 5;
 		this.zScale = 80;
-		this.setGeom(new ArrayList<Primitive>());
+		this.getGeom().clear();
 		front = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), "default.png");
 		back = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), "enemy_jet.png");
 		left = new Rectangle(this.getzScale(),this.getyScale(),this.getScale(), this.getGame(), "enemy_jet.png");
