@@ -3,6 +3,7 @@ import java.util.List;
 
 public interface Levels {
 	public static Level Level1(Game game){
+		game.addGameObject(new DisplayBoard("level1", game));
 		Tube tube = new Tube("Level1", 10, game);
 		List<Enemy> enemies = new ArrayList<Enemy>();
 		
@@ -15,6 +16,7 @@ public interface Levels {
 		return level;
 	}
 	public static Level Level2(Game game){
+		game.addGameObject(new DisplayBoard("level2", game));
 		Tube tube = new HalfTube("Level2", 5, game);
 		List<Enemy> enemies = new ArrayList<Enemy>();
 		
@@ -27,6 +29,7 @@ public interface Levels {
 		return level;
 	}
 	public static Level Level3(Game game){
+		game.addGameObject(new DisplayBoard("level3", game));
 		Tube tube = new Tube("Level3", 6, game);
 		tube.setRadius(-1f);
 		List<Enemy> enemies = new ArrayList<Enemy>();

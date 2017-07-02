@@ -32,6 +32,8 @@ public class Game {
 	public double shootTime = 0f;
 	public int shotsFired = 0;
 	public int enemyFired = 0;
+	public boolean isScoreUp = false;
+	public int helpCounter = 0;
 	private int uniqueid = 0;
 	private Level level = null;
 	private Sound bgm = null;
@@ -115,6 +117,7 @@ public class Game {
 				this.addGameObject(level.getPlayer());
 				this.addGameObject(level.getTube());
 				this.addGameObject(level.getBackground());
+				this.addGameObject(new DisplayBoard("score" + this.helpCounter++, this));
 				this.bgm.stop();
 				this.bgmLoop(level.getBgm());
 				this.setState("ready");
@@ -126,11 +129,17 @@ public class Game {
 					break;
 				}
 				//TODO this belongs into game engine? not sure~~
-				this.hud.getKills().setText("Abschuesse: " + this.getLevel().getKills());
-				this.hud.getLevel().setText("Level: " + this.getLevelNr());
+				//this.hud.getKills().setText("Abschuesse: " + this.getLevel().getKills());
+				//this.hud.getLevel().setText("Level: " + this.getLevelNr());
+				
 				this.gameEngine.spawnEnemy();
 				this.gameEngine.queueObjects();
 				this.gameEngine.moveObjects();
+				/*if(isScoreUp){
+					this.addGameObject(new DisplayBoard("score" + this.helpCounter++, this));
+					isScoreUp = false;
+					System.out.println(helpCounter);
+				}*/
 				break;
 			case "load": //Load next level!
 				this.sleep(1000);

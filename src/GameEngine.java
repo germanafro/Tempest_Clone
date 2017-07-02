@@ -7,7 +7,7 @@ import java.util.Random;
 import java.util.Set;
 
 public class GameEngine {
-	
+	private boolean scoreUp;
 	private Game game;
 	
 	public GameEngine(Game game){
@@ -36,7 +36,6 @@ public class GameEngine {
 		Iterator<GameObject> gameObjects = this.game.getGameObjects().values().iterator();
     	while(gameObjects.hasNext()){
     		GameObject gameObject = gameObjects.next();
-    		
     		if(gameObject.isDestroy()){
     			game.getDeleteQueue().add(gameObject);
     		}else{
@@ -69,6 +68,7 @@ public class GameEngine {
 				}
 			}
 			
+			
 			else if(name.toLowerCase().contains("playerprojectile")){
 				gameObject.move();
 				if(gameObject.getZpos() <= gameObject.getZtarget()){
@@ -100,6 +100,7 @@ public class GameEngine {
     				this.game.sfxPlay("Grenade-SoundBible.com-1777900486.mp3");
     				gameObject.setDestroy(true);
     				this.playerLoseLife(player);
+    				game.isScoreUp = true;
     				
     			}
     		// check collision with playerprojectile
@@ -118,6 +119,7 @@ public class GameEngine {
 	    					 this.game.sfxPlay("Blast-SoundBible.com-2068539061.mp3");
 	    					 //this.game.sfxPlay(new Sound("sfx/Blast-SoundBible.com-2068539061.mp3"));
 	    					 game.getLevel().setKills(game.getLevel().getKills() + 1);
+	    					 game.isScoreUp = true;
 	    				}
     				}
     			}
