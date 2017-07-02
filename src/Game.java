@@ -17,7 +17,7 @@ import javax.swing.JMenuItem;
 //TODO place holder
 public class Game {
 	private int levelNr = 1;
-	private String state = "startmenu";
+	private String state = "reset";
 	private Map<String, GameObject> gameObjects;
 	private List<GameObject> deleteQueue = new ArrayList<GameObject>();
 	private List<GameObject> moveQueue = new ArrayList<GameObject>();
@@ -25,6 +25,7 @@ public class Game {
 	private GameEngine gameEngine;
 	private RenderEngine renderEngine;
 	private boolean pause;
+	private boolean shouldStart = false;
 	private HUD hud;
 	private Timer timer = new Timer();
 	public float shootingSpeed = 1f/10; // limiter for player shooting speed
@@ -103,9 +104,11 @@ public class Game {
 			float delta = timer.getDelta();
 			switch(state){
 			case "startmenu":
-				bgm = mapBGM.get("09 Come and Find Me - B mix.mp3");
-				this.setLevelNr(1);
-				this.setState("load");
+				if(shouldStart) {
+					this.setLevelNr(1);
+					this.setState("load");
+					shouldStart = false;
+				}
 				break;
 			case "starting":
 				//TODO add countdown
@@ -138,6 +141,14 @@ public class Game {
 				this.enemyFired = 0;
 				this.setState("starting");
 				switch(this.getLevelNr()){
+				case 0:
+					this.setLevel(Levels.StartMenu(this));
+					this.addGameObject(level.getPlayer());
+					this.addGameObject(level.getTube());
+					this.addGameObject(level.getBackground());
+					this.bgmLoop(level.getBgm());
+					this.setState("startmenu");
+					break;
 				case 1:
 					this.setLevel(Levels.Level1(this));
 					break;
@@ -148,11 +159,19 @@ public class Game {
 					this.setLevel(Levels.Level3(this));
 					break;
 				default:
-					this.setState("ending");
+					// this is the happy Ending!
+					this.setLevel(Levels.Ending(this));
+					this.addGameObject(level.getPlayer());
+					this.addGameObject(level.getTube());
+					this.addGameObject(level.getBackground());
+					this.bgmLoop(level.getBgm());
+					this.setState("end");
 					break;
 				}
 				break;
 			case "reset":
+				this.setLevelNr(0);
+				this.setState("load");
 				break;
 			case "pause":
 				this.bgm.stop();
@@ -165,6 +184,10 @@ public class Game {
 				this.setState("end");
 				break;
 			case "end":
+				if(shouldStart) {
+					this.setState("reset");
+					shouldStart = false;
+				}
 				break;
 				
 			default:
@@ -447,6 +470,14 @@ public class Game {
 
 	public void setSfxvolume(float sfxvolume) {
 		this.sfxvolume = sfxvolume;
+	}
+
+	public boolean isShouldStart() {
+		return shouldStart;
+	}
+
+	public void setShouldStart(boolean shouldStart) {
+		this.shouldStart = shouldStart;
 	}
 
 }

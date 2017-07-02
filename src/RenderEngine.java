@@ -336,6 +336,9 @@ public class RenderEngine {
                 			proj.setSpawnSound(player.getProjectileSound());
                 			game.addGameObject(proj);
                 		}
+                		else if((game.getState() == "startmenu" || game.getState() == "ready" || game.getState() == "end" ) && action == GLFW_PRESS){
+                			game.setShouldStart(true);
+                		}
                     }
             		
             	}
@@ -444,12 +447,15 @@ public class RenderEngine {
         // Set the clear color - gray
         glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
         
-        // Switch to wireframe
-        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+        // fill wireframe
+        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
         // -> back to solid faces: glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
  
         // Backface culling: Shows, if the triangles are correctly defined
         glDisable(GL_CULL_FACE);
+        
+        // turn on depth tests
+        glEnable(GL11.GL_DEPTH_TEST);
         
         // Draw thicker lines
         GL11.glLineWidth(2);
