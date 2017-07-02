@@ -170,7 +170,7 @@ public class GameEngine {
         	enemy.setX(player.getX());
         	enemy.setY(player.getY());
         	enemy.setRalpha((random.nextInt(360) * game.getLevel().getTube().getStepr()) % 360);
-        	enemy.setAlphatarget(enemy.getRalpha()); //game.getLevel().getTube().getStepr() * (random.nextInt(360) -180)
+        	enemy.setAlphatarget(enemy.getRalpha()); 
         	enemy.setZpos(-41);
         	enemy.setZtarget(41);
         	game.addGameObject(enemy);

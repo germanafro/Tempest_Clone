@@ -21,7 +21,7 @@ public class Level {
 
 	//May vary Difficulty by killcount
 	private int kills = 0;
-	private int killGoal = 20;
+	private int killGoal = 5;
 	
 	// Every spawnCurve Enemies spawn, the frequency with which the enemies spawn rises
 	private int spawnCurve = 10;

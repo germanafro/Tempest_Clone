@@ -118,7 +118,23 @@ public class Game {
 				this.gameEngine.moveObjects();
 				break;
 			case "load": //Load next level!
-				
+				pause = true;
+				deleteQueue.clear();
+				moveQueue.clear();
+				dirtyQueue.clear();
+				gameObjects.clear();
+				this.shotsFired = 0;
+				this.enemyFired = 0;
+				if(this.getLevelNr() == 2){
+					this.setLevel(Levels.Level2(this));
+				}else if (this.getLevelNr() == 3){
+					this.setLevel(Levels.Level3(this));
+				}else{
+					this.setState("ending");
+				}
+				this.addGameObject(level.getPlayer());
+				this.addGameObject(level.getTube());
+				this.setState("playing");
 				break;
 			case "reset":
 				break;
