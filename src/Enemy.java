@@ -84,12 +84,14 @@ public class Enemy extends GameObject {
 		this.buffer();
 	}
 	
+	//Speed default should be 1
 	@Override
 	public void move(){
+		int speed = (this.getEnemyType() > 2) ? 2 : 1;
 		if(this.getAlphatarget() > this.getRalpha()){
-			this.setRalpha(this.getRalpha() + 1); //TODO change ralpha to double
+			this.setRalpha(this.getRalpha() + speed); //TODO change ralpha to double
 		} else if(this.getAlphatarget() < this.getRalpha()){
-			this.setRalpha(this.getRalpha() - 1); //TODO same here
+			this.setRalpha(this.getRalpha() - speed); //TODO same here
 		}
 
 
@@ -104,8 +106,7 @@ public class Enemy extends GameObject {
 	public void shootingLogic(){
 		Random rnd = new Random();
 		int i = rnd.nextInt(200);
-		if(i >= 199){
-			System.out.println("SHOOT!");
+		if(i >= 199 - this.getGame().getLevelNr() - 1){
 			Projectile proj = new Projectile("enemyProjectile" + game.enemyFired++, this.getGame());
 			proj.setX(this.getX());
 			proj.setY(this.getY());
@@ -119,8 +120,12 @@ public class Enemy extends GameObject {
 		}
 	}
 	
+	
+	/* Controlls Enemy Behavior
+	 * 
+	 */
 	@Override
-	public void movementLogic(int step){
+	public void enemyLogic(int step){
 		int type = this.getEnemyType();
 		switch(type){
 		case 1:
@@ -131,14 +136,14 @@ public class Enemy extends GameObject {
 					this.setAlphatarget(this.getAlphatarget() + step);
 				}else{
 					this.setAlphatarget(this.getAlphatarget() - step);
+				}
 			}
 			break;
-			}
 		case 2:
+			this.shootingLogic();
 			break;
-		case 3:
+		default: 
 			break;
-		default: break;
 		}
 	}	
 	@Override

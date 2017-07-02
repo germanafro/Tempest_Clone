@@ -104,7 +104,7 @@ public abstract class GameObject {
   	}
   	
   	
-  	public void movementLogic(int a){}
+  	public void enemyLogic(int a){}
 	public List<Primitive> getGeom() {
 		return geom;
 	}

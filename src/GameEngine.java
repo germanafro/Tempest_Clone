@@ -57,12 +57,11 @@ public class GameEngine {
 			if(name.toLowerCase().contains("enemy")){
 				if(gameObject.getAlphatarget() == gameObject.getRalpha()){
 					alphareached = true;
-					gameObject.movementLogic(game.getLevel().getTube().getStepr());
-					if(gameObject.getEnemyType() == 1){
+					gameObject.enemyLogic(game.getLevel().getTube().getStepr());
+/*					if(gameObject.getEnemyType() == 1){
 						gameObject.shootingLogic();
-					}
+					}*/
 				}
-				// new Function for different moving beheavior
 				gameObject.move();
 				if(name.toLowerCase().contains("enemyProjectile")){
 					if(this.checkCollision(gameObject, this.game.getLevel().getPlayer())){
@@ -71,7 +70,6 @@ public class GameEngine {
 						this.getGame().getLevel().getPlayer().loseLife();						
 					}
 				}
-				
 				if(gameObject.getZpos() >= gameObject.getZtarget()){
 					zreached = true;
     				game.destroyObject(name);
@@ -159,7 +157,10 @@ public class GameEngine {
 
         if (now - enemyTime > spawnspeed) {
         	level.setEnemyTime(timer.getTime());
+        	Random rnd = new Random();
+        	int i = rnd.nextInt(this.getGame().getLevelNr()) + 1;
         	Enemy enemy = new Enemy("enemy", game);
+        	enemy.setEnemyType(i);
         	level.setEnemycount(level.getEnemycount() + 1);
         	if(level.getEnemycount() % level.getSpawnCurve() == 0){
         		level.setSpawnspeed(((level.getSpawnspeed() - 0.05)));        		

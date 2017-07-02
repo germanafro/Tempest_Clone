@@ -111,11 +111,16 @@ public class Game {
 			case "playing":
 				if(this.nextLevel()){
 					this.setLevelNr(this.getLevelNr() + 1);
-					this.setState("pause");
+					this.setState("load");
 				}
 				this.gameEngine.spawnEnemy();
 				this.gameEngine.queueObjects();
 				this.gameEngine.moveObjects();
+				break;
+			case "load": //Load next level!
+				
+				break;
+			case "reset":
 				break;
 			case "pause":
 				this.bgm.stop();
