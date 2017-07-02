@@ -19,7 +19,6 @@ public class Enemy extends GameObject {
 	public Enemy(String name, Game game) {
 		super(name, game);
 		this.setEnemyType(1);
-		//this.setZtarget();
 		this.xScale = 40;
 		this.yScale = 5;
 		this.zScale = 80;
@@ -37,45 +36,6 @@ public class Enemy extends GameObject {
 		this.addGeom(top);
 		this.addGeom(bottom);
 		this.setDirty(true);
-	}
-	@Override
-	public void move(){
-		if(this.getAlphatarget() > this.getRalpha()){
-			this.setRalpha(this.getRalpha() + 1); //TODO change ralpha to double
-		} else if(this.getAlphatarget() < this.getRalpha()){
-			this.setRalpha(this.getRalpha() - 1); //TODO same here
-		}
-
-
-		if(this.getZtarget() > this.getZpos()){
-			this.setZpos(this.getZpos() + speed);
-		}else if(this.getZtarget() < this.getZpos()){
-			this.setZpos(this.getZpos() - speed);
-		}
-		this.setDirty(true);
-	}
-	
-	@Override
-	public void movementLogic(int step){
-		int type = this.getEnemyType();
-		switch(type){
-		case 1:
-			Random rnd = new Random();
-			int i = rnd.nextInt(200);
-			if(i >= 199) {
-				if(i % 2 == 0){
-					this.setAlphatarget(this.getAlphatarget() + step);
-				}else{
-					this.setAlphatarget(this.getAlphatarget() - step);
-			}
-			break;
-			}
-		case 2:
-			break;
-		case 3:
-			break;
-		default: break;
-		}
 	}
 	
 	@Override
@@ -123,9 +83,70 @@ public class Enemy extends GameObject {
 		bottom.matricesTomodelMatrix();
 		this.buffer();
 	}
+	
+	//Speed default should be 1
+	@Override
+	public void move(){
+		int speed = (this.getEnemyType() > 2) ? 2 : 1;
+		if(this.getAlphatarget() > this.getRalpha()){
+			this.setRalpha(this.getRalpha() + speed); //TODO change ralpha to double
+		} else if(this.getAlphatarget() < this.getRalpha()){
+			this.setRalpha(this.getRalpha() - speed); //TODO same here
+		}
 
+
+		if(this.getZtarget() > this.getZpos()){
+			this.setZpos(this.getZpos() + speed);
+		}else if(this.getZtarget() < this.getZpos()){
+			this.setZpos(this.getZpos() - speed);
+		}
+		this.setDirty(true);
+	}
+	@Override
+	public void shootingLogic(){
+		Random rnd = new Random();
+		int i = rnd.nextInt(200);
+		if(i >= 199 - this.getGame().getLevelNr() - 1){
+			Projectile proj = new Projectile("enemyProjectile" + game.enemyFired++, this.getGame());
+			proj.setX(this.getX());
+			proj.setY(this.getY());
+			proj.setZ(this.getZ());
+			proj.setRalpha(this.getRalpha());
+			proj.setAlphatarget(this.getAlphatarget());
+			proj.setZpos(this.getZpos() + 5);
+			proj.setZtarget(50);
+			proj.setSpawnSound(this.getProjectileSound());
+			game.addGameObject(proj);
+		}
+	}
 	
 	
+	/* Controlls Enemy Behavior
+	 * 
+	 */
+	@Override
+	public void enemyLogic(int step){
+		int type = this.getEnemyType();
+		switch(type){
+		case 1:
+			Random rnd = new Random();
+			int i = rnd.nextInt(200);
+			if(i >= 199) {
+				if(i % 2 == 0){
+					this.setAlphatarget(this.getAlphatarget() + step);
+				}else{
+					this.setAlphatarget(this.getAlphatarget() - step);
+				}
+			}
+			break;
+		case 2:
+			this.shootingLogic();
+			break;
+		default: 
+			break;
+		}
+	}	
+	@Override
 	public int getEnemyType() {
 		return enemyType;
 	}

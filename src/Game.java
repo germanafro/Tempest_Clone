@@ -30,6 +30,7 @@ public class Game {
 	public float shootingSpeed = 1f/10; // limiter for player shooting speed
 	public double shootTime = 0f;
 	public int shotsFired = 0;
+	public int enemyFired = 0;
 	private int uniqueid = 0;
 	private Level level = null;
 	private Sound bgm = null;
@@ -42,6 +43,7 @@ public class Game {
 	public Game(){
 		this.setHud(new HUD(this));
 		this.setGameObjects(new HashMap<String, GameObject>());
+		this.startNewGame();
 	}
 
 	private void startNewGame() {
@@ -116,6 +118,7 @@ public class Game {
 			case "playing":
 				if(this.nextLevel()){
 					this.setLevelNr(this.getLevelNr() + 1);
+					this.setState("load");
 					this.setState("pause");
 					this.hud.getKills().setText("Abschuesse: " + this.getLevel().getKills());
 					this.hud.getLevel().setText("Level: " + this.getLevelNr());
@@ -124,8 +127,33 @@ public class Game {
 				this.gameEngine.queueObjects();
 				this.gameEngine.moveObjects();
 				break;
+			case "load": //Load next level!
+				pause = true;
+				deleteQueue.clear();
+				moveQueue.clear();
+				dirtyQueue.clear();
+				gameObjects.clear();
+				this.shotsFired = 0;
+				this.enemyFired = 0;
+				if(this.getLevelNr() == 2){
+					this.setLevel(Levels.Level2(this));
+				}else if (this.getLevelNr() == 3){
+					this.setLevel(Levels.Level3(this));
+				}else{
+					this.setState("ending");
+				}
+				this.addGameObject(level.getPlayer());
+				this.addGameObject(level.getTube());
+				this.setState("playing");
+				break;
+			case "reset":
+				break;
 			case "pause":
 				this.bgm.stop();
+				break;
+			case "startmenu":
+				bgm = mapBGM.get("09 Come and Find Me - B mix.mp3");
+				this.setState("starting");
 				break;
 			case "ending":
 				this.bgm.stop();
@@ -155,6 +183,8 @@ public class Game {
 			timer.update();
 			this.hud.getLabelUPS().setText("UPS: " + timer.getUps());
 			this.hud.getLabelFPS().setText("FPS: " + timer.getFps());
+			this.hud.getKills().setText("Abschuesse: " + this.getLevel().getKills());
+			this.hud.getLevel().setText("Level: " + this.getLevelNr());
 			//Step3 fps cap if vsynch is off
 	        //this.sync(60);
 			
@@ -376,6 +406,14 @@ public class Game {
 
 	public void setShotsFired(int shotsFired) {
 		this.shotsFired = shotsFired;
+	}
+
+	public int getEnemyFired() {
+		return enemyFired;
+	}
+
+	public void setEnemyFired(int enemyFired) {
+		this.enemyFired = enemyFired;
 	}
 
 	public int getUniqueid() {

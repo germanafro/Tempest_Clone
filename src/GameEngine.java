@@ -57,11 +57,19 @@ public class GameEngine {
 			if(name.toLowerCase().contains("enemy")){
 				if(gameObject.getAlphatarget() == gameObject.getRalpha()){
 					alphareached = true;
-					gameObject.movementLogic(game.getLevel().getTube().getStepr());
+					gameObject.enemyLogic(game.getLevel().getTube().getStepr());
+/*					if(gameObject.getEnemyType() == 1){
+						gameObject.shootingLogic();
+					}*/
 				}
-				// new Function for different moving beheavior
 				gameObject.move();
-				
+				if(name.toLowerCase().contains("enemyProjectile")){
+					if(this.checkCollision(gameObject, this.game.getLevel().getPlayer())){
+						gameObject.setDestroy(true);
+						this.game.sfxPlay("Blast-SoundBible.com-2068539061.mp3");
+						this.getGame().getLevel().getPlayer().loseLife();						
+					}
+				}
 				if(gameObject.getZpos() >= gameObject.getZtarget()){
 					zreached = true;
     				game.destroyObject(name);
@@ -78,6 +86,7 @@ public class GameEngine {
 					alphareached = true;
 				}
 			}
+			
 			else if(name.toLowerCase().contains("player")){
 				gameObject.move();
 				zreached = true;
@@ -148,19 +157,20 @@ public class GameEngine {
 
         if (now - enemyTime > spawnspeed) {
         	level.setEnemyTime(timer.getTime());
+        	Random rnd = new Random();
+        	int i = rnd.nextInt(this.getGame().getLevelNr()) + 1;
         	Enemy enemy = new Enemy("enemy", game);
+        	enemy.setEnemyType(i);
         	level.setEnemycount(level.getEnemycount() + 1);
-        	//System.out.println("Enemy Count: " + level.getEnemycount());
         	if(level.getEnemycount() % level.getSpawnCurve() == 0){
-        		level.setSpawnspeed(((level.getSpawnspeed() - 0.05)));
-        		//System.out.println("Spawnspeed: " + level.getSpawnspeed());
-        		
+        		level.setSpawnspeed(((level.getSpawnspeed() - 0.05)));        		
         		} 
+        	
         	Player player = this.game.getLevel().getPlayer();
         	enemy.setX(player.getX());
         	enemy.setY(player.getY());
         	enemy.setRalpha((random.nextInt(360) * game.getLevel().getTube().getStepr()) % 360);
-        	enemy.setAlphatarget(enemy.getRalpha()); //game.getLevel().getTube().getStepr() * (random.nextInt(360) -180)
+        	enemy.setAlphatarget(enemy.getRalpha()); 
         	enemy.setZpos(-41);
         	enemy.setZtarget(41);
         	game.addGameObject(enemy);

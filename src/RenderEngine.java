@@ -267,7 +267,9 @@ public class RenderEngine {
             	}
             	// Andy's custom keys
             	if ( key == GLFW_KEY_R && action == GLFW_PRESS ){
-            		initObjects();
+            		game.setState("reset");
+            		
+            		//initObjects();
             	}
             	if ( key == GLFW_KEY_H && action == GLFW_PRESS ){
             		if(hud.isVisible()){
@@ -746,7 +748,7 @@ public class RenderEngine {
         			
         			// setup individual modelmatrix
         			// first translate, then rotate. Remember the flipped order
-                    // Einheitliche Rotation (zusätzliche individuelle Berechnungen finden in geom statt)
+                    // Einheitliche Rotation (zusï¿½tzliche individuelle Berechnungen finden in geom statt)
         			Matrix4 modelMatrix = obj.getModelMatrix();
                     modelMatrix = (Matrix4) new RotationMatrix(modelAngle.z, mat.Axis.Z)
                     		.mul((new RotationMatrix(modelAngle.y, mat.Axis.Y))
