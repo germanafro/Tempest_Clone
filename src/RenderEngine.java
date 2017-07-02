@@ -348,7 +348,7 @@ public class RenderEngine {
             			game.getBgm().loop();
             			game.setState("playing");
             		}
-            		else game.setState("pause");
+            		else if (game.getState().equals("playing")) game.setState("pause");
             	}
             	if ( key == GLFW_KEY_Q){
             		int val = hud.SlideScale.getValue();

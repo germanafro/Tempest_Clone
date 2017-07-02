@@ -115,8 +115,9 @@ public class Game {
 				this.addGameObject(level.getPlayer());
 				this.addGameObject(level.getTube());
 				this.addGameObject(level.getBackground());
+				this.bgm.stop();
 				this.bgmLoop(level.getBgm());
-				this.setState("playing");
+				this.setState("ready");
 				break;
 			case "playing":
 				if(this.nextLevel()){
@@ -132,6 +133,7 @@ public class Game {
 				this.gameEngine.moveObjects();
 				break;
 			case "load": //Load next level!
+				this.sleep(1000);
 				pause = true;
 				deleteQueue.clear();
 				moveQueue.clear();
@@ -146,7 +148,9 @@ public class Game {
 					this.addGameObject(level.getPlayer());
 					this.addGameObject(level.getTube());
 					this.addGameObject(level.getBackground());
+					if(this.bgm != null) this.bgm.stop();
 					this.bgmLoop(level.getBgm());
+					shouldStart = false;
 					this.setState("startmenu");
 					break;
 				case 1:
@@ -164,7 +168,9 @@ public class Game {
 					this.addGameObject(level.getPlayer());
 					this.addGameObject(level.getTube());
 					this.addGameObject(level.getBackground());
+					this.bgm.stop();
 					this.bgmLoop(level.getBgm());
+					shouldStart = false;
 					this.setState("end");
 					break;
 				}
@@ -179,8 +185,7 @@ public class Game {
 			case "ending":
 				//TODO add ending credits :P
 				this.bgm.stop();
-				this.bgm = mapBGM.get("07 We're the Resistors.mp3");
-				this.bgm.loop();
+				this.bgmLoop("07 We're the Resistors.mp3");
 				this.setState("end");
 				break;
 			case "end":
@@ -189,7 +194,13 @@ public class Game {
 					shouldStart = false;
 				}
 				break;
-				
+			case "ready":
+				// TODO add ready message 
+				if(shouldStart) {
+					this.setState("playing");
+					shouldStart = false;
+				}
+				break;
 			default:
 				break;
 			
@@ -231,6 +242,24 @@ public class Game {
         double lastLoopTime = timer.getLastLoopTime();
         double now = timer.getTime();
         float targetTime = 1f / fps;
+
+        while (now - lastLoopTime < targetTime) {
+            Thread.yield();
+
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+
+            now = timer.getTime();
+        }
+	}
+	
+	public void sleep(int ms) {
+        double lastLoopTime = timer.getLastLoopTime();
+        double now = timer.getTime();
+        float targetTime = 1f/((float)(ms)/1000);
 
         while (now - lastLoopTime < targetTime) {
             Thread.yield();

@@ -54,7 +54,7 @@ public interface Levels {
 		List<Enemy> enemies = new ArrayList<Enemy>();
 		Level level = new Level(tube, 0, game);
 		level.setEnemies(enemies);
-		level.setBgm("Creo_-_Sphere");
+		level.setBgm("Creo_-_Sphere.mp3");
 		return level;
 	}
 }
