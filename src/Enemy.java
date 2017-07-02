@@ -106,7 +106,7 @@ public class Enemy extends GameObject {
 	public void shootingLogic(){
 		Random rnd = new Random();
 		int i = rnd.nextInt(200);
-		if(i >= 199 - this.getGame().getLevelNr() - 1){
+		if(i >= 190 - this.getGame().getLevelNr() - 1){
 			Projectile proj = new Projectile("enemyProjectile" + game.enemyFired++, this.getGame());
 			proj.setX(this.getX());
 			proj.setY(this.getY());
@@ -131,11 +131,20 @@ public class Enemy extends GameObject {
 		case 1:
 			Random rnd = new Random();
 			int i = rnd.nextInt(200);
-			if(i >= 199) {
+			if(i >= 190) {
+				int target = this.getAlphatarget();
+				Tube tube = this.game.getLevel().getTube();
 				if(i % 2 == 0){
-					this.setAlphatarget(this.getAlphatarget() + step);
+					target += step;
+					if(tube.getClass() == HalfTube.class && target > ((HalfTube)tube).getAlphaMax()){
+						this.setAlphatarget(this.getAlphatarget() - step);
+					} else this.setAlphatarget(this.getAlphatarget() + step);
+					
 				}else{
-					this.setAlphatarget(this.getAlphatarget() - step);
+					target -= step;
+					if(tube.getClass() == HalfTube.class && target < ((HalfTube)tube).getAlphaMin()){
+						this.setAlphatarget(this.getAlphatarget() + step);
+					} else this.setAlphatarget(this.getAlphatarget() - step);
 				}
 			}
 			break;

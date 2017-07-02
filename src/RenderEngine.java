@@ -298,8 +298,13 @@ public class RenderEngine {
             		Tube tube = game.getLevel().getTube();
             		if(player != null && tube != null && game.getState() == "playing"){
             			int alphatarget = player.getAlphatarget();
-            			if (player.getRalpha() - alphatarget < tube.getStepr()){ // protects from overflowing
-            				player.setAlphatarget(alphatarget - tube.getStepr());
+            			if (player.getRalpha() - alphatarget  < tube.getStepr()){ // protects from overflowing
+            				if (tube.getClass() == HalfTube.class && ((HalfTube) tube).getAlphaMin() > alphatarget - tube.getStepr()){
+            					player.setAlphatarget(alphatarget);
+            				}
+            				else{
+            					player.setAlphatarget(alphatarget - tube.getStepr());
+            				}
             			}
             		}
 
@@ -309,8 +314,13 @@ public class RenderEngine {
             		Tube tube = game.getLevel().getTube();
             		if(player != null && tube != null && game.getState() == "playing"){
             			int alphatarget = player.getAlphatarget();
-            			if (alphatarget - player.getRalpha() < tube.getStepr()){
-            				player.setAlphatarget(alphatarget + tube.getStepr());
+            			if (alphatarget - player.getRalpha() < tube.getStepr()){ // two step limiter
+            				if (tube.getClass() == HalfTube.class && ((HalfTube) tube).getAlphaMax() < alphatarget + tube.getStepr()){
+            					player.setAlphatarget(alphatarget);
+            				}
+            				else{
+            					player.setAlphatarget(alphatarget + tube.getStepr());
+            				}
             			}
             		}
             	}

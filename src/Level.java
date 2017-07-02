@@ -31,6 +31,7 @@ public class Level {
 	public Level(Tube tube, int numEnemies, Game game){
 		this.tube = tube;
 		this.player = new Player("player1", game);
+		this.player.setY(this.tube.getRadius());
 		this.setBackground(new Background("background", game));
 		this.numEnemies = numEnemies;
 		

@@ -63,13 +63,6 @@ public class GameEngine {
 					}*/
 				}
 				gameObject.move();
-				if(name.toLowerCase().contains("enemyProjectile")){
-					if(this.checkCollision(gameObject, this.game.getLevel().getPlayer())){
-						gameObject.setDestroy(true);
-						this.game.sfxPlay("Blast-SoundBible.com-2068539061.mp3");
-						this.getGame().getLevel().getPlayer().loseLife();						
-					}
-				}
 				if(gameObject.getZpos() >= gameObject.getZtarget()){
 					zreached = true;
     				game.destroyObject(name);
@@ -106,7 +99,6 @@ public class GameEngine {
     			if (checkCollision(gameObject, player)){
     				this.game.sfxPlay("Grenade-SoundBible.com-1777900486.mp3");
     				gameObject.setDestroy(true);
-    				//this.game.sfxPlay(new Sound("sfx/Grenade-SoundBible.com-1777900486.mp3"));
     				this.playerLoseLife(player);
     				
     			}
@@ -167,9 +159,10 @@ public class GameEngine {
         		} 
         	
         	Player player = this.game.getLevel().getPlayer();
+        	Tube tube = this.game.getLevel().getTube();
         	enemy.setX(player.getX());
         	enemy.setY(player.getY());
-        	enemy.setRalpha((random.nextInt(360) * game.getLevel().getTube().getStepr()) % 360);
+        	enemy.setRalpha(((random.nextInt(tube.stepsr) - tube.stepsr/2) * tube.getStepr()));
         	enemy.setAlphatarget(enemy.getRalpha()); 
         	enemy.setZpos(-41);
         	enemy.setZtarget(41);
