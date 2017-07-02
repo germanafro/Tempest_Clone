@@ -43,7 +43,8 @@ public class Game {
 	public Game(){
 		this.setHud(new HUD(this));
 		this.setGameObjects(new HashMap<String, GameObject>());
-		this.startNewGame();
+		//TODO don't do that! 
+		//this.startNewGame();
 	}
 
 	private void startNewGame() {
@@ -119,10 +120,10 @@ public class Game {
 				if(this.nextLevel()){
 					this.setLevelNr(this.getLevelNr() + 1);
 					this.setState("load");
-					this.setState("pause");
-					this.hud.getKills().setText("Abschuesse: " + this.getLevel().getKills());
-					this.hud.getLevel().setText("Level: " + this.getLevelNr());
 				}
+				//TODO this belongs into game engine? not sure~~
+				this.hud.getKills().setText("Abschuesse: " + this.getLevel().getKills());
+				this.hud.getLevel().setText("Level: " + this.getLevelNr());
 				this.gameEngine.spawnEnemy();
 				this.gameEngine.queueObjects();
 				this.gameEngine.moveObjects();
@@ -144,16 +145,13 @@ public class Game {
 				}
 				this.addGameObject(level.getPlayer());
 				this.addGameObject(level.getTube());
+				
 				this.setState("playing");
 				break;
 			case "reset":
 				break;
 			case "pause":
 				this.bgm.stop();
-				break;
-			case "startmenu":
-				bgm = mapBGM.get("09 Come and Find Me - B mix.mp3");
-				this.setState("starting");
 				break;
 			case "ending":
 				this.bgm.stop();
@@ -183,8 +181,6 @@ public class Game {
 			timer.update();
 			this.hud.getLabelUPS().setText("UPS: " + timer.getUps());
 			this.hud.getLabelFPS().setText("FPS: " + timer.getFps());
-			this.hud.getKills().setText("Abschuesse: " + this.getLevel().getKills());
-			this.hud.getLevel().setText("Level: " + this.getLevelNr());
 			//Step3 fps cap if vsynch is off
 	        //this.sync(60);
 			
