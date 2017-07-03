@@ -46,15 +46,21 @@ public class Projectile extends GameObject {
 	
 	public void move(){
 		if(this.getName().contains("player")){
-			this.setZpos(this.getZpos() - 3);
+			this.setZpos(this.getZpos() - this.getSpeed());
 			this.setDirty(true);
 			this.setMoving(true);
 		}
 		else if(this.getName().contains("enemy")){
-			this.setZpos(this.getZpos() + 3);
+			this.setZpos(this.getZpos() + this.getSpeed());
 			this.setDirty(true);
 			this.setMoving(true);
 		}
+		if(this.getAlphatarget() > this.getRalpha()){
+			this.setRalpha(this.getRalpha() + this.getSpeed()*2);
+		} else if(this.getAlphatarget() < this.getRalpha()){
+			this.setRalpha(this.getRalpha() - this.getSpeed()*2); 
+		}
+		this.setMoving(true);
 	}
 	
 	public void update(){
@@ -139,5 +145,9 @@ public class Projectile extends GameObject {
 			obj.setScale(scale);
 		}
 		this.setDirty(true);
+	}
+	public boolean isDead(){
+		if (lives-- <= 0) return true;
+		return false;
 	}
 }

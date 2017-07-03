@@ -113,18 +113,20 @@ public class GameEngine {
 	    					// System.out.println("[Debug]Zerstöre" + enemyObject.getName());
 	    					 gameObject.setDestroy(true);
 	    					 this.game.sfxPlay(enemyObject.getDeathSound());
-	    					 if(!enemysName.contains("rambo")){ // invincible types 
-	    						enemyObject.setDestroy(true);
-	    					 	if (!enemysName.contains("projectile")){ // no score types
-	    					 		this.game.setScore(this.game.getScore() + 1);
-	    					 		this.game.getLevel().setKills(game.getLevel().getKills() + 1);
-	    					 		
-	    					 		int tens = this.game.getScore()/10;
-	    					 		int ones = this.game.getScore()%10;
-	    					 		this.game.getDisplay().getScore().setTexture(ones + ".png"); 
-	    					 		this.game.getDisplay().getScore10().setTexture(tens + ".png"); 
-	    					 			// TODO display global score not just level score
-	    					 	}
+	    					 if(!enemysName.contains("invincible")){ // invincible types 
+	    						if (enemyObject.isDead()) {
+									enemyObject.setDestroy(true);
+									if (!enemysName.contains("projectile")) { // no score types
+										this.game.setScore(this.game.getScore() + 1);
+										this.game.getLevel().setKills(game.getLevel().getKills() + 1);
+
+										int tens = this.game.getScore() / 10;
+										int ones = this.game.getScore() % 10;
+										this.game.getDisplay().getScore().setTexture(ones + ".png");
+										this.game.getDisplay().getScore10().setTexture(tens + ".png");
+										// TODO display global score not just level score
+									} 
+								}
 	    					 }
 	    				}
     				}
@@ -146,14 +148,15 @@ public class GameEngine {
 		boolean touchr = deltaradius*2*radius/360 < (obj1.xoffset + obj2.xoffset)/3;  // rough estimate but seems to be satisfying
 		return touchz && touchr;
 	}
-	
+	/**
+	 *  spawn random enemy
+	 */
 	public void spawnEnemy(){
 		Level level = game.getLevel();
 		Timer timer = game.getTimer();
         double now = timer.getTime();
         double spawnspeed = game.getLevel().getSpawnspeed(); // limiter for Enemy spawn speed
     	double enemyTime = game.getLevel().getEnemyTime();
-    	Random random = new Random();
 
         if (now - enemyTime > spawnspeed) {
         	level.setEnemyTime(timer.getTime());
@@ -166,7 +169,10 @@ public class GameEngine {
         }
         	
 	}
-	
+	/**
+	 * spawn enemy with id
+	 * @param id enemy id 1-99 normal enemies  100+ boss types
+	 */
 	public void spawnEnemy(int id){
 		Level level = game.getLevel();
 		Random random = new Random();
@@ -182,6 +188,7 @@ public class GameEngine {
             				"roundysh.png",
             				game);
         		 enemy.setDeathSound("phaserDown1.mp3");
+        		 enemy.setLives(1);
         		break;
         	case 2:
         		 enemy = new Enemy("enemy_rambo", 2 ,
@@ -193,6 +200,7 @@ public class GameEngine {
             				"wingship.png",
             				game);
         		 enemy.setDeathSound("pepSound3.mp3");
+        		 enemy.setLives(10);
         		break;
         	case 3:
         		 enemy = new Enemy("enemy_undefined", 3 ,
@@ -203,13 +211,14 @@ public class GameEngine {
             				"spco.png",
             				"spco.png",
             				game);
+        		 enemy.setLives(2);
         		break;
         	case 100:
-        		enemy = new Enemy("enemy_boss_0", 3 ,
-       				 "futurefighter.png.png",
-           				"shship.png.png",
-           				"shship.png.png",
-           				"shship.png.png",
+        		enemy = new Enemy("enemy_boss_0", 100 ,
+       				 "futurefighter.png",
+           				"shship.png",
+           				"shship.png",
+           				"shship.png",
            				"mship1.png",
            				"mship1.png",
            				game) {
@@ -222,33 +231,37 @@ public class GameEngine {
 						double now = timer.getTime();
 						
 						float salvodelay = 5f;
-						float shotdelay = 1f/3;
+						float shotdelay = 1f/10;
 						
 						if (now - lastsalvo > salvodelay) {
 							//begin salvo
 							if(now - lastshot > shotdelay){
-								Projectile proj = new Projectile("enemyprojectile" + game.enemyFired++, this.getGame(), "enemy_projectile.png");
-								proj.setX(this.getX());
-								proj.setY(this.getY());
-								proj.setZ(this.getZ());
-								proj.setRalpha(this.getRalpha());
-								proj.setAlphatarget(this.getAlphatarget());
-								proj.setZpos(this.getZpos() + 5);
-								proj.setZtarget(50);
-								proj.setSpawnSound(this.getProjectileSound());
-								game.addGameObject(proj);
+								for (int i = 0; i < 3 ; i++){ // ohh its a triple!!
+									Projectile proj = new Projectile("enemyprojectile" + game.enemyFired++, this.getGame(), "enemy_projectile.png");
+									proj.setX(this.getX());
+									proj.setY(this.getY());
+									proj.setZ(this.getZ());
+									proj.setRalpha(this.getRalpha() + (i-1)*this.game.getLevel().getTube().getStepr());
+									proj.setAlphatarget(36000); // make it spin round and round ^_^ xD
+									proj.setZpos(this.getZpos() + 5);
+									proj.setZtarget(50);
+									proj.setSpawnSound(this.getProjectileSound());
+									game.addGameObject(proj);
+								}
 								lastshot = timer.getTime();
 								shotsfired++;
 							}
 							if (shotsfired>= 10){
+								shotsfired = 0;
 								lastsalvo = timer.getTime(); // finish salvo
 							}
 						}		
 					}
         		};
         		enemy.setLives(100);
-        		enemy.setDeathSound("");
+        		enemy.setDeathSound("lowDown.mp3");
         		enemy.setProjectileSound("phaserUp5.mp3");
+        		break;
         	default:
        		 enemy = new Enemy("enemy_brute", 0 ,
        				"enemy_projectile.png",
@@ -259,6 +272,7 @@ public class GameEngine {
        				"enemy_jet.png",
        				 game);
        		 enemy.setDeathSound("phaserDown3.mp3");
+       		enemy.setLives(3);
        		break;
         	}
         	level.setEnemycount(level.getEnemycount() + 1);

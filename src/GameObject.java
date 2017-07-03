@@ -52,6 +52,7 @@ public abstract class GameObject {
 	protected float x = 0f;
 	protected float y = 0f;
 	protected float z = 0f;
+	private int speed = 1;
 	private String projectileSound = "laser4.mp3";
 	private String spawnSound = "phaserDown2.mp3";
 	private String deathSound = "phaserDown2.mp3";
@@ -68,6 +69,7 @@ public abstract class GameObject {
 	private boolean dirty = true;
 	private boolean moving = false;
 	private boolean destroy = false;
+	protected int lives = 1;
 	public int stepsr = 0;
 
   	
@@ -338,4 +340,13 @@ public abstract class GameObject {
 	public void runscript(){
 		
 	}
+	public int getSpeed() {
+		return speed;
+	}
+	public void setSpeed(int speed) {
+		this.speed = speed;
+	}
+	public boolean isDead(){
+		return false;
+	};
 }

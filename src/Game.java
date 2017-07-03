@@ -129,6 +129,7 @@ public class Game {
 				this.addGameObject(level.getPlayer());
 				this.addGameObject(level.getTube());
 				this.addGameObject(level.getBackground());
+				//this.gameEngine.spawnEnemy(100); //spawn test boss
 				this.bgm.stop();
 				this.bgmLoop(level.getBgm());
 				this.setState("ready");
@@ -139,7 +140,6 @@ public class Game {
 					this.setState("load");
 					break;
 				}
-				
 				this.gameEngine.spawnEnemy();
 				this.gameEngine.queueObjects();
 				this.gameEngine.moveObjects();

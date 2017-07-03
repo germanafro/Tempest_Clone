@@ -11,7 +11,6 @@ import mat.Vec3;
  *
  */
 public class Enemy extends GameObject {
-	int speed = 1; // Movement along the z Axis
 	int enemyType = 1; //1 to n(3) possible Enemytypes
 	Rectangle front;
 	Rectangle back;
@@ -19,7 +18,6 @@ public class Enemy extends GameObject {
 	Rectangle right;
 	Rectangle top;
 	Rectangle bottom;
-	private int lives = 1;
 	
 	public Enemy(String name, int type, Game game) {
 		super(name, game);
@@ -174,9 +172,9 @@ public class Enemy extends GameObject {
 			}
 		}
 		if(this.getAlphatarget() > this.getRalpha()){
-			this.setRalpha(this.getRalpha() + speed); //TODO change ralpha to double - nein! ralpha ist eine relative Einheit zum spielfeld grid working as intended
+			this.setRalpha(this.getRalpha() + getSpeed()); //TODO change ralpha to double - nein! ralpha ist eine relative Einheit zum spielfeld grid working as intended
 		} else if(this.getAlphatarget() < this.getRalpha()){
-			this.setRalpha(this.getRalpha() - speed); //TODO same here
+			this.setRalpha(this.getRalpha() - getSpeed()); //TODO same here
 		}
 		this.setDirty(true);
 	}
@@ -191,9 +189,9 @@ public class Enemy extends GameObject {
 		int i = rnd.nextInt(100);
 		if(i >= 100 - chance) {
 			if(this.getZtarget() > this.getZpos()){
-				this.setZpos(this.getZpos() + speed);
+				this.setZpos(this.getZpos() + getSpeed());
 			}else if(this.getZtarget() < this.getZpos()){
-				this.setZpos(this.getZpos() - speed);
+				this.setZpos(this.getZpos() - getSpeed());
 			}
 			this.setDirty(true);
 		}
@@ -211,9 +209,9 @@ public class Enemy extends GameObject {
 		case 3: // chaser
 			this.setAlphatarget(game.getLevel().getPlayer().getRalpha()); // chase players current position not his target position - that would be mean =D
 			if(this.getAlphatarget() > this.getRalpha()){
-				this.setRalpha(this.getRalpha() + speed);
+				this.setRalpha(this.getRalpha() + getSpeed());
 			} else if(this.getAlphatarget() < this.getRalpha()){
-				this.setRalpha(this.getRalpha() - speed); 
+				this.setRalpha(this.getRalpha() - getSpeed()); 
 			}
 			this.setDirty(true);
 			this.moveZLogic(75, zstep); // move slower for balance
@@ -228,8 +226,10 @@ public class Enemy extends GameObject {
 			this.moveZLogic(100, zstep);
 			break;
 		case 100:
+		case 200:
 			this.moveRLogic(1, rstep);
 			this.bossTimer();
+			break;
 		default: //rambo
 			this.moveZLogic(100, zstep);
 			break;
@@ -286,8 +286,8 @@ public class Enemy extends GameObject {
 	public void setLives(int lives) {
 		this.lives = lives;
 	}
-	public boolean isdead(){
-		if (lives-- == 0) return true;
+	public boolean isDead(){
+		if (lives-- <= 0) return true;
 		return false;
 	}
 	public void bossTimer() {
