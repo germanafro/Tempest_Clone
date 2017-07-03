@@ -152,11 +152,10 @@ public class Game {
 					this.gameEngine.spawnEnemy(100); //spawn test boss
 					break;
 				case 2:
-					this.gameEngine.spawnEnemy(101); //spawn test boss
+					this.gameEngine.spawnEnemy(100); //spawn test boss
 					break;
 				case 3:
 					this.gameEngine.spawnEnemy(100); //spawn test boss
-					this.gameEngine.spawnEnemy(101); //spawn test boss
 					break;
 				}
 				this.setState("boss");
