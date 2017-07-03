@@ -47,6 +47,9 @@ public class Game {
 	private float sfxvolume = 0f;
 	public Map<String, Sound> mapSFX = null;
 	public Map<String, Sound> mapBGM = null;
+	private DisplayBoard display = null;
+	private int score = 0;
+	private int lives = 0;
 	
 	public Game(){
 		this.setHud(new HUD(this));
@@ -92,6 +95,9 @@ public class Game {
 		this.renderEngine.loadTextures(); // TODO: move back to render engine?
 		this.loadMapSFX();
 		this.loadMapBGM();
+		this.score = 0;
+		this.lives = 4;
+		display = new DisplayBoard("displayboard", this);
 		this.renderEngine.initObjects();
 		this.gameEngine.run();
 		timer.init();
@@ -117,6 +123,8 @@ public class Game {
 			float delta = timer.getDelta();
 			switch(state){
 			case "startmenu":
+				this.score = 0;
+				this.lives = 4;
 				if(shouldStart) {
 					this.setLevelNr(1);
 					this.setState("load");
@@ -128,7 +136,7 @@ public class Game {
 				this.addGameObject(level.getPlayer());
 				this.addGameObject(level.getTube());
 				this.addGameObject(level.getBackground());
-				this.addGameObject(new DisplayBoard("score" + this.helpCounter++, this)); // Sollte der Counter für die Abschüsse werden.
+				display.getLevel().setTexture(this.getLevelNr() +".png");
 				this.bgm.stop();
 				this.bgmLoop(level.getBgm());
 				this.setState("ready");
@@ -152,6 +160,7 @@ public class Game {
 				moveQueue.clear();
 				dirtyQueue.clear();
 				gameObjects.clear();
+				this.addGameObject(display);
 				this.shotsFired = 0;
 				this.enemyFired = 0;
 				this.setState("starting");
@@ -206,6 +215,7 @@ public class Game {
 				this.setLevel(Levels.GameOver(this));
 				//this.addGameObject(level.getPlayer());
 				this.addGameObject(level.getTube());
+				this.addGameObject(display);
 				//this.addGameObject(level.getBackground());
 				this.bgm.stop();
 				this.bgmLoop(level.getBgm());
@@ -553,6 +563,30 @@ public class Game {
 
 	public void setShouldStart(boolean shouldStart) {
 		this.shouldStart = shouldStart;
+	}
+
+	public DisplayBoard getDisplay() {
+		return display;
+	}
+
+	public void setDisplay(DisplayBoard display) {
+		this.display = display;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+
+	public int getLives() {
+		return lives;
+	}
+
+	public void setLives(int lives) {
+		this.lives = lives;
 	}
 
 }

@@ -109,17 +109,26 @@ public class GameEngine {
     			//TODO work with iterator over GameObject<> Map ?
     			Set<String> keys = game.getGameObjects().keySet();
     			for(String enemysName: keys){
-    				if(enemysName.contains("enemy") && !enemysName.contains("enemy_rambo")){
+    				if(enemysName.contains("enemy")){
 	    				GameObject enemyObject = game.getGameObjects().get(enemysName);
 	    				if(checkCollision(gameObject, enemyObject)){
 	    					// System.out.println("[Debug]Zerstöre" + gameObject.getName());
 	    					// System.out.println("[Debug]Zerstöre" + enemyObject.getName());
 	    					 gameObject.setDestroy(true);
-	    					 enemyObject.setDestroy(true);
 	    					 this.game.sfxPlay("Blast-SoundBible.com-2068539061.mp3");
-	    					 //this.game.sfxPlay(new Sound("sfx/Blast-SoundBible.com-2068539061.mp3"));
-	    					 this.game.getLevel().setKills(game.getLevel().getKills() + 1);
-	    					 
+	    					 if(!enemysName.contains("enemy_rambo")){ // invincible types 
+	    						enemyObject.setDestroy(true);
+	    					 	if (!enemysName.contains("enemyprojectile")){ // no score types
+	    					 		this.game.setScore(this.game.getScore() + 1);
+	    					 		this.game.getLevel().setKills(game.getLevel().getKills() + 1);
+	    					 		
+	    					 		int tens = this.game.getScore()/10;
+	    					 		int ones = this.game.getScore()%10;
+	    					 		this.game.getDisplay().getScore().setTexture(ones + ".png"); 
+	    					 		this.game.getDisplay().getScore10().setTexture(tens + ".png"); 
+	    					 			// TODO display global score not just level score
+	    					 	}
+	    					 }
 	    				}
     				}
     			}

@@ -95,6 +95,7 @@ public abstract class Primitive {
 	}
 	
 	public Primitive(int x , int y, int scale, Game game, String texture){
+		this.game = game;
 		this.x = x;
 		this.y = y;
 		this.scale = scale;

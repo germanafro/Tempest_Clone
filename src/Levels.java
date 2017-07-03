@@ -57,7 +57,7 @@ public interface Levels {
 		return level;
 	}
 	public static Level Ending(Game game){
-		Background tube = new Background("ending", "credits.png", game); // TODO replace with ending screen
+		Background tube = new Background("ending", "credits.png", game);
 		tube.setxScale(400);
 		tube.setyScale(400);
 		tube.setzScale(100);
@@ -69,7 +69,7 @@ public interface Levels {
 	}
 	
 	public static Level GameOver(Game game){
-		Background tube = new Background("gameover", "Mljuegos0.png", game); // TODO replace with ending screen
+		Background tube = new Background("gameover", "Mljuegos0.png", game);
 		//tube.scale = 100;
 		tube.setxScale(400);
 		tube.setyScale(300);
