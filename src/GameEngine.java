@@ -57,9 +57,6 @@ public class GameEngine {
 				if(gameObject.getAlphatarget() == gameObject.getRalpha()){
 					alphareached = true;
 					gameObject.enemyLogic(game.getLevel().getTube().getStepr());
-/*					if(gameObject.getEnemyType() == 1){
-						gameObject.shootingLogic();
-					}*/
 				}
 				gameObject.move();
 				if(gameObject.getZpos() >= gameObject.getZtarget()){
@@ -100,7 +97,6 @@ public class GameEngine {
     				this.game.sfxPlay("Grenade-SoundBible.com-1777900486.mp3");
     				gameObject.setDestroy(true);
     				this.playerLoseLife(player);
-    				game.isScoreUp = true;
     				
     			}
     		// check collision with playerprojectile
@@ -118,8 +114,8 @@ public class GameEngine {
 	    					 enemyObject.setDestroy(true);
 	    					 this.game.sfxPlay("Blast-SoundBible.com-2068539061.mp3");
 	    					 //this.game.sfxPlay(new Sound("sfx/Blast-SoundBible.com-2068539061.mp3"));
-	    					 game.getLevel().setKills(game.getLevel().getKills() + 1);
-	    					 game.isScoreUp = true;
+	    					 this.game.getLevel().setKills(game.getLevel().getKills() + 1);
+	    					 
 	    				}
     				}
     			}

@@ -34,8 +34,9 @@ public class Level {
 		this.player.setY(this.tube.getRadius());
 		this.setBackground(new Background("background", game));
 		this.numEnemies = numEnemies;
-		
 	}
+	
+	
 	public int getKills() {
 		return kills;
 	}

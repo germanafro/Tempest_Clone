@@ -117,7 +117,7 @@ public class Game {
 				this.addGameObject(level.getPlayer());
 				this.addGameObject(level.getTube());
 				this.addGameObject(level.getBackground());
-				this.addGameObject(new DisplayBoard("score" + this.helpCounter++, this));
+				this.addGameObject(new DisplayBoard("score" + this.helpCounter++, this)); // Sollte der Counter für die Abschüsse werden.
 				this.bgm.stop();
 				this.bgmLoop(level.getBgm());
 				this.setState("ready");
@@ -128,18 +128,11 @@ public class Game {
 					this.setState("load");
 					break;
 				}
-				//TODO this belongs into game engine? not sure~~
-				//this.hud.getKills().setText("Abschuesse: " + this.getLevel().getKills());
-				//this.hud.getLevel().setText("Level: " + this.getLevelNr());
 				
 				this.gameEngine.spawnEnemy();
 				this.gameEngine.queueObjects();
 				this.gameEngine.moveObjects();
-				/*if(isScoreUp){
-					this.addGameObject(new DisplayBoard("score" + this.helpCounter++, this));
-					isScoreUp = false;
-					System.out.println(helpCounter);
-				}*/
+
 				break;
 			case "load": //Load next level!
 				this.sleep(1000);

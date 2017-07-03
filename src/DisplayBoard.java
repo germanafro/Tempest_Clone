@@ -7,9 +7,9 @@ import mat.Vec3;
 public class DisplayBoard extends GameObject{
 	Rectangle front;
 	
+	
 	public DisplayBoard(String name, Game game){
 		super(name, game);
-		//this.setName(name);
 		this.setGeom(new ArrayList<Primitive>());
 		if(name.equals("level1")){front = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), "1.png");}
 		if(name.equals("level2")){front = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), "2.png");}
@@ -19,7 +19,6 @@ public class DisplayBoard extends GameObject{
 		if(game.getLevel().getKills() == 2 && name.contains("score")){front = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), "2.png");}
 		if(game.getLevel().getKills() == 3 && name.contains("score")){front = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), "3.png");}
 		if(game.getLevel().getKills() == 4 && name.contains("score")){front = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), "4.png");}
-		//if(game.getLevel().getKills() == 5){front = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), "5.png");}
 		this.addGeom(front);
 		this.setDirty(true);
 	}
