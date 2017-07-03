@@ -16,6 +16,8 @@ public class DisplayBoard extends GameObject{
 	private Rectangle score10;
 
 	private List<Rectangle> lives = new ArrayList<Rectangle>();
+	private int maxScore = 99;
+	private int minScore = 0;
 	private int maxlives = 0;
 	public DisplayBoard(String name, Game game){
 		super(name, game);
@@ -87,6 +89,7 @@ public class DisplayBoard extends GameObject{
 		for (int i = maxlives ; i > 0 ; i--){
 			if (this.getGeom().contains(this.lives.get(i-1))){ 
 				this.getGeom().remove(this.lives.get(i-1)); // entferne Leben von rechts nach links
+				this.updateScore(-10); // punishment!
 				if (i == 1){
 					return true;
 				}
@@ -95,10 +98,31 @@ public class DisplayBoard extends GameObject{
 		}
 		return false;
 	}
+	/**
+	 * increase score value with given value
+	 * @param value increment
+	 */
+	public void updateScore(int value){
+		// limiter so we dont overflow
+		int newscore = this.game.getScore() + value;
+		if (value > 0) this.game.setScore(Math.min(maxScore, newscore));
+		else if (value < 0 ) this.game.setScore(Math.max(minScore , newscore));
+		int tens = this.game.getScore() / 10;
+		int ones = this.game.getScore() % 10;
+		this.getScore().setTexture(ones + ".png");
+		this.getScore10().setTexture(tens + ".png");
+		// TODO display global score not just level score
+	}
 	public Rectangle getScore10() {
 		return score10;
 	}
 	public void setScore10(Rectangle score10) {
 		this.score10 = score10;
+	}
+	public int getMaxScore() {
+		return maxScore;
+	}
+	public void setMaxScore(int maxScore) {
+		this.maxScore = maxScore;
 	}
 }

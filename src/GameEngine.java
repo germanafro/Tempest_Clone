@@ -115,15 +115,11 @@ public class GameEngine {
 	    					 this.game.sfxPlay(enemyObject.getDeathSound());
 	    					 if(!enemysName.contains("invincible")){ // invincible types 
 	    						if (enemyObject.isDead()) {
+	    							if (enemysName.contains("boss")) this.game.getLevel().setBossDead(true);
 									enemyObject.setDestroy(true);
 									if (!enemysName.contains("projectile")) { // no score types
-										this.game.setScore(this.game.getScore() + 1);
+										this.game.getDisplay().updateScore(enemyObject.getScoreVal());
 										this.game.getLevel().setKills(game.getLevel().getKills() + 1);
-
-										int tens = this.game.getScore() / 10;
-										int ones = this.game.getScore() % 10;
-										this.game.getDisplay().getScore().setTexture(ones + ".png");
-										this.game.getDisplay().getScore10().setTexture(tens + ".png");
 										// TODO display global score not just level score
 									} 
 								}
@@ -258,6 +254,7 @@ public class GameEngine {
 						}		
 					}
         		};
+        		enemy.setScoreVal(10);
         		enemy.setLives(100);
         		enemy.setDeathSound("lowDown.mp3");
         		enemy.setProjectileSound("phaserUp5.mp3");

@@ -26,6 +26,7 @@ public class Level {
 	
 	// Every spawnCurve Enemies spawn, the frequency with which the enemies spawn rises
 	private int spawnCurve = 10;
+	private boolean bossDead = false;
 
 
 	public Level(GameObject tube, int numEnemies, Game game){
@@ -116,6 +117,12 @@ public class Level {
 	}
 	public void setBackground(Background background) {
 		this.background = background;
+	}
+	public boolean isBossDead() {
+		return bossDead ;
+	}
+	public void setBossDead(boolean dead) {
+		this.bossDead =  dead ;
 	}
 	
 }

@@ -60,6 +60,7 @@ public abstract class GameObject {
 	private int ralpha = 0;
 	private int ztarget = 0;
 	protected int zpos = 0;
+	private int scoreval = 0;
 	protected Matrix4[] matrices = {
 			new RotationMatrix(0, mat.Axis.X),  // rotate object
 			new TranslationMatrix(new Vec3(0,0,0)), //initial individual offset to determine position relative to other geoms in this object
@@ -348,5 +349,11 @@ public abstract class GameObject {
 	}
 	public boolean isDead(){
 		return false;
+	}
+	public int getScoreVal() {
+		return scoreval;
+	}
+	public void setScoreVal(int scoreval) {
+		this.scoreval = scoreval;
 	};
 }

@@ -129,15 +129,14 @@ public class Game {
 				this.addGameObject(level.getPlayer());
 				this.addGameObject(level.getTube());
 				this.addGameObject(level.getBackground());
-				//this.gameEngine.spawnEnemy(100); //spawn test boss
+				//
 				this.bgm.stop();
 				this.bgmLoop(level.getBgm());
 				this.setState("ready");
 				break;
 			case "playing":
 				if(this.nextLevel()){
-					this.setLevelNr(this.getLevelNr() + 1);
-					this.setState("load");
+					this.setState("bossbegin");
 					break;
 				}
 				this.gameEngine.spawnEnemy();
@@ -145,6 +144,31 @@ public class Game {
 				this.gameEngine.moveObjects();
 
 				break;
+			case "bossbegin":
+				switch(this.getLevelNr()){
+				case 1:
+					this.gameEngine.spawnEnemy(100); //spawn test boss
+					break;
+				case 2:
+					this.gameEngine.spawnEnemy(101); //spawn test boss
+					break;
+				case 3:
+					this.gameEngine.spawnEnemy(100); //spawn test boss
+					this.gameEngine.spawnEnemy(101); //spawn test boss
+					break;
+				}
+				this.setState("boss");
+				break;
+			case "boss":
+				if(this.level.isBossDead()){
+					this.setLevelNr(this.getLevelNr() + 1);
+					this.setState("load");
+					break;
+				}
+				this.gameEngine.queueObjects();
+				this.gameEngine.moveObjects();
+				break;
+				
 			case "load": //Load next level!
 				this.sleep(1000);
 				pause = true;
@@ -194,6 +218,9 @@ public class Game {
 				this.setState("load");
 				break;
 			case "pause":
+				this.bgm.stop();
+				break;
+			case "bosspause":
 				this.bgm.stop();
 				break;
 			case "ending":

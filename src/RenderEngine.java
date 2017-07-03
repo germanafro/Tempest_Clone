@@ -255,7 +255,7 @@ public class RenderEngine {
 								game.shootTime = timer.getTime();
 								Player player = game.getLevel().getPlayer();
 								GameObject tube = game.getLevel().getTube();
-								if (player != null && tube != null && game.getState() == "playing") {
+								if (player != null && tube != null && (game.getState() == "playing" || game.getState() == "boss")) {
 									Projectile proj = new Projectile("playerprojectile" + game.shotsFired++, game,
 											"player_projectile.png");
 									proj.setX(player.getX());
@@ -298,7 +298,7 @@ public class RenderEngine {
                 	if (level != null) {
 						Player player = level.getPlayer();
 						GameObject tube = level.getTube();
-						if (player != null && tube != null && game.getState() == "playing") {
+						if (player != null && tube != null && (game.getState() == "playing" || game.getState() == "boss")) {
 							int alphatarget = player.getAlphatarget();
 							if (alphatarget - player.getRalpha() < tube.getStepr()) { // two step limiter
 								if (tube.getClass() == HalfTube.class
@@ -315,7 +315,7 @@ public class RenderEngine {
                 	if (level != null) {
 						Player player = level.getPlayer();
 						GameObject tube = level.getTube();
-						if (player != null && tube != null && game.getState() == "playing") {
+						if (player != null && tube != null && (game.getState() == "playing" || game.getState() == "boss")) {
 							int alphatarget = player.getAlphatarget();
 							if (player.getRalpha() - alphatarget < tube.getStepr()) { // protects from overflowing
 								if (tube.getClass() == HalfTube.class
@@ -419,7 +419,7 @@ public class RenderEngine {
             	if ( key == GLFW_KEY_A && action == GLFW_PRESS ){
             		Player player = game.getLevel().getPlayer();
             		GameObject tube = game.getLevel().getTube();
-            		if(player != null && tube != null && game.getState() == "playing"){
+            		if(player != null && tube != null && (game.getState() == "playing" || game.getState() == "boss")){
             			int alphatarget = player.getAlphatarget();
             			if (player.getRalpha() - alphatarget  < tube.getStepr()){ // protects from overflowing
             				if (tube.getClass() == HalfTube.class && ((HalfTube) tube).getAlphaMin() > alphatarget - tube.getStepr()){
@@ -435,7 +435,7 @@ public class RenderEngine {
             	if ( key == GLFW_KEY_D && action == GLFW_PRESS ){
             		Player player = game.getLevel().getPlayer();
             		GameObject tube = game.getLevel().getTube();
-            		if(player != null && tube != null && game.getState() == "playing"){
+            		if(player != null && tube != null && (game.getState() == "playing" || game.getState() == "boss")) {
             			int alphatarget = player.getAlphatarget();
             			if (alphatarget - player.getRalpha() < tube.getStepr()){ // two step limiter
             				if (tube.getClass() == HalfTube.class && ((HalfTube) tube).getAlphaMax() < alphatarget + tube.getStepr()){
@@ -457,7 +457,7 @@ public class RenderEngine {
                     	game.shootTime = timer.getTime();
                     	Player player = game.getLevel().getPlayer();
                 		GameObject tube = game.getLevel().getTube();
-                		if(player != null && tube != null && game.getState() == "playing"){
+                		if(player != null && tube != null && (game.getState() == "playing" || game.getState() == "boss")){
                 			Projectile proj = new Projectile("playerprojectile" + game.shotsFired++, game, "player_projectile.png");
                 			proj.setX(player.getX());
                 			proj.setY(player.getY());
@@ -482,6 +482,12 @@ public class RenderEngine {
             			game.setState("playing");
             		}
             		else if (game.getState().equals("playing")) game.setState("pause");
+            		
+            		else if(game.getState().equals("bosspause")){
+            			game.getBgm().loop();
+            			game.setState("boss");
+            		}
+            		else if (game.getState().equals("boss")) game.setState("bosspause");
             	}
             	if ( key == GLFW_KEY_Q){
             		int val = hud.SlideScale.getValue();

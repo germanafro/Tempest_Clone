@@ -57,6 +57,7 @@ public class Enemy extends GameObject {
 		this.setEnemyType(type);
 		this.setDeathSound("Blast-SoundBible.com-2068539061.mp3");
 		this.setProjectileSound("laser3.mp3");
+		this.setScoreVal(1);
 		this.xScale = 40;
 		this.yScale = 20;
 		this.zScale = 80;
