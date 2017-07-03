@@ -5,7 +5,11 @@ import mat.Matrix4;
 import mat.RotationMatrix;
 import mat.TranslationMatrix;
 import mat.Vec3;
-
+/**
+ * Implementation for various enemy types
+ * @author Sebastian Witt
+ *
+ */
 public class Enemy extends GameObject {
 	int speed = 1; // Movement along the z Axis
 	int enemyType = 1; //1 to n(3) possible Enemytypes
@@ -16,11 +20,11 @@ public class Enemy extends GameObject {
 	Rectangle top;
 	Rectangle bottom;
 	
-	public Enemy(String name, Game game) {
+	public Enemy(String name, int type, Game game) {
 		super(name, game);
-		this.setEnemyType(1);
+		this.setEnemyType(type);
 		this.xScale = 40;
-		this.yScale = 5;
+		this.yScale = 20;
 		this.zScale = 80;
 		this.getGeom().clear();
 		front = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), "default.png");
@@ -35,6 +39,39 @@ public class Enemy extends GameObject {
 		this.addGeom(right);
 		this.addGeom(top);
 		this.addGeom(bottom);
+		this.setDirty(true);
+	}
+	/**
+	 * constructor to set custom textures
+	 * @param name
+	 * @param type
+	 * @param front
+	 * @param back
+	 * @param left
+	 * @param right
+	 * @param top
+	 * @param bottom
+	 * @param game
+	 */
+	public Enemy(String name, int type, String front, String back, String left, String right, String top, String bottom, Game game) {
+		super(name, game);
+		this.setEnemyType(type);
+		this.xScale = 40;
+		this.yScale = 20;
+		this.zScale = 80;
+		this.getGeom().clear();
+		this.front = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), front);
+		this.back = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), back);
+		this.left = new Rectangle(this.getzScale(),this.getyScale(),this.getScale(), this.getGame(), left);
+		this.right = new Rectangle(this.getzScale(),this.getyScale(),this.getScale(), this.getGame(), right);
+		this.top = new Rectangle(this.getxScale(),this.getzScale(),this.getScale(), this.getGame(), top);
+		this.bottom = new Rectangle(this.getxScale(),this.getzScale(),this.getScale(), this.getGame(), bottom);
+		this.addGeom(this.front);
+		this.addGeom(this.back);
+		this.addGeom(this.left);
+		this.addGeom(this.right);
+		this.addGeom(this.top);
+		this.addGeom(this.bottom);
 		this.setDirty(true);
 	}
 	
@@ -89,7 +126,7 @@ public class Enemy extends GameObject {
 	public void move(){
 		int speed = (this.getEnemyType() > 2) ? 2 : 1;
 		if(this.getAlphatarget() > this.getRalpha()){
-			this.setRalpha(this.getRalpha() + speed); //TODO change ralpha to double
+			this.setRalpha(this.getRalpha() + speed); //TODO change ralpha to double - nein! ralpha ist eine relative Einheit zum spielfeld grid working as intended
 		} else if(this.getAlphatarget() < this.getRalpha()){
 			this.setRalpha(this.getRalpha() - speed); //TODO same here
 		}
@@ -102,12 +139,15 @@ public class Enemy extends GameObject {
 		}
 		this.setDirty(true);
 	}
+	/**
+	 * randomly shoot projectiles at the player
+	 */
 	@Override
 	public void shootingLogic(){
 		Random rnd = new Random();
 		int i = rnd.nextInt(200);
-		if(i >= 190 - this.getGame().getLevelNr() - 1){
-			Projectile proj = new Projectile("enemyProjectile" + game.enemyFired++, this.getGame());
+		if(i >= 197 - this.getGame().getLevelNr() - 1){
+			Projectile proj = new Projectile("enemyProjectile" + game.enemyFired++, this.getGame(), "enemy_projectile.png");
 			proj.setX(this.getX());
 			proj.setY(this.getY());
 			proj.setZ(this.getZ());
@@ -121,19 +161,21 @@ public class Enemy extends GameObject {
 	}
 	
 	
-	/* Controlls Enemy Behavior
-	 * 
+	/**
+	 * control enemy behavior
 	 */
 	@Override
 	public void enemyLogic(int step){
 		int type = this.getEnemyType();
 		switch(type){
 		case 1:
+			this.shootingLogic(); // durchsacken lassen - so könenn shooter auch sidesteps machen ^_^
+		case 0:
 			Random rnd = new Random();
 			int i = rnd.nextInt(200);
 			if(i >= 190) {
 				int target = this.getAlphatarget();
-				Tube tube = this.game.getLevel().getTube();
+				GameObject tube = this.game.getLevel().getTube();
 				if(i % 2 == 0){
 					target += step;
 					if(tube.getClass() == HalfTube.class && target > ((HalfTube)tube).getAlphaMax()){
@@ -147,9 +189,6 @@ public class Enemy extends GameObject {
 					} else this.setAlphatarget(this.getAlphatarget() - step);
 				}
 			}
-			break;
-		case 2:
-			this.shootingLogic();
 			break;
 		default: 
 			break;

@@ -12,7 +12,13 @@ import javax.sound.sampled.AudioInputStream;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-
+/**
+ * Stores most of the games data
+ * runs gameloop
+ * distributes workload
+ * @author Andreas Berger
+ *
+ */
 
 //TODO place holder
 public class Game {
@@ -75,7 +81,9 @@ public class Game {
 		// TODO Auto-generated method stub
 		this.setRenderEngine(new RenderEngine(this));
 	}
-
+	/**
+	 * initialize buffers and tools then runs the gameloop
+	 */
 	public void run() {
 		// TODO Auto-generated method stub
 		this.renderEngine.run();
@@ -97,7 +105,10 @@ public class Game {
         
         if (renderEngine.getErrorCallback() != null)renderEngine.getErrorCallback().free();
 	}
-	
+	/**
+	 * the gameloop
+	 * coordinate the workflow
+	 */
 	private void loop(){
 		while(!glfwWindowShouldClose(this.getRenderEngine().getWindow())){
 			//TODO Step 1 do game calculations
@@ -165,13 +176,12 @@ public class Game {
 				default:
 					// this is the happy Ending!
 					this.setLevel(Levels.Ending(this));
-					this.addGameObject(level.getPlayer());
 					this.addGameObject(level.getTube());
-					this.addGameObject(level.getBackground());
 					this.bgm.stop();
 					this.bgmLoop(level.getBgm());
-					shouldStart = false;
 					this.setState("end");
+					this.sleep(1000);
+					shouldStart = false;
 					break;
 				}
 				break;
@@ -183,9 +193,21 @@ public class Game {
 				this.bgm.stop();
 				break;
 			case "ending":
-				//TODO add ending credits :P
+				this.sleep(1000);
+				pause = true;
+				deleteQueue.clear();
+				moveQueue.clear();
+				dirtyQueue.clear();
+				gameObjects.clear();
+				this.shotsFired = 0;
+				this.enemyFired = 0;
+				this.setLevel(Levels.GameOver(this));
+				//this.addGameObject(level.getPlayer());
+				this.addGameObject(level.getTube());
+				//this.addGameObject(level.getBackground());
 				this.bgm.stop();
-				this.bgmLoop("07 We're the Resistors.mp3");
+				this.bgmLoop(level.getBgm());
+				shouldStart = false;
 				this.setState("end");
 				break;
 			case "end":
@@ -236,6 +258,7 @@ public class Game {
 
 	/**
 	 * limit fps and cpu usage
+	 * do not use with v-synch enabled !
 	 * @param fps the targetet fps
 	 */
 	public void sync(int fps) {
@@ -255,7 +278,10 @@ public class Game {
             now = timer.getTime();
         }
 	}
-	
+	/**
+	 * releases cpu while waiting
+	 * @param ms time in ms to wait
+	 */
 	public void sleep(int ms) {
         double lastLoopTime = timer.getLastLoopTime();
         double now = timer.getTime();
@@ -273,7 +299,10 @@ public class Game {
             now = timer.getTime();
         }
 	}
-	
+	/**
+	 * load clip from map and begin a loop
+	 * @param name name of mp3 file within assets/sounds/bgm/ to play
+	 */
 	public void bgmLoop(String name){
 		if(bgm != null)	this.bgm.stop();
 		this.bgm = mapBGM.get(name);
@@ -281,12 +310,20 @@ public class Game {
 		this.bgm.loop();
 		
 	}
+	/**
+	 * load clip from map and play once
+	 * multiple access to the same sound will cancel one another
+	 * @param name name of mp3 file within assets/sounds/sfx/ to play
+	 */
 	public void sfxPlay(String name){
 		Sound sound = this.mapSFX.get(name);
 		sound.setVolume(this.sfxvolume );
 		sound.play();
 	}
-
+	/**
+	 * adds a GameObject to the map and readies it for rendering
+	 * @param gameObject 
+	 */
 	public void addGameObject(GameObject gameObject) {
 		String name = gameObject.getName();
 		if (gameObjects.containsKey(name)) gameObject.setName(name + uniqueid++);
@@ -294,7 +331,10 @@ public class Game {
 		this.hud.registerNewObject(gameObject.getName());
 		this.sfxPlay(gameObject.getSpawnSound());
 	}
-	
+	/**
+	 * an attempt to clean up after destruction of an Object
+	 * @param name
+	 */
 	public void destroyObject(String name){
 		JMenuItem item = hud.getObjects().get(name);
 		if (item != null) {
@@ -311,7 +351,9 @@ public class Game {
 			gameObject.setDestroy(true);
 		}
 	}
-	
+	/**
+	 * loads all sfx mp3 files in assets/sounds/sfx/ into clips that are stored in a map
+	 */
 	private  void loadMapSFX(){
     	mapSFX = new HashMap<String, Sound>();
     	File folder = new File("assets/sounds/sfx/");
@@ -326,7 +368,9 @@ public class Game {
 			}
         }
     }
-	
+	/**
+	 * loads all bgm mp3 files in assets/sounds/bgm/ into clips that are stored in a map
+	 */
 	private  void loadMapBGM(){
     	mapBGM = new HashMap<String, Sound>();
     	File folder = new File("assets/sounds/bgm/");

@@ -5,7 +5,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
+/**
+ * runs various checks and executes game calculations
+ * @author Sebastian Witt
+ *
+ */
 public class GameEngine {
 	
 	private Game game;
@@ -108,7 +112,7 @@ public class GameEngine {
     			//TODO work with iterator over GameObject<> Map ?
     			Set<String> keys = game.getGameObjects().keySet();
     			for(String enemysName: keys){
-    				if(enemysName.contains("enemy")){
+    				if(enemysName.contains("enemy") && !enemysName.contains("enemy_rambo")){
 	    				GameObject enemyObject = game.getGameObjects().get(enemysName);
 	    				if(checkCollision(gameObject, enemyObject)){
 	    					// System.out.println("[Debug]Zerstöre" + gameObject.getName());
@@ -132,7 +136,7 @@ public class GameEngine {
 		// turn left into right orientation
 		if (alpha1 < 0) alpha1 = 360 + alpha1;
 		if (alpha2 < 0) alpha2 = 360 + alpha2;
-		Tube tube = game.getLevel().getTube();
+		GameObject tube = game.getLevel().getTube();
 		float radius = 1f* (tube.getScale()/100f) *  (float)(tube.getrScale())/100f;
 		int deltaradius = Math.abs(alpha1-alpha2);
 		boolean touchr = deltaradius*2*radius/360 < (obj1.xoffset + obj2.xoffset)/3;  // rough estimate but seems to be satisfying
@@ -150,16 +154,60 @@ public class GameEngine {
         if (now - enemyTime > spawnspeed) {
         	level.setEnemyTime(timer.getTime());
         	Random rnd = new Random();
-        	int i = rnd.nextInt(this.getGame().getLevelNr()) + 1;
-        	Enemy enemy = new Enemy("enemy", game);
-        	enemy.setEnemyType(i);
+        	int i = 0;
+        	if(this.game.getLevel().getEnemies().size() > 1){
+        		i = rnd.nextInt(this.game.getLevel().getEnemies().size());
+        	}
+        	Enemy enemy = null;
+        	switch(i){
+        	case 1:
+        		 enemy = new Enemy("enemy_shooter", 1 ,
+        				 "aliensh.png",
+            				"enemy_projectile.png",
+            				"enemy_projectile.png",
+            				"enemy_projectile.png",
+            				"roundysh.png",
+            				"roundysh.png",
+            				game);
+        		break;
+        	case 2:
+        		 enemy = new Enemy("enemy_rambo", 2 ,
+        				 "enemy_projectile.png",
+            				"enemy_projectile.png",
+            				"enemy_projectile.png",
+            				"enemy_projectile.png",
+            				"wingship.png",
+            				"wingship.png",
+            				game);
+        		break;
+        	case 3:
+        		 enemy = new Enemy("enemy_undefined", 3 ,
+        				 "yelship.png",
+            				"yelship.png",
+            				"yelship.png",
+            				"yelship.png",
+            				"spco.png",
+            				"spco.png",
+            				game);
+        		break;
+        	default:
+       		 enemy = new Enemy("enemy_brute", 0 ,
+       				"enemy_projectile.png",
+       				"enemy_projectile.png",
+       				"enemy_projectile.png",
+       				"enemy_projectile.png",
+       				"enemy_jet.png",
+       				"enemy_jet.png",
+       				 game);
+       		break;
+        	}
         	level.setEnemycount(level.getEnemycount() + 1);
         	if(level.getEnemycount() % level.getSpawnCurve() == 0){
         		level.setSpawnspeed(((level.getSpawnspeed() - 0.05)));        		
         		} 
         	
         	Player player = this.game.getLevel().getPlayer();
-        	Tube tube = this.game.getLevel().getTube();
+        	GameObject tube = this.game.getLevel().getTube();
         	enemy.setX(player.getX());
         	enemy.setY(player.getY());
         	enemy.setRalpha(((random.nextInt(tube.stepsr) - tube.stepsr/2) * tube.getStepr()));

@@ -9,10 +9,10 @@ import java.util.List;
  */
 //TODO write a parser to load a script file that will describe the level for dynamic level creation 
 public class Level {
-	private Tube tube = null;
+	private GameObject tube = null;
 	private Player player = null;
 	private Background background = null;
-	private List<Enemy> enemies = new ArrayList<Enemy>(); // enemy pool to choose from
+	private List<Integer> enemies = new ArrayList<Integer>(); // enemy pool to choose from
 	private int numEnemies = 0; // max number of enemies spawned
 	private int enemycount = 0; // count enemies already spawned
 	private double spawnspeed = 1; // limiter for Enemy spawn speed
@@ -28,11 +28,11 @@ public class Level {
 	private int spawnCurve = 10;
 
 
-	public Level(Tube tube, int numEnemies, Game game){
+	public Level(GameObject tube, int numEnemies, Game game){
 		this.tube = tube;
 		this.player = new Player("player1", game);
 		this.player.setY(this.tube.getRadius());
-		this.setBackground(new Background("background", game));
+		this.setBackground(new Background("background", "background.png", game));
 		this.numEnemies = numEnemies;
 		
 	}
@@ -48,10 +48,10 @@ public class Level {
 	public void setPlayer(Player player) {
 		this.player = player;
 	}
-	public Tube getTube() {
+	public GameObject getTube() {
 		return tube;
 	}
-	public void setTube(Tube tube) {
+	public void setTube(GameObject tube) {
 		this.tube = tube;
 	}
 	public int getNumEnemies() {
@@ -60,11 +60,11 @@ public class Level {
 	public void setNumEnemies(int numEnemies) {
 		this.numEnemies = numEnemies;
 	}
-	public List<Enemy> getEnemies() {
+	public List<Integer> getEnemies() {
 		return enemies;
 	}
-	public void setEnemies(List<Enemy> enemies) {
-		this.enemies = enemies;
+	public void setEnemies(List<Integer> enemies2) {
+		this.enemies = enemies2;
 	}
 	public double getSpawnspeed() {
 		if(this.spawnspeed < 0){

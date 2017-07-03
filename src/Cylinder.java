@@ -113,7 +113,7 @@ public class Cylinder extends Primitive {
 		
 		for (int i = 0; i < this.getxTiles(); i ++){
 			for (int j = 0; j < this.getyTiles() + 1; j ++){
-				double rad =  Math.toRadians(360f - j*stepr);
+				double rad =  Math.toRadians(j*stepr);
 				// splice normal information
 				n.add((float) (-r*Math.cos(rad)*xscale));
 				n.add((float) (-r*Math.sin(rad)*yscale));

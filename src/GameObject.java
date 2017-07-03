@@ -62,6 +62,7 @@ public abstract class GameObject {
 	private boolean dirty = true;
 	private boolean moving = false;
 	private boolean destroy = false;
+	public int stepsr = 0;
 
   	
   	public GameObject(String name, Game game){
@@ -288,5 +289,20 @@ public abstract class GameObject {
 		return 0;
 	}
 	public void shootingLogic(){}
+
+	public float getRadius() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public float getStepz() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public int getStepr() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 }

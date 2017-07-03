@@ -7,7 +7,7 @@ import mat.Vec3;
 
 public class Background extends GameObject {
 	Rectangle front;
-	public Background(String name, Game game) {
+	public Background(String name, String texture, Game game) {
 		super(name, game);
 		this.x = 0f;
 		this.z = 0f;
@@ -19,7 +19,7 @@ public class Background extends GameObject {
 		this.setZtarget(-41);
 		this.setRalpha(0);
 		this.setAlphatarget(0);  
-		front = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), "background.png");
+		front = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), texture);
 		this.getGeom().clear();
 		this.addGeom(front);
 		this.setDirty(true);

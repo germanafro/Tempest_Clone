@@ -1,12 +1,16 @@
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Container to store Level data
+ * @author Andreas Berger
+ *
+ */
 public interface Levels {
 	public static Level Level1(Game game){
-		Tube tube = new Tube("Level1", 10, game);
-		List<Enemy> enemies = new ArrayList<Enemy>();
+		Tube tube = new Tube("Level1", 10, "tube_purple.png", game);
 		
-		enemies.add(new Enemy("enemy", game));
+		List<Integer> enemies = new ArrayList<Integer>();
+		enemies.add(0);
 		
 		Level level = new Level(tube, 10, game);
 		level.setEnemies(enemies);
@@ -15,10 +19,11 @@ public interface Levels {
 		return level;
 	}
 	public static Level Level2(Game game){
-		Tube tube = new HalfTube("Level2", 5, game);
-		List<Enemy> enemies = new ArrayList<Enemy>();
+		Tube tube = new HalfTube("Level2", 5, "tube_red.png", game);
 		
-		enemies.add(new Enemy("enemy", game));
+		List<Integer> enemies = new ArrayList<Integer>();
+		enemies.add(0);
+		enemies.add(1);
 		
 		Level level = new Level(tube, 10, game);
 		level.setEnemies(enemies);
@@ -27,11 +32,13 @@ public interface Levels {
 		return level;
 	}
 	public static Level Level3(Game game){
-		Tube tube = new Tube("Level3", 6, game);
+		Tube tube = new Tube("Level3", 6, "tube_red.png", game);
 		tube.setRadius(-1f);
-		List<Enemy> enemies = new ArrayList<Enemy>();
 		
-		enemies.add(new Enemy("enemy", game));
+		List<Integer> enemies = new ArrayList<Integer>();
+		enemies.add(0);
+		enemies.add(1);
+		enemies.add(2);
 		
 		Level level = new Level(tube, 10, game);
 		level.setEnemies(enemies);
@@ -43,19 +50,34 @@ public interface Levels {
 	
 	// special stuff
 	public static Level StartMenu(Game game){
-		Tube tube = new Tube("startmenu", 10, game); // TODO replace with intro screen
-		List<Enemy> enemies = new ArrayList<Enemy>();
+		Background tube = new Background("startmenu", "startmenu.png", game);
+		tube.setZpos(40);
 		Level level = new Level(tube, 0, game);
-		level.setEnemies(enemies);
 		level.setBgm("09 Come and Find Me - B mix.mp3");
 		return level;
 	}
 	public static Level Ending(Game game){
-		Tube tube = new Tube("ending", 10, game); // TODO replace with ending screen
-		List<Enemy> enemies = new ArrayList<Enemy>();
+		Background tube = new Background("ending", "credits.png", game); // TODO replace with ending screen
+		tube.setxScale(400);
+		tube.setyScale(400);
+		tube.setzScale(100);
+		tube.setScale(300);
+		tube.setDirty(true);
 		Level level = new Level(tube, 0, game);
-		level.setEnemies(enemies);
 		level.setBgm("Creo_-_Sphere.mp3");
+		return level;
+	}
+	
+	public static Level GameOver(Game game){
+		Background tube = new Background("gameover", "Mljuegos0.png", game); // TODO replace with ending screen
+		//tube.scale = 100;
+		tube.setxScale(400);
+		tube.setyScale(300);
+		tube.setzScale(150);
+		tube.setScale(300);
+		tube.setDirty(true);
+		Level level = new Level(tube, 0, game);
+		level.setBgm("07 We're the Resistors.mp3");
 		return level;
 	}
 }

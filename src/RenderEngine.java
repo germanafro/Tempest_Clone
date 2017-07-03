@@ -109,7 +109,11 @@ import mat.PerspectiveMatrix;
 import mat.RotationMatrix;
 import mat.TranslationMatrix;
 import mat.Vec3;
-
+/**
+ * the rendering pipeline for the game
+ * @author andreas Berger
+ *
+ */
 public class RenderEngine {
 
 	
@@ -278,7 +282,7 @@ public class RenderEngine {
             			hud.setVisible(true);
             		}
         		}
-            	// w,S incrase,decrease Y - D,A increase, decrease X - E,Q increase, decrease Scale
+            	// w,S incrase,decrease Y 
             	if ( key == GLFW_KEY_W && action == GLFW_PRESS ){
             		int val = hud.SlideY.getValue();
             		if (val < hud.SlideY.getMaximum()){
@@ -295,7 +299,7 @@ public class RenderEngine {
             	//Player controls
             	if ( key == GLFW_KEY_A && action == GLFW_PRESS ){
             		Player player = game.getLevel().getPlayer();
-            		Tube tube = game.getLevel().getTube();
+            		GameObject tube = game.getLevel().getTube();
             		if(player != null && tube != null && game.getState() == "playing"){
             			int alphatarget = player.getAlphatarget();
             			if (player.getRalpha() - alphatarget  < tube.getStepr()){ // protects from overflowing
@@ -311,7 +315,7 @@ public class RenderEngine {
             	}
             	if ( key == GLFW_KEY_D && action == GLFW_PRESS ){
             		Player player = game.getLevel().getPlayer();
-            		Tube tube = game.getLevel().getTube();
+            		GameObject tube = game.getLevel().getTube();
             		if(player != null && tube != null && game.getState() == "playing"){
             			int alphatarget = player.getAlphatarget();
             			if (alphatarget - player.getRalpha() < tube.getStepr()){ // two step limiter
@@ -333,9 +337,9 @@ public class RenderEngine {
                     if (now - lastshot > targetTime) {
                     	game.shootTime = timer.getTime();
                     	Player player = game.getLevel().getPlayer();
-                		Tube tube = game.getLevel().getTube();
+                		GameObject tube = game.getLevel().getTube();
                 		if(player != null && tube != null && game.getState() == "playing"){
-                			Projectile proj = new Projectile("playerprojectile" + game.shotsFired++, game);
+                			Projectile proj = new Projectile("playerprojectile" + game.shotsFired++, game, "player_projectile.png");
                 			proj.setX(player.getX());
                 			proj.setY(player.getY());
                 			proj.setZ(player.getZ());
@@ -469,6 +473,10 @@ public class RenderEngine {
         
         // Draw thicker lines
         GL11.glLineWidth(2);
+        
+     // Enable transparency TODO experimental
+        glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         
     }
     
@@ -754,7 +762,6 @@ public class RenderEngine {
     			}
     			GL20.glUseProgram(0);
         		for(Primitive obj : gameObject.getGeom()){
-        			//gameObject.buffer();
         			GL20.glUseProgram(pId);
         			
         			// bind the individual texture

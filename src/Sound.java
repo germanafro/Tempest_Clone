@@ -86,6 +86,8 @@ public class Sound {
         clip.start();
     }
     public void loop(){
+    	if(clip.isActive()) clip.stop();
+    	clip.setFramePosition(0);  // Must always rewind!
         clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
     public void stop(){

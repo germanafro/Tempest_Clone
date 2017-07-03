@@ -244,7 +244,7 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
 			this.SlideX.setValue(100);
 			this.SlideY.setValue(100);
 			this.SlideScale.setValue(100);
-			gameObject =new Tube("tube", 10, this.game);
+			gameObject =new Tube("tube", 10, "tube_neon.png", this.game);
 			this.game.addGameObject(gameObject);
 		}
 		else if(e.getSource() == this.editMenu.getItem(0) ){
@@ -291,7 +291,11 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
 		this.getObjects().put(name, obj);
     	obj.addActionListener(this);
     	this.getObjectMenu().add(obj);
-    	obj.getActionListeners()[0].actionPerformed(new ActionEvent(obj, ActionEvent.ACTION_PERFORMED, null));
+    	try{
+    		//obj.getActionListeners()[0].actionPerformed(new ActionEvent(obj, ActionEvent.ACTION_PERFORMED, "test"));
+    	} catch( Exception e){
+    		
+    	}
 	}
 	public void deleteObject(){
 		this.game.destroyObject(this.currObj);

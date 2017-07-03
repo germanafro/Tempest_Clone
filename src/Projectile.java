@@ -12,19 +12,19 @@ public class Projectile extends GameObject {
 	Rectangle right;
 	Rectangle top;
 	Rectangle bottom;
-	public Projectile(String name, Game game) {
+	public Projectile(String name, Game game , String texture) {
 		super(name, game);
 		// TODO Auto-generated constructor stub
 		this.xScale = 10;
 		this.yScale = 10;
 		this.zScale = 10;
 		this.setGeom(new ArrayList<Primitive>());
-		front = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), "player_jet.png");
-		back = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), "player_jet.png");
-		left = new Rectangle(this.getzScale(),this.getyScale(),this.getScale(), this.getGame(), "player_jet.png");
-		right = new Rectangle(this.getzScale(),this.getyScale(),this.getScale(), this.getGame(), "player_jet.png");
-		top = new Rectangle(this.getxScale(),this.getzScale(),this.getScale(), this.getGame(), "player_jet.png");
-		bottom = new Rectangle(this.getxScale(),this.getzScale(),this.getScale(), this.getGame(), "player_jet.png");
+		front = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), texture);
+		back = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), texture);
+		left = new Rectangle(this.getzScale(),this.getyScale(),this.getScale(), this.getGame(), texture);
+		right = new Rectangle(this.getzScale(),this.getyScale(),this.getScale(), this.getGame(), texture);
+		top = new Rectangle(this.getxScale(),this.getzScale(),this.getScale(), this.getGame(), texture);
+		bottom = new Rectangle(this.getxScale(),this.getzScale(),this.getScale(), this.getGame(), texture);
 		this.getGeom().clear();
 		this.addGeom(front);
 		this.addGeom(back);
