@@ -22,6 +22,12 @@ import mat.RotationMatrix;
 import mat.TranslationMatrix;
 import mat.Vec3;
 
+/**
+ * basic Game Object
+ * acts as multipurpose container and provides an interface to lowerlevel classes such as the Geometry
+ * @author Andreas Berger
+ *
+ */
 public abstract class GameObject {
 	
 	
@@ -71,14 +77,14 @@ public abstract class GameObject {
 		this.setName(name);
 		this.addGeom(new Rectangle(100,100,100,game));
 	}
-  	
-  	public void move() { //Alte Parameter, nur zur Sicherheit: int alpha, int z
-		// z axis rotation
-  		/*
-		this.setRalpha(this.getRalpha() + alpha);
-		this.setZpos(this.getZpos() + z);
-		this.setDirty(true);*/
-			}
+  	/**
+  	 * TODO make abstract?
+  	 */
+  	public void move() {}
+  	/**
+  	 * update matrices and offsets then buffer new data
+  	 * TODO can still be optimized
+  	 */
 	public void update(){
 		//shared
 		this.xoffset = offset * new Float(this.getxScale())/100f * new Float(this.getScale())/100f;
@@ -104,7 +110,10 @@ public abstract class GameObject {
   		this.setDirty(false);
   	}
   	
-  	
+  	/**
+  	 * implements an AI
+  	 * @param a  radial step size of one step in degree
+  	 */
   	public void enemyLogic(int a){}
 	public List<Primitive> getGeom() {
 		return geom;

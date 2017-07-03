@@ -12,7 +12,11 @@ import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-
+/**
+ * stores sound clips in ram - has mp3 support
+ * @author Andreas Berger
+ *
+ */
 public class Sound {
     private Clip clip;
     public Sound(String fileName) {

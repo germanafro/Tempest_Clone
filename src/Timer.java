@@ -5,7 +5,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * providers timer functionalities
+ * fps / ups
+ * @author Andreas Berger
+ *
+ */
 public class Timer {
 		 
 		private float timeCount;
@@ -124,6 +129,11 @@ public class Timer {
 		public void setLastLoopTime(double lastLoopTime) {
 			this.lastLoopTime = lastLoopTime;
 		}
+		/**
+		 * analysis tool start with this function then call analysis to record stages
+		 * finally use stopAnalysis() and print the result with printAnalysis()
+		 * result will % of time spent in marked stage
+		 */
 		public void startAnalysis(){
 			analysisstart = this.getTime();
 			analysis = new HashMap<String, Double>();

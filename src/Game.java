@@ -19,8 +19,6 @@ import javax.swing.JMenuItem;
  * @author Andreas Berger
  *
  */
-
-//TODO place holder
 public class Game {
 	private int levelNr = 1;
 	private String state = "reset";
@@ -53,14 +51,8 @@ public class Game {
 	
 	public Game(){
 		this.setHud(new HUD(this));
+		this.hud.setVisible(false);
 		this.setGameObjects(new HashMap<String, GameObject>());
-		//TODO don't do that! 
-		//this.startNewGame();
-	}
-
-	private void startNewGame() {
-		// TODO Auto-generated method stub
-		this.setState("starting");
 	}
 
 	public double getXStep() {
@@ -125,6 +117,7 @@ public class Game {
 			case "startmenu":
 				this.score = 0;
 				this.lives = 4;
+				display.resetLives();
 				if(shouldStart) {
 					this.setLevelNr(1);
 					this.setState("load");
@@ -136,7 +129,6 @@ public class Game {
 				this.addGameObject(level.getPlayer());
 				this.addGameObject(level.getTube());
 				this.addGameObject(level.getBackground());
-				display.getLevel().setTexture(this.getLevelNr() +".png");
 				this.bgm.stop();
 				this.bgmLoop(level.getBgm());
 				this.setState("ready");
@@ -160,6 +152,7 @@ public class Game {
 				moveQueue.clear();
 				dirtyQueue.clear();
 				gameObjects.clear();
+				display.getLevel().setTexture(this.getLevelNr() +".png");
 				this.addGameObject(display);
 				this.shotsFired = 0;
 				this.enemyFired = 0;
@@ -334,7 +327,7 @@ public class Game {
 	}
 	/**
 	 * adds a GameObject to the map and readies it for rendering
-	 * @param gameObject 
+	 * @param gameObject a GameObject class to render
 	 */
 	public void addGameObject(GameObject gameObject) {
 		String name = gameObject.getName();
@@ -345,7 +338,7 @@ public class Game {
 	}
 	/**
 	 * an attempt to clean up after destruction of an Object
-	 * @param name
+	 * @param name name of the Object
 	 */
 	public void destroyObject(String name){
 		JMenuItem item = hud.getObjects().get(name);

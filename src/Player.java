@@ -14,7 +14,6 @@ public class Player extends GameObject {
 	Rectangle right;
 	Rectangle top;
 	Rectangle bottom;
-	private int lifes = 4;
 	
 	public Player(String name, Game game) {
 		super(name, game);
@@ -136,14 +135,5 @@ public class Player extends GameObject {
 			obj.setScale(scale);
 		}
 		this.setDirty(true);
-	}
-	public int getLifes() {
-		return lifes;
-	}
-	public void setLifes(int lifes) {
-		this.lifes = lifes;
-	}
-	public int loseLife() {
-		return --lifes;
 	}
 }

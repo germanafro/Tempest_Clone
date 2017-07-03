@@ -1,5 +1,9 @@
 import java.util.ArrayList;
-
+/**
+ * half the Tube limits freedom of movement
+ * @author andreas Berger
+ *
+ */
 public class HalfTube extends Tube {
 
 	private int alphaMin = -90;

@@ -5,6 +5,12 @@ import mat.RotationMatrix;
 import mat.TranslationMatrix;
 import mat.Vec3;
 
+/**
+ * projectile. Can be used by player and enemy respectively
+ * TODO: store master for identification instead of name
+ * @author andreas Berger
+ *
+ */
 public class Projectile extends GameObject {
 	Rectangle front;
 	Rectangle back;

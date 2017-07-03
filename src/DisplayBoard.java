@@ -5,6 +5,11 @@ import mat.Matrix4;
 import mat.TranslationMatrix;
 import mat.Vec3;
 
+/**
+ * display the status bar
+ * @author Sebastian Witt
+ *
+ */
 public class DisplayBoard extends GameObject{
 	private Rectangle level;
 	private Rectangle score;
@@ -74,13 +79,21 @@ public class DisplayBoard extends GameObject{
 			this.addGeom(live);
 		}
 	}
-	public void loselive(){
+	/**
+	 * removes one life icon after another
+	 * @return true if all lives are lost false otherwise
+	 */
+	public boolean loselive(){
 		for (int i = maxlives ; i > 0 ; i--){
 			if (this.getGeom().contains(this.lives.get(i-1))){ 
 				this.getGeom().remove(this.lives.get(i-1)); // entferne Leben von rechts nach links
-				break; // only remove one at a time :P
+				if (i == 1){
+					return true;
+				}
+				return false; // only remove one at a time :P
 			}  
 		}
+		return false;
 	}
 	public Rectangle getScore10() {
 		return score10;

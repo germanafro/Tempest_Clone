@@ -43,15 +43,15 @@ public class Enemy extends GameObject {
 	}
 	/**
 	 * constructor to set custom textures
-	 * @param name
-	 * @param type
-	 * @param front
-	 * @param back
-	 * @param left
-	 * @param right
-	 * @param top
-	 * @param bottom
-	 * @param game
+	 * @param name name of enemy should use format enemy_name
+	 * @param type type of enemy
+	 * @param front texture facing positive z
+	 * @param back texture facing negative z
+	 * @param left textture facing negative x
+	 * @param right texture facing positiv x
+	 * @param top texture facing positive y
+	 * @param bottom texture facing negative y
+	 * @param game the game handle
 	 */
 	public Enemy(String name, int type, String front, String back, String left, String right, String top, String bottom, Game game) {
 		super(name, game);
@@ -147,7 +147,7 @@ public class Enemy extends GameObject {
 		Random rnd = new Random();
 		int i = rnd.nextInt(200);
 		if(i >= 197 - this.getGame().getLevelNr() - 1){
-			Projectile proj = new Projectile("enemyProjectile" + game.enemyFired++, this.getGame(), "enemy_projectile.png");
+			Projectile proj = new Projectile("enemyprojectile" + game.enemyFired++, this.getGame(), "enemy_projectile.png");
 			proj.setX(this.getX());
 			proj.setY(this.getY());
 			proj.setZ(this.getZ());

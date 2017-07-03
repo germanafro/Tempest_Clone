@@ -76,9 +76,10 @@ public abstract class Primitive {
 	}
 	/**
 	 * stores basic geometric data
-	 * @param x
-	 * @param y
-	 * @param scale
+	 * @param x num of tiles usually in x direction
+	 * @param y num of tiles usualyl in y direction
+	 * @param scale scaling factor determining general size of object
+	 * @param game the game Handle
 	 */
 	public Primitive(int x , int y, int scale, Game game){
 		this.game = game;

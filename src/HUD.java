@@ -60,6 +60,7 @@ public class HUD extends JFrame implements ActionListener, ChangeListener{
     /**
      * basic hud containing data for X,Y,Scale 
      * allows for a choice of simple 3d Obkects to manipulate from the menu.
+     * @param game the gam ehandle
      */
     public HUD(Game game){
     	this.setGame(game);

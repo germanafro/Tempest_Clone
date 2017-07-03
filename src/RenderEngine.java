@@ -172,7 +172,6 @@ public class RenderEngine {
 		this.game = game;
 		this.hud = this.game.getHud();
 		this.setTextureIds(new HashMap<String, Integer>());
-		this.hud.setVisible(true);
 	}
   	/**
   	 * noteworthy changes: hooked hud to destroy when the window is closed
@@ -593,9 +592,9 @@ public class RenderEngine {
  
     /**
      * Uses an external class to load a PNG image and bind it as texture
-     * @param filename
-     * @param textureUnit
-     * @return textureID
+     * @param filename full path to file
+     * @param textureUnit a texture unit
+     * @return textureID buffer id for texture
      */
     private int loadPNGTexture(String filename, int textureUnit) {
         ByteBuffer buf = null;

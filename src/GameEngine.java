@@ -100,7 +100,7 @@ public class GameEngine {
     			if (checkCollision(gameObject, player)){
     				this.game.sfxPlay("Grenade-SoundBible.com-1777900486.mp3");
     				gameObject.setDestroy(true);
-    				this.playerLoseLife(player);
+    				this.playerLoseLife();
     				
     			}
     		// check collision with playerprojectile
@@ -116,9 +116,9 @@ public class GameEngine {
 	    					// System.out.println("[Debug]Zerstöre" + enemyObject.getName());
 	    					 gameObject.setDestroy(true);
 	    					 this.game.sfxPlay("Blast-SoundBible.com-2068539061.mp3");
-	    					 if(!enemysName.contains("enemy_rambo")){ // invincible types 
+	    					 if(!enemysName.contains("rambo")){ // invincible types 
 	    						enemyObject.setDestroy(true);
-	    					 	if (!enemysName.contains("enemyprojectile")){ // no score types
+	    					 	if (!enemysName.contains("projectile")){ // no score types
 	    					 		this.game.setScore(this.game.getScore() + 1);
 	    					 		this.game.getLevel().setKills(game.getLevel().getKills() + 1);
 	    					 		
@@ -228,10 +228,10 @@ public class GameEngine {
 
 
 	
-	private void playerLoseLife(Player player) {
+	private void playerLoseLife() {
 		// TODO Auto-generated method stub
 		System.out.println("ouch!");
-		if(player.loseLife() < 1) game.setState("ending");
+		if(this.game.getDisplay().loselive()) game.setState("ending");
 		
 	}
 }

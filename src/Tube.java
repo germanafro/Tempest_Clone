@@ -1,5 +1,9 @@
 import java.util.ArrayList;
-
+/**
+ * basic tube. Forms the playing field
+ * @author andreas Berger
+ *
+ */
 public class Tube extends GameObject {
 	protected int stepsz = 100;
 	private float stepz = 0;
