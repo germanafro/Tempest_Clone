@@ -37,6 +37,12 @@ import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
+import static org.lwjgl.glfw.GLFW.GLFW_STICKY_KEYS;
+import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
+import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_DISABLED;
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_MIDDLE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
@@ -45,7 +51,13 @@ import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
+//callbacks
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
+
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
@@ -91,8 +103,11 @@ import java.util.Map;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.Version;
+import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
+import org.lwjgl.glfw.GLFWMouseButtonCallback;
+import org.lwjgl.glfw.GLFWScrollCallbackI;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.opengl.GL;
@@ -121,6 +136,12 @@ public class RenderEngine {
     // We need to strongly reference callback instances.
     private GLFWErrorCallback errorCallback;
     private GLFWKeyCallback   keyCallback;
+    private GLFWCursorPosCallback   cursorPosCallback;
+    private GLFWMouseButtonCallback   mouseBUttonCallback;
+    private GLFWScrollCallbackI   scrollCallback;
+    private int mouseX = 0, mouseY = 0;
+    
+    
     private GLFWWindowSizeCallback window_size_callback;
  
     // The window handle
@@ -214,7 +235,106 @@ public class RenderEngine {
         setWindow(glfwCreateWindow(WIDTH, HEIGHT, "Hello World!", NULL, NULL));
         if ( getWindow() == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
- 
+        
+        // set proper input modes
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // don't want to see the cursor
+        
+        glfwSetMouseButtonCallback(window, setMouseBUttonCallback(new GLFWMouseButtonCallback(){
+			@Override
+			public void invoke(long window, int button, int action, int mods) {
+				// TODO Auto-generated method stub
+					if (action == GLFW_PRESS) {
+						switch (button) {
+						case GLFW_MOUSE_BUTTON_LEFT:
+							Timer timer = game.getTimer();
+							double lastshot = game.shootTime;
+							double now = timer.getTime();
+							float targetTime = game.shootingSpeed;
+
+							if (now - lastshot > targetTime) {
+								game.shootTime = timer.getTime();
+								Player player = game.getLevel().getPlayer();
+								GameObject tube = game.getLevel().getTube();
+								if (player != null && tube != null && game.getState() == "playing") {
+									Projectile proj = new Projectile("playerprojectile" + game.shotsFired++, game,
+											"player_projectile.png");
+									proj.setX(player.getX());
+									proj.setY(player.getY());
+									proj.setZ(player.getZ());
+									proj.setRalpha(player.getRalpha());
+									proj.setAlphatarget(player.getAlphatarget());
+									proj.setZpos(35);
+									proj.setZtarget(-50);
+									proj.setSpawnSound(player.getProjectileSound());
+									game.addGameObject(proj);
+								} else if ((game.getState() == "startmenu" || game.getState() == "ready"
+										|| game.getState() == "end")) {
+									game.setShouldStart(true);
+								}
+							}
+							break;
+						case GLFW_MOUSE_BUTTON_RIGHT:
+							break;
+						case GLFW_MOUSE_BUTTON_MIDDLE:
+						default:
+							break;
+						}
+					}
+			}
+        }));
+        
+        // Setup a Cursor callback. It will be called every time the mouse is moved.
+        glfwSetCursorPosCallback(window, setCursorPosCallback(new GLFWCursorPosCallback(){
+        	@Override
+        	public void invoke(long window, double x, double y){
+        		// Add delta of x and y mouse coordinates
+        		int mouseDX = 0, mouseDY = 0;
+                mouseDX += (int)x - mouseX;
+                mouseDY += (int)x - mouseY;
+                
+                if (mouseDX > 0){
+                	//move counterclockwise
+                	Level level = game.getLevel();
+                	if (level != null) {
+						Player player = level.getPlayer();
+						GameObject tube = level.getTube();
+						if (player != null && tube != null && game.getState() == "playing") {
+							int alphatarget = player.getAlphatarget();
+							if (alphatarget - player.getRalpha() < tube.getStepr()) { // two step limiter
+								if (tube.getClass() == HalfTube.class
+										&& ((HalfTube) tube).getAlphaMax() < alphatarget + tube.getStepr()) {
+									player.setAlphatarget(alphatarget);
+								} else {
+									player.setAlphatarget(alphatarget + tube.getStepr());
+								}
+							}
+						} 
+					}
+                } else if (mouseDX < 0){
+                	Level level = game.getLevel();
+                	if (level != null) {
+						Player player = level.getPlayer();
+						GameObject tube = level.getTube();
+						if (player != null && tube != null && game.getState() == "playing") {
+							int alphatarget = player.getAlphatarget();
+							if (player.getRalpha() - alphatarget < tube.getStepr()) { // protects from overflowing
+								if (tube.getClass() == HalfTube.class
+										&& ((HalfTube) tube).getAlphaMin() > alphatarget - tube.getStepr()) {
+									player.setAlphatarget(alphatarget);
+								} else {
+									player.setAlphatarget(alphatarget - tube.getStepr());
+								}
+							}
+						} 
+					}
+                }
+                // Set new positions of x and y
+                mouseX =  (int)x;
+                mouseY =  (int)y;
+                
+        	}
+        	})
+        );
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(getWindow(), setKeyCallback(new GLFWKeyCallback() {
             @Override
@@ -480,7 +600,11 @@ public class RenderEngine {
     }
     
     
-    private void setupMatrices() {
+    private void glfwSetCursorCallback() {
+		// TODO Auto-generated method stub
+		
+	}
+	private void setupMatrices() {
      	
     	// Setup projection and view matrix
     	projectionMatrix = new PerspectiveMatrix(-1,1,-1,1, 1f,11f);
@@ -885,5 +1009,26 @@ public class RenderEngine {
 	}
 	public void setTextureIds(Map<String, Integer> textureIds) {
 		this.textureIds = textureIds;
+	}
+	public GLFWCursorPosCallback getCursorPosCallback() {
+		return cursorPosCallback;
+	}
+	public GLFWCursorPosCallback setCursorPosCallback(GLFWCursorPosCallback cursorPosCallback) {
+		this.cursorPosCallback = cursorPosCallback;
+		return cursorPosCallback;
+	}
+	public GLFWMouseButtonCallback getMouseBUttonCallback() {
+		return mouseBUttonCallback;
+	}
+	public GLFWMouseButtonCallback setMouseBUttonCallback(GLFWMouseButtonCallback mouseBUttonCallback) {
+		this.mouseBUttonCallback = mouseBUttonCallback;
+		return mouseBUttonCallback;
+	}
+	public GLFWScrollCallbackI getScrollCallback() {
+		return scrollCallback;
+	}
+	public GLFWScrollCallbackI setScrollCallback(GLFWScrollCallbackI scrollCallback) {
+		this.scrollCallback = scrollCallback;
+		return scrollCallback;
 	}
 }
