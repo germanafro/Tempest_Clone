@@ -20,6 +20,8 @@ import mat.Vec4;
  *
  */
 public abstract class Primitive {
+	
+	private Game game;
 	// x,y,z directional stretch
 	private int x = 100;
 	private int y = 100;
@@ -79,6 +81,7 @@ public abstract class Primitive {
 	 * @param scale
 	 */
 	public Primitive(int x , int y, int scale, Game game){
+		this.game = game;
 		this.x = x;
 		this.y = y;
 		this.scale = scale;
@@ -335,6 +338,7 @@ public abstract class Primitive {
 	}
 	public void setTexture(String texture) {
 		this.texture = texture;
+		this.setTextureID(this.game.getRenderEngine().getTextureIds().get(texture));
 	}
 	public Vec3 getOrigin() {
 		return origin;

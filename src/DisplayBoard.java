@@ -10,7 +10,7 @@ public class DisplayBoard extends GameObject{
 	
 	public DisplayBoard(String name, Game game){
 		super(name, game);
-		this.setGeom(new ArrayList<Primitive>());
+		this.getGeom().clear();
 		if(name.equals("level1")){front = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), "1.png");}
 		if(name.equals("level2")){front = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), "2.png");}
 		if(name.equals("level3")){front = new Rectangle(this.getxScale(),this.getyScale(),this.getScale(), this.getGame(), "3.png");}
