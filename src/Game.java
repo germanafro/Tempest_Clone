@@ -145,6 +145,8 @@ public class Game {
 
 				break;
 			case "bossbegin":
+				this.bgm.stop();
+				this.bgmLoop("06 Searching.mp3");
 				switch(this.getLevelNr()){
 				case 1:
 					this.gameEngine.spawnEnemy(100); //spawn test boss
