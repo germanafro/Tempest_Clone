@@ -11,7 +11,7 @@ import java.util.Set;
  *
  */
 public class GameEngine {
-	
+	private boolean scoreUp;
 	private Game game;
 	
 	public GameEngine(Game game){
@@ -40,7 +40,6 @@ public class GameEngine {
 		Iterator<GameObject> gameObjects = this.game.getGameObjects().values().iterator();
     	while(gameObjects.hasNext()){
     		GameObject gameObject = gameObjects.next();
-    		
     		if(gameObject.isDestroy()){
     			game.getDeleteQueue().add(gameObject);
     		}else{
@@ -62,9 +61,6 @@ public class GameEngine {
 				if(gameObject.getAlphatarget() == gameObject.getRalpha()){
 					alphareached = true;
 					gameObject.enemyLogic(game.getLevel().getTube().getStepr());
-/*					if(gameObject.getEnemyType() == 1){
-						gameObject.shootingLogic();
-					}*/
 				}
 				gameObject.move();
 				if(gameObject.getZpos() >= gameObject.getZtarget()){
@@ -72,6 +68,7 @@ public class GameEngine {
     				game.destroyObject(name);
 				}
 			}
+			
 			
 			else if(name.toLowerCase().contains("playerprojectile")){
 				gameObject.move();
@@ -121,7 +118,8 @@ public class GameEngine {
 	    					 enemyObject.setDestroy(true);
 	    					 this.game.sfxPlay("Blast-SoundBible.com-2068539061.mp3");
 	    					 //this.game.sfxPlay(new Sound("sfx/Blast-SoundBible.com-2068539061.mp3"));
-	    					 game.getLevel().setKills(game.getLevel().getKills() + 1);
+	    					 this.game.getLevel().setKills(game.getLevel().getKills() + 1);
+	    					 
 	    				}
     				}
     			}
