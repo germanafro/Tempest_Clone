@@ -58,10 +58,7 @@ public class GameEngine {
 			
 			//drop ifelse cases?
 			if(name.toLowerCase().contains("enemy")){
-				if(gameObject.getAlphatarget() == gameObject.getRalpha()){
-					alphareached = true;
-					gameObject.enemyLogic(game.getLevel().getTube().getStepr());
-				}
+				gameObject.enemyLogic(game.getLevel().getTube().getStepr(), game.getLevel().getTube().getStepz());
 				gameObject.move();
 				if(gameObject.getZpos() >= gameObject.getZtarget()){
 					zreached = true;
@@ -98,7 +95,7 @@ public class GameEngine {
     			// size in steps = size / stepsize
     			
     			if (checkCollision(gameObject, player)){
-    				this.game.sfxPlay("Grenade-SoundBible.com-1777900486.mp3");
+    				this.game.sfxPlay(player.getDeathSound());
     				gameObject.setDestroy(true);
     				this.playerLoseLife();
     				
@@ -115,7 +112,7 @@ public class GameEngine {
 	    					// System.out.println("[Debug]Zerstöre" + gameObject.getName());
 	    					// System.out.println("[Debug]Zerstöre" + enemyObject.getName());
 	    					 gameObject.setDestroy(true);
-	    					 this.game.sfxPlay("Blast-SoundBible.com-2068539061.mp3");
+	    					 this.game.sfxPlay(enemyObject.getDeathSound());
 	    					 if(!enemysName.contains("rambo")){ // invincible types 
 	    						enemyObject.setDestroy(true);
 	    					 	if (!enemysName.contains("projectile")){ // no score types
@@ -165,8 +162,16 @@ public class GameEngine {
         	if(this.game.getLevel().getEnemies().size() > 1){
         		i = rnd.nextInt(this.game.getLevel().getEnemies().size());
         	}
-        	Enemy enemy = null;
-        	switch(i){
+        	this.spawnEnemy(i);
+        }
+        	
+	}
+	
+	public void spawnEnemy(int id){
+		Level level = game.getLevel();
+		Random random = new Random();
+        Enemy enemy = null;
+        	switch(id){
         	case 1:
         		 enemy = new Enemy("enemy_shooter", 1 ,
         				 "aliensh.png",
@@ -176,6 +181,7 @@ public class GameEngine {
             				"roundysh.png",
             				"roundysh.png",
             				game);
+        		 enemy.setDeathSound("phaserDown1.mp3");
         		break;
         	case 2:
         		 enemy = new Enemy("enemy_rambo", 2 ,
@@ -186,6 +192,7 @@ public class GameEngine {
             				"wingship.png",
             				"wingship.png",
             				game);
+        		 enemy.setDeathSound("pepSound3.mp3");
         		break;
         	case 3:
         		 enemy = new Enemy("enemy_undefined", 3 ,
@@ -197,6 +204,51 @@ public class GameEngine {
             				"spco.png",
             				game);
         		break;
+        	case 100:
+        		enemy = new Enemy("enemy_boss_0", 3 ,
+       				 "futurefighter.png.png",
+           				"shship.png.png",
+           				"shship.png.png",
+           				"shship.png.png",
+           				"mship1.png",
+           				"mship1.png",
+           				game) {
+        			private double lastsalvo = 0f;
+        			private double lastshot = 0f;
+        			private int shotsfired = 0;
+        			@Override
+        			public void bossTimer(){
+        				Timer timer = game.getTimer();
+						double now = timer.getTime();
+						
+						float salvodelay = 5f;
+						float shotdelay = 1f/3;
+						
+						if (now - lastsalvo > salvodelay) {
+							//begin salvo
+							if(now - lastshot > shotdelay){
+								Projectile proj = new Projectile("enemyprojectile" + game.enemyFired++, this.getGame(), "enemy_projectile.png");
+								proj.setX(this.getX());
+								proj.setY(this.getY());
+								proj.setZ(this.getZ());
+								proj.setRalpha(this.getRalpha());
+								proj.setAlphatarget(this.getAlphatarget());
+								proj.setZpos(this.getZpos() + 5);
+								proj.setZtarget(50);
+								proj.setSpawnSound(this.getProjectileSound());
+								game.addGameObject(proj);
+								lastshot = timer.getTime();
+								shotsfired++;
+							}
+							if (shotsfired>= 10){
+								lastsalvo = timer.getTime(); // finish salvo
+							}
+						}		
+					}
+        		};
+        		enemy.setLives(100);
+        		enemy.setDeathSound("");
+        		enemy.setProjectileSound("phaserUp5.mp3");
         	default:
        		 enemy = new Enemy("enemy_brute", 0 ,
        				"enemy_projectile.png",
@@ -206,6 +258,7 @@ public class GameEngine {
        				"enemy_jet.png",
        				"enemy_jet.png",
        				 game);
+       		 enemy.setDeathSound("phaserDown3.mp3");
        		break;
         	}
         	level.setEnemycount(level.getEnemycount() + 1);
@@ -223,7 +276,6 @@ public class GameEngine {
         	enemy.setZtarget(41);
         	game.addGameObject(enemy);
         	
-        }
 	}
 
 

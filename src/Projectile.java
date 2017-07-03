@@ -21,6 +21,7 @@ public class Projectile extends GameObject {
 	public Projectile(String name, Game game , String texture) {
 		super(name, game);
 		// TODO Auto-generated constructor stub
+		this.setDeathSound("pepSound3.mp3");
 		this.xScale = 10;
 		this.yScale = 10;
 		this.zScale = 10;

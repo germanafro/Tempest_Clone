@@ -17,6 +17,7 @@ public class Player extends GameObject {
 	
 	public Player(String name, Game game) {
 		super(name, game);
+		this.setDeathSound("Grenade-SoundBible.com-1777900486.mp3");
 		this.x = 0f;
 		this.z = 0f;
 		this.y = -1.1f;

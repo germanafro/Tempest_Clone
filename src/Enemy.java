@@ -19,6 +19,7 @@ public class Enemy extends GameObject {
 	Rectangle right;
 	Rectangle top;
 	Rectangle bottom;
+	private int lives = 1;
 	
 	public Enemy(String name, int type, Game game) {
 		super(name, game);
@@ -56,6 +57,8 @@ public class Enemy extends GameObject {
 	public Enemy(String name, int type, String front, String back, String left, String right, String top, String bottom, Game game) {
 		super(name, game);
 		this.setEnemyType(type);
+		this.setDeathSound("Blast-SoundBible.com-2068539061.mp3");
+		this.setProjectileSound("laser3.mp3");
 		this.xScale = 40;
 		this.yScale = 20;
 		this.zScale = 80;
@@ -124,29 +127,15 @@ public class Enemy extends GameObject {
 	//Speed default should be 1
 	@Override
 	public void move(){
-		int speed = (this.getEnemyType() > 2) ? 2 : 1;
-		if(this.getAlphatarget() > this.getRalpha()){
-			this.setRalpha(this.getRalpha() + speed); //TODO change ralpha to double - nein! ralpha ist eine relative Einheit zum spielfeld grid working as intended
-		} else if(this.getAlphatarget() < this.getRalpha()){
-			this.setRalpha(this.getRalpha() - speed); //TODO same here
-		}
-
-
-		if(this.getZtarget() > this.getZpos()){
-			this.setZpos(this.getZpos() + speed);
-		}else if(this.getZtarget() < this.getZpos()){
-			this.setZpos(this.getZpos() - speed);
-		}
-		this.setDirty(true);
 	}
 	/**
 	 * randomly shoot projectiles at the player
 	 */
 	@Override
-	public void shootingLogic(){
+	public void shootingLogic(int chance){
 		Random rnd = new Random();
-		int i = rnd.nextInt(200);
-		if(i >= 197 - this.getGame().getLevelNr() - 1){
+		int i = rnd.nextInt(100);
+		if(i >= 100 - chance) {
 			Projectile proj = new Projectile("enemyprojectile" + game.enemyFired++, this.getGame(), "enemy_projectile.png");
 			proj.setX(this.getX());
 			proj.setY(this.getY());
@@ -160,37 +149,89 @@ public class Enemy extends GameObject {
 		}
 	}
 	
+	/**
+	 * on each tick target one step on rotation axis with chance % chance
+	 * note: the chance should be fairly low as there are up to 60 checks / sec
+	 */
+	@Override
+	public void moveRLogic(int chance, int step){
+		Random rnd = new Random();
+		int i = rnd.nextInt(100);
+		if(i >= 100 - chance) {
+			int target = this.getAlphatarget();
+			GameObject tube = this.game.getLevel().getTube();
+			if(i % 2 == 0){
+				target += step;
+				if(tube.getClass() == HalfTube.class && target > ((HalfTube)tube).getAlphaMax()){
+					this.setAlphatarget(this.getAlphatarget() - step);
+				} else this.setAlphatarget(this.getAlphatarget() + step);
+				
+			}else{
+				target -= step;
+				if(tube.getClass() == HalfTube.class && target < ((HalfTube)tube).getAlphaMin()){
+					this.setAlphatarget(this.getAlphatarget() + step);
+				} else this.setAlphatarget(this.getAlphatarget() - step);
+			}
+		}
+		if(this.getAlphatarget() > this.getRalpha()){
+			this.setRalpha(this.getRalpha() + speed); //TODO change ralpha to double - nein! ralpha ist eine relative Einheit zum spielfeld grid working as intended
+		} else if(this.getAlphatarget() < this.getRalpha()){
+			this.setRalpha(this.getRalpha() - speed); //TODO same here
+		}
+		this.setDirty(true);
+	}
+	
+	/**
+	 * on each tick move one step on z axis towards player with chance % chance
+	 * note: the chance should be fairly low as there are up to 60 checks / sec
+	 */
+	@Override
+	public void moveZLogic(int chance, float step){
+		Random rnd = new Random();
+		int i = rnd.nextInt(100);
+		if(i >= 100 - chance) {
+			if(this.getZtarget() > this.getZpos()){
+				this.setZpos(this.getZpos() + speed);
+			}else if(this.getZtarget() < this.getZpos()){
+				this.setZpos(this.getZpos() - speed);
+			}
+			this.setDirty(true);
+		}
+	}
+	
+	
 	
 	/**
 	 * control enemy behavior
 	 */
 	@Override
-	public void enemyLogic(int step){
+	public void enemyLogic(int rstep, float zstep){
 		int type = this.getEnemyType();
 		switch(type){
-		case 1:
-			this.shootingLogic(); // durchsacken lassen - so könenn shooter auch sidesteps machen ^_^
-		case 0:
-			Random rnd = new Random();
-			int i = rnd.nextInt(200);
-			if(i >= 190) {
-				int target = this.getAlphatarget();
-				GameObject tube = this.game.getLevel().getTube();
-				if(i % 2 == 0){
-					target += step;
-					if(tube.getClass() == HalfTube.class && target > ((HalfTube)tube).getAlphaMax()){
-						this.setAlphatarget(this.getAlphatarget() - step);
-					} else this.setAlphatarget(this.getAlphatarget() + step);
-					
-				}else{
-					target -= step;
-					if(tube.getClass() == HalfTube.class && target < ((HalfTube)tube).getAlphaMin()){
-						this.setAlphatarget(this.getAlphatarget() + step);
-					} else this.setAlphatarget(this.getAlphatarget() - step);
-				}
+		case 3: // chaser
+			this.setAlphatarget(game.getLevel().getPlayer().getRalpha()); // chase players current position not his target position - that would be mean =D
+			if(this.getAlphatarget() > this.getRalpha()){
+				this.setRalpha(this.getRalpha() + speed);
+			} else if(this.getAlphatarget() < this.getRalpha()){
+				this.setRalpha(this.getRalpha() - speed); 
 			}
+			this.setDirty(true);
+			this.moveZLogic(75, zstep); // move slower for balance
 			break;
-		default: 
+		case 1: // shooter
+			this.shootingLogic(1); 
+			this.moveZLogic(5, zstep); // standard shooters prefer to stay back and shoot but will move on eventually
+			this.moveRLogic(5, rstep);
+			break;
+		case 0: // brute
+			this.moveRLogic(1, rstep);
+			this.moveZLogic(100, zstep);
+			break;
+		case 100:
+			this.moveRLogic(1, rstep);
+			this.bossTimer();
+		default: //rambo
+			this.moveZLogic(100, zstep);
 			break;
 		}
 	}	
@@ -238,5 +279,19 @@ public class Enemy extends GameObject {
 			obj.setScale(scale);
 		}
 		this.setDirty(true);
+	}
+	public int getLives() {
+		return lives;
+	}
+	public void setLives(int lives) {
+		this.lives = lives;
+	}
+	public boolean isdead(){
+		if (lives-- == 0) return true;
+		return false;
+	}
+	public void bossTimer() {
+		// TODO Auto-generated method stub
+		
 	}
 }

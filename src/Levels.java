@@ -11,6 +11,7 @@ public interface Levels {
 		
 		List<Integer> enemies = new ArrayList<Integer>();
 		enemies.add(0);
+		enemies.add(1);
 		
 		Level level = new Level(tube, 10, game);
 		level.setEnemies(enemies);
@@ -24,6 +25,7 @@ public interface Levels {
 		List<Integer> enemies = new ArrayList<Integer>();
 		enemies.add(0);
 		enemies.add(1);
+		enemies.add(2);
 		
 		Level level = new Level(tube, 10, game);
 		level.setEnemies(enemies);
@@ -39,7 +41,7 @@ public interface Levels {
 		enemies.add(0);
 		enemies.add(1);
 		enemies.add(2);
-		
+		enemies.add(3);
 		Level level = new Level(tube, 10, game);
 		level.setEnemies(enemies);
 		

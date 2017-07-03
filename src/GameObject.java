@@ -54,7 +54,7 @@ public abstract class GameObject {
 	protected float z = 0f;
 	private String projectileSound = "laser4.mp3";
 	private String spawnSound = "phaserDown2.mp3";
-	
+	private String deathSound = "phaserDown2.mp3";
 	private int alphatarget = 0;
 	private int ralpha = 0;
 	private int ztarget = 0;
@@ -110,11 +110,7 @@ public abstract class GameObject {
   		this.setDirty(false);
   	}
   	
-  	/**
-  	 * implements an AI
-  	 * @param a  radial step size of one step in degree
-  	 */
-  	public void enemyLogic(int a){}
+  
 	public List<Primitive> getGeom() {
 		return geom;
 	}
@@ -297,7 +293,6 @@ public abstract class GameObject {
 	public int getEnemyType(){
 		return 0;
 	}
-	public void shootingLogic(){}
 
 	public float getRadius() {
 		// TODO Auto-generated method stub
@@ -313,5 +308,34 @@ public abstract class GameObject {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
+	public void moveZLogic(int chance, float step) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void moveRLogic(int chance, int step) {
+		// TODO Auto-generated method stub
+		
+	}
+	/**
+  	 * implements an AI
+  	 * @param rstep  radial relative step size of one step in degree
+  	 * @param zstep step size of one step in z direction as coordinate
+  	 */
+	public void enemyLogic(int rstep, float zstep) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void shootingLogic(int chance) {
+		// TODO Auto-generated method stub
+		
+	}
+	public String getDeathSound() {
+		return deathSound;
+	}
+	public void setDeathSound(String deathSound) {
+		this.deathSound = deathSound;
+	}
+	public void runscript(){
+		
+	}
 }
